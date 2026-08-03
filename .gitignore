@@ -12,9 +12,13 @@
 
 # testing
 /coverage
+/output/
+/test-results/
+/devserver.log
 
 # next.js
 /.next/
+/.next-stale-*/
 /out/
 
 # production

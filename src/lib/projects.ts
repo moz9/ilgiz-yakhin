@@ -25,11 +25,15 @@ export type Project = {
   links?: { label: string; href: string }[];
   access: "public" | "mixed" | "private";
   accent: "teal" | "red" | "graphite";
+  cover: string;
+  coverAlt: string;
 };
 
 export const projects: Project[] = [
   {
     slug: "lunafantasy",
+    cover: "/cases/lunafantasy.webp",
+    coverAlt: "Главная страница платформы LunaFantasy",
     index: "01",
     title: "LunaFantasy",
     shortTitle: "Full-stack platform",
@@ -56,6 +60,8 @@ export const projects: Project[] = [
   },
   {
     slug: "revalib",
+    cover: "/cases/revalib.webp",
+    coverAlt: "Главная страница библиотеки RevaLib",
     index: "02",
     title: "RevaLib",
     shortTitle: "Content operations",
@@ -83,6 +89,8 @@ export const projects: Project[] = [
   },
   {
     slug: "worktime-reporting",
+    cover: "/cases/worktime.webp",
+    coverAlt: "Экран проверки отчета рабочего времени на синтетических данных",
     index: "03",
     title: "Система подготовки отчетности рабочего времени",
     shortTitle: "Internal reporting tool",
@@ -109,6 +117,8 @@ export const projects: Project[] = [
   },
   {
     slug: "chessrise",
+    cover: "/cases/chessrise.webp",
+    coverAlt: "Главная страница шахматной школы ChessRise",
     index: "04",
     title: "ChessRise",
     shortTitle: "Commercial web launch",
@@ -136,6 +146,8 @@ export const projects: Project[] = [
   },
   {
     slug: "pioner",
+    cover: "/cases/pioner.webp",
+    coverAlt: "Главная страница сайта торгово-развлекательного центра Пионер",
     index: "05",
     title: "Сайт ТРЦ «Пионер»",
     shortTitle: "Business platform",
@@ -163,6 +175,8 @@ export const projects: Project[] = [
   },
   {
     slug: "infrastructure-inventory",
+    cover: "/cases/sysinvent.webp",
+    coverAlt: "Рабочий экран системы учета ИТ-инфраструктуры на синтетических данных",
     index: "06",
     title: "Система учета ИТ-инфраструктуры",
     shortTitle: "Secure desktop tooling",

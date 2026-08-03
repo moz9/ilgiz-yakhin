@@ -14,6 +14,8 @@ describe("project catalog", () => {
       expect(project.decisions).toHaveLength(3);
       expect(project.evidence).toHaveLength(3);
       expect(project.limitations.length).toBeGreaterThan(0);
+      expect(project.cover).toMatch(/^\/cases\/.+\.(png|webp|jpg)$/);
+      expect(project.coverAlt.length).toBeGreaterThan(12);
       expect(getProject(project.slug)).toEqual(project);
     }
   });

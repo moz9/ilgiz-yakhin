@@ -1,11 +1,11 @@
 import { expect, test } from "@playwright/test";
 
-test("home offers the fast HR path and interactive scene", async ({ page }) => {
+test("home offers the fast HR path and animated project index", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: /ILGIZ YAKHIN/i })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Смотреть проекты" })).toBeVisible();
-  await expect(page.getByRole("navigation", { name: "Зоны портфолио" })).toBeVisible();
-  await expect(page.getByText("Не набор технологий.", { exact: false })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Проекты", exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Проекты", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "LunaFantasy" })).toBeVisible();
 });
 
 test("catalog filters cases and opens a technical breakdown", async ({ page }) => {

@@ -21,4 +21,10 @@ describe("public content boundary", () => {
     const forbidden = ["animego", "podkop", "ax3000t", "xray/3x-ui", "service_user"];
     for (const term of forbidden) expect(content.toLowerCase()).not.toContain(term);
   });
+
+  it("keeps the homepage free of discarded slogans", () => {
+    for (const phrase of ["не набор технологий", "работающие системы", "один контур ответственности", "шесть систем"]) {
+      expect(content.toLowerCase()).not.toContain(phrase);
+    }
+  });
 });

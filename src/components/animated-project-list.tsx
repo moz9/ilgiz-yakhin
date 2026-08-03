@@ -1,46 +1,78 @@
 "use client";
 
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
-import type { Project } from "@/lib/projects";
-import { projects } from "@/lib/projects";
+import { useState } from "react";
+import { projects, type Project } from "@/lib/projects";
 
-function ProjectFeature({ project }: { project: Project }) {
-  const target = useRef<HTMLElement>(null);
-  const reduceMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target, offset: ["start end", "end start"] });
-  const imageY = useTransform(scrollYProgress, [0, 1], reduceMotion ? ["0%", "0%"] : ["-4%", "4%"]);
-  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], reduceMotion ? [1, 1, 1] : [1.06, 1, 1.06]);
+const homeOrder = ["chessrise", "pioner", "worktime-reporting", "infrastructure-inventory", "lunafantasy", "revalib"];
+const homeProjects = homeOrder.map((slug) => projects.find((project) => project.slug === slug)).filter((project): project is Project => Boolean(project));
+
+const posterWords: Record<string, [string, string]> = {
+  pioner: ["PIONER", "WEB"],
+  chessrise: ["CHESS", "RISE"],
+  "worktime-reporting": ["WORK", "TIME"],
+  "infrastructure-inventory": ["SYS", "INVENT"],
+  lunafantasy: ["LUNA", "FANTASY"],
+  revalib: ["REVA", "LIB"],
+};
+
+function CasePoster({ project }: { project: Project }) {
+  const words = posterWords[project.slug] ?? [project.title, project.category[0]];
 
   return (
-    <article className={`project-feature project-${project.slug} accent-${project.accent}`} ref={target}>
-      <div className="project-feature-copy">
-        <div className="project-feature-meta"><span>{project.index}</span><span>{project.category.join(" · ")}</span></div>
-        <h3><Link href={`/projects/${project.slug}`}>{project.title}</Link></h3>
-        <p>{project.summary}</p>
-        <div className="project-feature-footer">
-          <span>{project.stack.slice(0, 4).join(" / ")}</span>
-          <Link href={`/projects/${project.slug}`} aria-label={`Открыть кейс ${project.title}`}><ArrowUpRight aria-hidden="true" /></Link>
-        </div>
+    <div className={`case-poster case-poster-${project.slug}`}>
+      <div className="case-poster-head">
+        <span>Case {(homeProjects.indexOf(project) + 1).toString().padStart(2, "0")}</span>
+        <span>{project.category.join(" / ")}</span>
       </div>
-      <Link className="project-feature-media" href={`/projects/${project.slug}`} aria-label={`Открыть кейс ${project.title}`}>
-        <motion.div style={{ y: imageY, scale: imageScale }}>
-          <Image src={project.cover} alt={project.coverAlt} fill loading={project.index === "01" ? "eager" : "lazy"} sizes="(max-width: 760px) calc(100vw - 32px), 58vw" unoptimized />
-        </motion.div>
-        <span>Открыть кейс <ArrowUpRight aria-hidden="true" /></span>
-      </Link>
-    </article>
+      <div className="case-poster-grid" aria-hidden="true"><i /><i /><i /><i /></div>
+      <div className="case-poster-word" aria-hidden="true"><span>{words[0]}</span><span>{words[1]}</span></div>
+      <strong>{project.title}</strong>
+      <div className="case-poster-stack">{project.stack.slice(0, 3).map((item) => <span key={item}>{item}</span>)}</div>
+    </div>
   );
 }
 
 export function AnimatedProjectList() {
+  const [activeSlug, setActiveSlug] = useState(homeProjects[0].slug);
+  const reduceMotion = useReducedMotion();
+  const activeProject = homeProjects.find((project) => project.slug === activeSlug) ?? homeProjects[0];
+
   return (
-    <section className="project-film" id="projects" aria-labelledby="work-title">
-      <header className="project-film-heading"><p>Selected work · 2023—2026</p><h2 id="work-title">Проекты</h2><span>06</span></header>
-      <div>{projects.map((project) => <ProjectFeature project={project} key={project.slug} />)}</div>
+    <section className="project-index-home" id="projects" aria-labelledby="work-title">
+      <header className="project-index-heading"><span>01</span><h2 id="work-title">Избранные проекты</h2><span>06</span></header>
+      <div className="project-index-layout">
+        <div className="project-index-list">
+          {homeProjects.map((project, index) => (
+            <motion.article
+              className={activeSlug === project.slug ? "is-active" : ""}
+              key={project.slug}
+              onHoverStart={() => setActiveSlug(project.slug)}
+              onFocusCapture={() => setActiveSlug(project.slug)}
+              onViewportEnter={() => setActiveSlug(project.slug)}
+              initial={false}
+            >
+              <span className="index-number" aria-hidden="true">{(index + 1).toString().padStart(2, "0")}</span>
+              <div>
+                <p>{project.category.join(" · ")}</p>
+                <h3><Link href={`/projects/${project.slug}`}>{project.title}</Link></h3>
+              </div>
+              <Link className="index-arrow" href={`/projects/${project.slug}`} aria-label={`Открыть кейс ${project.title}`}><ArrowUpRight aria-hidden="true" /></Link>
+              <Link className="mobile-case-poster" href={`/projects/${project.slug}`} tabIndex={-1} aria-hidden="true"><CasePoster project={project} /></Link>
+            </motion.article>
+          ))}
+        </div>
+        <div className="project-poster-stage" aria-live="polite">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div key={activeProject.slug} initial={reduceMotion ? false : { opacity: 0, x: 28, rotate: 1.2 }} animate={{ opacity: 1, x: 0, rotate: 0 }} exit={reduceMotion ? undefined : { opacity: 0, x: -20, rotate: -1 }} transition={{ duration: .42, ease: [0.22, 1, 0.36, 1] }}>
+              <Link href={`/projects/${activeProject.slug}`} aria-label={`Открыть кейс ${activeProject.title}`}><CasePoster project={activeProject} /></Link>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+      <Link className="project-index-all" href="/projects">Все проекты <ArrowUpRight aria-hidden="true" /></Link>
     </section>
   );
 }

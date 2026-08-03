@@ -4,7 +4,7 @@ test("home offers the fast HR path and animated project index", async ({ page })
   await page.goto("/");
   await expect(page.getByRole("heading", { name: /ILGIZ YAKHIN/i })).toBeVisible();
   await expect(page.getByRole("link", { name: "Проекты", exact: true }).first()).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Проекты", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Избранные проекты", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "LunaFantasy" })).toBeVisible();
 });
 

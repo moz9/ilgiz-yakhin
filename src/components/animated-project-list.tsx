@@ -1,73 +1,46 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef } from "react";
+import type { Project } from "@/lib/projects";
 import { projects } from "@/lib/projects";
 
-export function AnimatedProjectList() {
-  const [activeSlug, setActiveSlug] = useState(projects[0].slug);
+function ProjectFeature({ project }: { project: Project }) {
+  const target = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
-  const activeProject = projects.find((project) => project.slug === activeSlug) ?? projects[0];
+  const { scrollYProgress } = useScroll({ target, offset: ["start end", "end start"] });
+  const imageY = useTransform(scrollYProgress, [0, 1], reduceMotion ? ["0%", "0%"] : ["-4%", "4%"]);
+  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], reduceMotion ? [1, 1, 1] : [1.06, 1, 1.06]);
 
   return (
-    <section className="work-showcase" id="projects" aria-labelledby="work-title">
-      <header className="work-heading">
-        <p>2023—2026</p>
-        <h2 id="work-title">Проекты</h2>
-        <span>{projects.length.toString().padStart(2, "0")}</span>
-      </header>
-
-      <div className="work-layout">
-        <div className="work-list">
-          {projects.map((project) => (
-            <motion.article
-              className={`work-row accent-${project.accent} ${activeSlug === project.slug ? "is-active" : ""}`}
-              key={project.slug}
-              onFocusCapture={() => setActiveSlug(project.slug)}
-              onHoverStart={() => setActiveSlug(project.slug)}
-              onViewportEnter={() => setActiveSlug(project.slug)}
-              initial={false}
-            >
-              <div className="work-row-top">
-                <span>{project.index}</span>
-                <span>{project.category.join(" · ")}</span>
-              </div>
-              <h3><Link href={`/projects/${project.slug}`}>{project.title}</Link></h3>
-              <p>{project.summary}</p>
-              <div className="work-row-bottom">
-                <span>{project.stack.slice(0, 3).join(" / ")}</span>
-                <Link href={`/projects/${project.slug}`} aria-label={`Открыть кейс ${project.title}`}>
-                  <ArrowUpRight aria-hidden="true" />
-                </Link>
-              </div>
-              <Link className="work-mobile-visual" href={`/projects/${project.slug}`} tabIndex={-1} aria-hidden="true">
-                <Image src={project.cover} alt="" fill loading="eager" sizes="(max-width: 760px) calc(100vw - 32px), 1px" />
-              </Link>
-            </motion.article>
-          ))}
-        </div>
-
-        <div className="work-preview" aria-live="polite">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              className="work-preview-frame"
-              key={activeProject.slug}
-              initial={reduceMotion ? false : { opacity: 0, y: 26, scale: 0.985 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={reduceMotion ? undefined : { opacity: 0, y: -18, scale: 1.01 }}
-              transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <Link href={`/projects/${activeProject.slug}`} aria-label={`Открыть кейс ${activeProject.title}`}>
-                <Image src={activeProject.cover} alt={activeProject.coverAlt} fill sizes="(max-width: 1100px) 50vw, 760px" priority={activeProject.slug === projects[0].slug} />
-                <span>{activeProject.shortTitle}</span>
-              </Link>
-            </motion.div>
-          </AnimatePresence>
+    <article className={`project-feature project-${project.slug} accent-${project.accent}`} ref={target}>
+      <div className="project-feature-copy">
+        <div className="project-feature-meta"><span>{project.index}</span><span>{project.category.join(" · ")}</span></div>
+        <h3><Link href={`/projects/${project.slug}`}>{project.title}</Link></h3>
+        <p>{project.summary}</p>
+        <div className="project-feature-footer">
+          <span>{project.stack.slice(0, 4).join(" / ")}</span>
+          <Link href={`/projects/${project.slug}`} aria-label={`Открыть кейс ${project.title}`}><ArrowUpRight aria-hidden="true" /></Link>
         </div>
       </div>
+      <Link className="project-feature-media" href={`/projects/${project.slug}`} aria-label={`Открыть кейс ${project.title}`}>
+        <motion.div style={{ y: imageY, scale: imageScale }}>
+          <Image src={project.cover} alt={project.coverAlt} fill loading={project.index === "01" ? "eager" : "lazy"} sizes="(max-width: 760px) calc(100vw - 32px), 58vw" unoptimized />
+        </motion.div>
+        <span>Открыть кейс <ArrowUpRight aria-hidden="true" /></span>
+      </Link>
+    </article>
+  );
+}
+
+export function AnimatedProjectList() {
+  return (
+    <section className="project-film" id="projects" aria-labelledby="work-title">
+      <header className="project-film-heading"><p>Selected work · 2023—2026</p><h2 id="work-title">Проекты</h2><span>06</span></header>
+      <div>{projects.map((project) => <ProjectFeature project={project} key={project.slug} />)}</div>
     </section>
   );
 }

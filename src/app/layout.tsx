@@ -1,19 +1,7 @@
 import type { Metadata } from "next";
-import { Manrope, IBM_Plex_Mono } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
-
-const manrope = Manrope({
-  variable: "--font-sans",
-  subsets: ["latin", "cyrillic"],
-});
-
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-mono",
-  weight: ["400", "500"],
-  subsets: ["latin", "cyrillic"],
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
@@ -29,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={`${manrope.variable} ${plexMono.variable}`} suppressHydrationWarning data-scroll-behavior="smooth">
+    <html lang="ru" suppressHydrationWarning data-scroll-behavior="smooth">
       <body><SiteHeader />{children}<SiteFooter /></body>
     </html>
   );

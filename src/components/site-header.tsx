@@ -19,7 +19,7 @@ export function SiteHeader() {
 
   return (
     <header className="site-header">
-      <Link className="wordmark" href="/" aria-label="ILGIZ YAKHIN — главная">
+      <Link className="wordmark" href="/">
         <span>IY</span>
         <strong>ILGIZ YAKHIN</strong>
       </Link>

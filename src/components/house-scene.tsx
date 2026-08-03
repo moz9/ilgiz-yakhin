@@ -19,7 +19,7 @@ export function HouseScene() {
   return (
     <motion.div className="house-stage" initial={reduceMotion ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>
       <motion.div className="house-image" animate={reduceMotion ? undefined : { y: [0, -5, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}>
-        <Image src="https://raw.githubusercontent.com/moz9/ilgiz-yakhin/main/public/images/portfolio-house.webp" alt="Архитектурный разрез дома с зонами проектов, автоматизации, desktop-разработки, инфраструктуры и резюме" fill sizes="(max-width: 900px) 100vw, 75vw" priority unoptimized />
+        <Image src="https://raw.githubusercontent.com/moz9/ilgiz-yakhin/main/public/images/portfolio-house.webp" alt="Архитектурный разрез дома с зонами проектов, автоматизации, desktop-разработки, инфраструктуры и резюме" fill sizes="(max-width: 900px) 100vw, 75vw" priority quality={82} />
       </motion.div>
       <nav className="room-hotspots" aria-label="Зоны портфолио">
         {rooms.map((room, index) => (

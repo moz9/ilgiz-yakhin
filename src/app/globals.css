@@ -379,7 +379,7 @@ button { color: inherit; font: inherit; }
 .reel-controls button.is-active i { background: var(--red); width: 48px; }
 .cinematic-actions { display: flex; gap: 8px; }
 .cinematic-actions a { align-items: center; background: #f6f6f1; color: #0a0b0c; display: flex; font-size: 14px; font-weight: 750; gap: 12px; height: 52px; padding: 0 22px; }
-.cinematic-actions a:first-child { background: var(--teal); color: #fff; }
+.cinematic-actions a:first-child { background: var(--teal); color: #0a0b0c; }
 .cinematic-actions svg { height: 17px; width: 17px; }
 
 .project-film { background: var(--paper); }

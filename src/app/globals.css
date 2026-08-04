@@ -260,7 +260,6 @@ button { color: inherit; font: inherit; }
   position: relative;
 }
 
-.glass-filter { height: 0; position: absolute; width: 0; }
 .cover-grid-lines { inset: 0; pointer-events: none; position: absolute; }
 .cover-grid-lines i { background: color-mix(in srgb, var(--ink) 14%, transparent); position: absolute; }
 .cover-grid-lines i:nth-child(1) { height: 1px; left: 4%; right: 4%; top: 16%; }
@@ -303,27 +302,6 @@ button { color: inherit; font: inherit; }
   border: 1px solid var(--glass-line);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72), 0 18px 46px rgba(18, 29, 27, 0.14);
 }
-.liquid-lens {
-  align-items: center;
-  backdrop-filter: blur(12px) saturate(1.45);
-  background: rgba(255, 255, 255, 0.26);
-  border: 1px solid rgba(255, 255, 255, 0.78);
-  border-radius: 58px 42px 54px 40px;
-  box-shadow: inset 0 1px 1px rgba(255,255,255,.95), 0 18px 40px rgba(19,34,32,.15);
-  display: flex;
-  filter: url(#liquid-glass-distortion);
-  gap: 13px;
-  height: 116px;
-  justify-content: center;
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  width: 188px;
-  z-index: 20;
-}
-.liquid-lens span { font-family: var(--font-mono), monospace; font-size: 8px; font-weight: 700; text-transform: uppercase; }
-
 .cover-actions { bottom: 32px; display: grid; grid-template-columns: 1fr 1fr; left: 7%; position: absolute; z-index: 14; }
 .cover-actions a { align-items: center; display: flex; font-size: 12px; font-weight: 750; gap: 24px; justify-content: space-between; min-width: 178px; padding: 18px 20px; }
 .cover-actions a + a { border-left: 1px solid color-mix(in srgb, var(--ink) 16%, transparent); }
@@ -446,7 +424,6 @@ button { color: inherit; font: inherit; }
   .cover-fragment-pioner { right: 16px; top: 260px; width: 30%; }
   .cover-fragment-worktime { bottom: 112px; left: 9%; width: 52%; }
   .cover-fragment-sysinvent { bottom: 86px; right: 4%; width: 42%; }
-  .liquid-lens { display: none; }
   .cover-actions { bottom: 18px; left: 16px; right: 16px; }
   .cover-actions a { font-size: 10px; min-width: 0; padding: 15px 13px; }
 
@@ -486,7 +463,6 @@ button { color: inherit; font: inherit; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .liquid-lens { display: none; }
   .cover-fragment, .cover-copy > *, .showreel-copy, .showreel-visual { animation: none !important; transform: none !important; }
 }
 

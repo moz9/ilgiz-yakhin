@@ -1,11 +1,6 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/react";
 import { ArrowDownRight, Download } from "lucide-react";
-import type { PointerEvent } from "react";
-import { useState } from "react";
 
 const fragments = [
   { className: "cover-fragment cover-fragment-chess", src: "/cases/chessrise.webp", alt: "Фрагмент интерфейса ChessRise" },
@@ -15,30 +10,8 @@ const fragments = [
 ] as const;
 
 export function HeroReel() {
-  const reduceMotion = useReducedMotion();
-  const [lensVisible, setLensVisible] = useState(false);
-  const pointerX = useMotionValue(420);
-  const pointerY = useMotionValue(230);
-  const lensX = useSpring(pointerX, { stiffness: 180, damping: 24, mass: 0.45 });
-  const lensY = useSpring(pointerY, { stiffness: 180, damping: 24, mass: 0.45 });
-
-  const handlePointerMove = (event: PointerEvent<HTMLElement>) => {
-    if (reduceMotion) return;
-    setLensVisible(true);
-    const bounds = event.currentTarget.getBoundingClientRect();
-    pointerX.set(event.clientX - bounds.left - 94);
-    pointerY.set(event.clientY - bounds.top - 58);
-  };
-
   return (
-    <section className="liquid-cover" aria-labelledby="hero-title" onPointerMove={handlePointerMove} onPointerLeave={() => setLensVisible(false)}>
-      <svg className="glass-filter" aria-hidden="true">
-        <filter id="liquid-glass-distortion" x="-20%" y="-20%" width="140%" height="140%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.012 0.028" numOctaves="2" seed="8" result="noise" />
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="B" />
-        </filter>
-      </svg>
-
+    <section className="liquid-cover" aria-labelledby="hero-title">
       <div className="cover-grid-lines" aria-hidden="true"><i /><i /><i /><i /></div>
 
       <div className="cover-fragments" aria-hidden="true">
@@ -61,10 +34,6 @@ export function HeroReel() {
           Full-stack / AI-разработчик
         </p>
       </div>
-
-      <motion.div className="liquid-lens" animate={{ opacity: lensVisible ? 1 : 0 }} style={reduceMotion ? undefined : { x: lensX, y: lensY }} aria-hidden="true">
-        <span>Web</span><span>Desktop</span><span>Automation</span>
-      </motion.div>
 
       <div className="cover-actions glass-surface">
         <Link href="#projects">Смотреть проекты <ArrowDownRight aria-hidden="true" /></Link>

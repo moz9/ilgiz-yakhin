@@ -352,7 +352,7 @@ button { color: inherit; font: inherit; }
 .chess-detail { bottom: 8%; right: 3%; }
 
 .pioner-scene { background: #ff694f; }
-.pioner-display { background: #101112; box-shadow: 0 34px 80px rgba(46,17,12,.28); height: 520px; left: 6%; overflow: hidden; position: absolute; top: 12%; width: 78%; }
+.pioner-display { aspect-ratio: 3 / 2; background: #101112; box-shadow: 0 34px 80px rgba(46,17,12,.28); left: 6%; overflow: hidden; position: absolute; top: 12%; width: 78%; }
 .pioner-display .scene-image img { object-position: center top; }
 .device-phone { background: #101112; border: 6px solid #101112; bottom: 7%; height: 390px; overflow: hidden; position: absolute; right: 5%; width: 190px; z-index: 4; }
 .device-phone img { object-fit: cover; object-position: 53% top; }
@@ -443,7 +443,7 @@ button { color: inherit; font: inherit; }
   .device-laptop { bottom: 17%; left: 5%; width: 90%; }
   .device-screen { border-width: 6px; height: 300px; }
   .chess-detail { bottom: 5%; right: 3%; }
-  .pioner-display { height: 330px; left: 4%; top: 10%; width: 84%; }
+  .pioner-display { left: 4%; top: 10%; width: 84%; }
   .device-phone { bottom: 4%; height: 260px; right: 4%; width: 126px; }
   .scene-route { bottom: 5%; left: 4%; max-width: 230px; padding: 13px; }
   .scene-route strong, .sys-status strong { font-size: 10px; }

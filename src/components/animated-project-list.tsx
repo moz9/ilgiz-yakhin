@@ -31,7 +31,7 @@ function PionerScene({ project }: { project: Project }) {
   return (
     <div className="case-scene pioner-scene">
       <div className="pioner-display"><BrowserBar label="pioner-site.vercel.app" /><div className="scene-image"><Image src={project.cover} alt={project.coverAlt} fill sizes="(max-width: 760px) 92vw, 58vw" /></div></div>
-      <div className="device-phone"><div className="phone-speaker" /><Image src={project.cover} alt="Мобильное представление сайта ТРЦ Пионер" fill sizes="180px" /></div>
+      <div className="device-phone"><div className="phone-speaker" /><Image src="/cases/pioner-mobile.webp" alt="Мобильное представление сайта ТРЦ Пионер" fill sizes="180px" /></div>
       <div className="scene-route glass-surface"><MapPin aria-hidden="true" /><div><span>Посетительский маршрут</span><strong>Каталог · карта · события</strong></div></div>
     </div>
   );
@@ -95,7 +95,7 @@ export function AnimatedProjectList() {
       </div>
 
       <div className="project-archive">
-        <div><p>Archive / production</p><h2>Ещё два full-stack кейса</h2></div>
+        <div><p>Archive / production</p><h2>Другие проекты</h2></div>
         {archiveProjects.map((project) => (
           <Link key={project.slug} href={`/projects/${project.slug}`}>
             <span>{project.category.join(" · ")}</span>

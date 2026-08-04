@@ -27,6 +27,9 @@ test("catalog filters cases and opens a technical breakdown", async ({ page }) =
 test("resume files and email are reachable", async ({ page, request }) => {
   await page.goto("/resume");
   await expect(page.getByRole("heading", { name: "Full-stack / AI-разработчик" })).toBeVisible();
+  const portrait = page.getByRole("main").getByRole("img", { name: "Ильгиз Яхин" });
+  await expect(portrait).toBeVisible();
+  await expect.poll(async () => portrait.evaluate((image) => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
   await expect(page.getByRole("heading", { name: "Коммерческая практика" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "PDF-версии" })).toBeVisible();
   await expect(page.getByRole("main").getByRole("link", { name: /im@angelius.ru/ }).first()).toHaveAttribute("href", "mailto:im@angelius.ru");

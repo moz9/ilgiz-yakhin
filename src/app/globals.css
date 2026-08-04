@@ -480,14 +480,17 @@ button { color: inherit; font: inherit; }
 .resume-cover-grid i:nth-child(2) { left: 50%; }
 .resume-cover-grid i:nth-child(3) { left: 75%; }
 .resume-cover-top { color: #9ba19f; display: flex; font-family: var(--font-mono), monospace; font-size: 10px; justify-content: space-between; position: relative; z-index: 2; }
-.resume-cover-copy { align-content: center; display: grid; min-height: 620px; position: relative; z-index: 2; }
+.resume-cover-copy { align-content: center; display: grid; max-width: 64%; min-height: 620px; position: relative; z-index: 2; }
 .resume-overline { color: #ff684f; font-family: var(--font-mono), monospace; font-size: 12px; margin-bottom: 28px; text-transform: uppercase; }
 .resume-cover h1 { font-size: 96px; font-weight: 780; line-height: .92; max-width: 1050px; }
 .resume-cover h1 span { color: #ff684f; }
 .resume-cover-lead { color: #b6bcba; font-size: 19px; line-height: 1.65; margin-top: 34px; max-width: 720px; }
 .resume-cover-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
 .resume-cover-meta span { border: 1px solid #3f4543; font-family: var(--font-mono), monospace; font-size: 9px; padding: 8px 10px; text-transform: uppercase; }
-.resume-scroll-cue { align-items: center; bottom: 40px; display: flex; font-family: var(--font-mono), monospace; font-size: 10px; gap: 12px; position: absolute; right: 40px; text-transform: uppercase; z-index: 3; }
+.resume-portrait { aspect-ratio: 3 / 4; background: #f4f3ef; border: 8px solid #f4f3ef; bottom: 46px; box-shadow: 0 34px 80px rgba(0,0,0,.34); margin: 0; max-width: 440px; overflow: hidden; position: absolute; right: 4%; width: 31%; z-index: 2; }
+.resume-portrait::before { background: #ff684f; content: ""; height: 4px; left: 0; position: absolute; right: 0; top: 0; z-index: 2; }
+.resume-portrait img { object-fit: cover; object-position: center top; }
+.resume-scroll-cue { align-items: center; bottom: 40px; display: flex; font-family: var(--font-mono), monospace; font-size: 10px; gap: 12px; left: 40px; position: absolute; text-transform: uppercase; z-index: 3; }
 .resume-scroll-cue svg { color: #ff684f; height: 18px; width: 18px; }
 
 .resume-section-heading { align-items: end; border-top: 1px solid var(--line); display: grid; gap: 48px; grid-template-columns: 220px 1fr; padding-top: 22px; }
@@ -580,7 +583,8 @@ button { color: inherit; font: inherit; }
 @media (max-width: 1100px) {
   .resume-cover { margin-left: 20px; margin-right: 20px; min-height: 680px; }
   .resume-cover-copy { min-height: 550px; }
-  .resume-cover h1 { font-size: 72px; }
+  .resume-cover h1 { font-size: 54px; }
+  .resume-portrait { bottom: 54px; width: 30%; }
   .resume-section-heading { grid-template-columns: 170px 1fr; }
   .resume-section-heading h2 { font-size: 44px; }
   .resume-profile-lead > p { font-size: 29px; }
@@ -591,17 +595,18 @@ button { color: inherit; font: inherit; }
 }
 
 @media (max-width: 760px) {
-  .resume-cover { margin: 16px 0 0; min-height: 650px; padding: 24px 16px 30px; }
+  .resume-cover { margin: 16px 0 0; min-height: 760px; padding: 24px 16px 30px; }
   .resume-cover-grid i:nth-child(1) { left: 33.33%; }
   .resume-cover-grid i:nth-child(2) { left: 66.66%; }
   .resume-cover-grid i:nth-child(3) { display: none; }
   .resume-cover-top { align-items: flex-start; flex-direction: column; gap: 6px; }
-  .resume-cover-copy { align-content: center; min-height: 530px; }
+  .resume-cover-copy { align-content: start; max-width: none; min-height: 0; padding-top: 72px; }
   .resume-overline { font-size: 10px; margin-bottom: 20px; }
   .resume-cover h1 { font-size: 48px; line-height: .96; }
   .resume-cover-lead { font-size: 15px; margin-top: 26px; }
   .resume-cover-meta { margin-top: 24px; }
-  .resume-scroll-cue { bottom: 26px; right: 16px; }
+  .resume-portrait { border-width: 5px; bottom: 34px; max-width: none; right: 16px; width: 47%; }
+  .resume-scroll-cue { bottom: 34px; left: 16px; }
   .resume-section-heading { align-items: start; display: flex; flex-direction: column; gap: 24px; }
   .resume-section-heading h2 { font-size: 36px; }
   .resume-profile-grid { display: block; margin-top: 54px; }

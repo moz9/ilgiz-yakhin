@@ -8,6 +8,17 @@ describe("project catalog", () => {
     expect(new Set(projects.map(({ index }) => index)).size).toBe(6);
   });
 
+  it("puts neutral commercial cases first and sensitive content last", () => {
+    expect(projects.map(({ slug }) => slug)).toEqual([
+      "chessrise",
+      "pioner",
+      "worktime-reporting",
+      "infrastructure-inventory",
+      "revalib",
+      "lunafantasy",
+    ]);
+  });
+
   it("keeps every case evidence-driven", () => {
     for (const project of projects) {
       expect(project.stack.length).toBeGreaterThanOrEqual(5);

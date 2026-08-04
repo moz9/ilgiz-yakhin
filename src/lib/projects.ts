@@ -31,12 +31,12 @@ export type Project = {
 
 const caseAssetBase = "/cases";
 
-export const projects: Project[] = [
+const projectCatalog: Project[] = [
   {
     slug: "lunafantasy",
     cover: `${caseAssetBase}/lunafantasy.webp`,
     coverAlt: "Главная страница платформы LunaFantasy",
-    index: "01",
+    index: "06",
     title: "LunaFantasy",
     shortTitle: "Full-stack platform",
     category: ["Web", "Infrastructure"],
@@ -50,9 +50,9 @@ export const projects: Project[] = [
       { title: "Воспроизводимый релиз", text: "Immutable releases, health/readiness checks, smoke-тест и rollback вместо ручного изменения работающей версии." },
       { title: "Доказательства", text: "Единые команды качества объединяют типизацию, тесты, production build и deployment-проверки." },
     ],
-    results: ["31 Node-тест и 9 deployment-тестов", "Production build на 488 страниц", "Проверенные auth/RBAC, CSRF и security headers", "Green CI с PostgreSQL и миграциями"],
+    results: ["31 Node-тест, 9 deployment-тестов и 9 browser E2E", "Production build на 488 страниц", "Проверенные auth/RBAC, CSRF и security headers", "Green CI с PostgreSQL и миграциями"],
     evidence: [
-      { label: "QA", value: "40 automated checks" },
+      { label: "QA", value: "31 Node + 9 deploy + 9 E2E" },
       { label: "Build", value: "488 routes" },
       { label: "Security", value: "Auth / RBAC / CSRF" },
     ],
@@ -64,7 +64,7 @@ export const projects: Project[] = [
     slug: "revalib",
     cover: `${caseAssetBase}/revalib.webp`,
     coverAlt: "Главная страница библиотеки RevaLib",
-    index: "02",
+    index: "05",
     title: "RevaLib",
     shortTitle: "Content operations",
     category: ["Web", "Automation", "Infrastructure"],
@@ -121,7 +121,7 @@ export const projects: Project[] = [
     slug: "chessrise",
     cover: `${caseAssetBase}/chessrise.webp`,
     coverAlt: "Главная страница шахматной школы ChessRise",
-    index: "04",
+    index: "01",
     title: "ChessRise",
     shortTitle: "Commercial web launch",
     category: ["Web", "Infrastructure"],
@@ -129,16 +129,16 @@ export const projects: Project[] = [
     role: "Разработка, запуск и передача заказчику",
     summary: "Сайт шахматной школы с интерактивной задачей, заявками и надежным production-контуром.",
     task: "Представить школу, провести родителя от первого знакомства до заявки и дать заказчику готовый работающий продукт, а не только макет.",
-    stack: ["Next.js", "React", "TypeScript", "Supabase", "PostgreSQL", "RLS", "Nginx", "systemd"],
+    stack: ["Next.js", "React", "TypeScript", "Supabase (PostgreSQL + RLS)", "Nginx", "systemd"],
     decisions: [
       { title: "Надежная заявка", text: "Серверная валидация, запись в БД, Telegram-уведомление и PDF формируют контролируемый бизнес-сценарий." },
-      { title: "Доступ к данным", text: "Миграции, индексы и Row Level Security ограничивают операции на уровне PostgreSQL." },
-      { title: "Передаваемый production", text: "Health-check, versioned releases и rollback позволяют сопровождать сайт после сдачи." },
+      { title: "Доступ к данным", text: "Миграции, индексы и Row Level Security в Supabase PostgreSQL ограничивают публичные операции с данными." },
+      { title: "Разделение инфраструктуры", text: "Next.js работает на VDS за Nginx, а Supabase остается внешним контуром данных и заявок." },
     ],
-    results: ["Проект принят и оплачен заказчиком", "Полный цикл заявки", "SEO и Schema.org", "Versioned deployment и rollback"],
+    results: ["Проект принят и оплачен заказчиком", "Заявка сохраняется в БД и уходит в Telegram с PDF", "SEO и Schema.org", "Versioned deployment и rollback"],
     evidence: [
       { label: "Outcome", value: "Accepted by client" },
-      { label: "Data", value: "PostgreSQL + RLS" },
+      { label: "Data", value: "Supabase PostgreSQL + RLS" },
       { label: "Release", value: "Health + rollback" },
     ],
     limitations: ["Проект не изменяется без нового запроса заказчика.", "SMTP был подготовлен, но не подключен на момент передачи."],
@@ -150,7 +150,7 @@ export const projects: Project[] = [
     slug: "pioner",
     cover: `${caseAssetBase}/pioner.webp`,
     coverAlt: "Главная страница сайта торгово-развлекательного центра Пионер",
-    index: "05",
+    index: "02",
     title: "Сайт ТРЦ «Пионер»",
     shortTitle: "Business platform",
     category: ["Web"],
@@ -179,7 +179,7 @@ export const projects: Project[] = [
     slug: "infrastructure-inventory",
     cover: `${caseAssetBase}/sysinvent.webp`,
     coverAlt: "Рабочий экран системы учета ИТ-инфраструктуры на синтетических данных",
-    index: "06",
+    index: "04",
     title: "Система учета ИТ-инфраструктуры",
     shortTitle: "Secure desktop tooling",
     category: ["Desktop", "Automation", "Infrastructure"],
@@ -187,7 +187,7 @@ export const projects: Project[] = [
     role: "Desktop-разработка, безопасность и QA",
     summary: "Корпоративный desktop-инструмент для инвентаризации, сверки и администрирования оборудования без раскрытия рабочей сети.",
     task: "Собрать единое рабочее место для учета инфраструктуры и одновременно подготовить безопасную демонстрационную версию, полностью отделенную от рабочих данных.",
-    stack: ["Electron", "React", "TypeScript", "SQLite", "Zod", "IPC", "Vitest", "NSIS"],
+    stack: ["Electron", "React", "TypeScript", "SQLite / SQLCipher", "Zod", "Typed IPC", "Vitest", "NSIS"],
     decisions: [
       { title: "Изоляция renderer", text: "contextIsolation, отключенный nodeIntegration и узкий typed IPC ограничивают поверхность Electron-приложения." },
       { title: "Отдельная демо-версия", text: "Публичная сборка использует синтетические данные и не содержит рабочих скриптов, ключей или подключения к сети." },
@@ -204,6 +204,8 @@ export const projects: Project[] = [
     accent: "graphite",
   },
 ];
+
+export const projects = projectCatalog.sort((left, right) => left.index.localeCompare(right.index));
 
 export function getProject(slug: string) {
   return projects.find((project) => project.slug === slug);

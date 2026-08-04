@@ -4,7 +4,7 @@ import { ArrowDownRight, Download } from "lucide-react";
 
 const fragments = [
   { className: "cover-fragment cover-fragment-chess", src: "/cases/chessrise.webp", alt: "Фрагмент интерфейса ChessRise" },
-  { className: "cover-fragment cover-fragment-pioner", src: "/cases/pioner.webp", alt: "Фрагмент сайта ТРЦ Пионер" },
+  { className: "cover-fragment cover-fragment-pioner", src: "/cases/pioner-mobile.webp", alt: "Мобильный интерфейс сайта ТРЦ Пионер" },
   { className: "cover-fragment cover-fragment-worktime", src: "/cases/worktime.webp", alt: "Фрагмент программы подготовки отчетности" },
   { className: "cover-fragment cover-fragment-sysinvent", src: "/cases/sysinvent.webp", alt: "Фрагмент системы учета инфраструктуры" },
 ] as const;

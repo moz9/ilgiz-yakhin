@@ -3,6 +3,10 @@ import { expect, test } from "@playwright/test";
 test("home offers the fast HR path and animated project index", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: /ILGIZ YAKHIN/i })).toBeVisible();
+  const heroImages = page.locator(".liquid-cover img");
+  await expect(heroImages).toHaveCount(4);
+  await expect.poll(async () => heroImages.evaluateAll((images) => images.every((image) => (image as HTMLImageElement).naturalWidth > 0))).toBe(true);
+  await expect(page.locator('.cover-fragment-pioner img[src*="pioner-mobile"]')).toBeVisible();
   const menuButton = page.getByRole("button", { name: "Открыть меню" });
   if (await menuButton.isVisible()) await menuButton.click();
   await expect(page.getByRole("link", { name: "Проекты", exact: true }).first()).toBeVisible();

@@ -3,6 +3,8 @@ import { expect, test } from "@playwright/test";
 test("home offers the fast HR path and animated project index", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: /ILGIZ YAKHIN/i })).toBeVisible();
+  const menuButton = page.getByRole("button", { name: "Открыть меню" });
+  if (await menuButton.isVisible()) await menuButton.click();
   await expect(page.getByRole("link", { name: "Проекты", exact: true }).first()).toBeVisible();
   await expect(page.getByRole("heading", { name: "Избранные проекты", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "LunaFantasy" })).toBeVisible();

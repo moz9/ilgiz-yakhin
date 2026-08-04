@@ -29,7 +29,7 @@ export type Project = {
   coverAlt: string;
 };
 
-const caseAssetBase = "https://raw.githubusercontent.com/moz9/ilgiz-yakhin/main/public/cases";
+const caseAssetBase = "/cases";
 
 export const projects: Project[] = [
   {

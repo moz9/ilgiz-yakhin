@@ -43,29 +43,23 @@ export function HeroReel() {
 
       <div className="cover-fragments" aria-hidden="true">
         {fragments.map((fragment, index) => (
-          <motion.div
-            className={fragment.className}
-            key={fragment.src}
-            initial={reduceMotion ? false : { opacity: 0, y: 28, rotate: index % 2 ? 2 : -2 }}
-            animate={{ opacity: 1, y: 0, rotate: 0 }}
-            transition={{ delay: 0.16 + index * 0.08, duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
-          >
+          <div className={fragment.className} key={fragment.src}>
             <Image src={fragment.src} alt={fragment.alt} fill sizes="(max-width: 760px) 42vw, 24vw" priority={index < 2} />
-          </motion.div>
+          </div>
         ))}
       </div>
 
       <div className="cover-copy">
-        <motion.p className="cover-kicker" initial={reduceMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <p className="cover-kicker">
           Portfolio / 2026
-        </motion.p>
-        <motion.h1 id="hero-title" initial={reduceMotion ? false : { opacity: 0, y: 34 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.78, ease: [0.22, 1, 0.36, 1] }}>
+        </p>
+        <h1 id="hero-title">
           <span>ILGIZ</span>
           <span>YAKHIN</span>
-        </motion.h1>
-        <motion.p className="cover-role" initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.34, duration: 0.55 }}>
+        </h1>
+        <p className="cover-role">
           Full-stack / AI-разработчик
-        </motion.p>
+        </p>
       </div>
 
       <motion.div className="liquid-lens" animate={{ opacity: lensVisible ? 1 : 0 }} style={reduceMotion ? undefined : { x: lensX, y: lensY }} aria-hidden="true">

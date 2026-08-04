@@ -287,6 +287,15 @@ button { color: inherit; font: inherit; }
 .cover-fragment-pioner img { object-position: 50% 10%; transform: scale(1.14); }
 .cover-fragment-worktime img { object-position: 66% 34%; transform: scale(1.32); }
 .cover-fragment-sysinvent img { object-position: 72% 48%; transform: scale(1.3); }
+.cover-fragment, .cover-copy > * { animation: cover-rise .68s cubic-bezier(.22, 1, .36, 1) both; }
+.cover-fragment:nth-child(2), .cover-copy h1 { animation-delay: .06s; }
+.cover-fragment:nth-child(3), .cover-copy .cover-role { animation-delay: .12s; }
+.cover-fragment:nth-child(4) { animation-delay: .18s; }
+
+@keyframes cover-rise {
+  from { transform: translateY(18px); }
+  to { transform: translateY(0); }
+}
 
 .glass-surface {
   backdrop-filter: blur(20px) saturate(1.35);
@@ -478,7 +487,7 @@ button { color: inherit; font: inherit; }
 
 @media (prefers-reduced-motion: reduce) {
   .liquid-lens { display: none; }
-  .cover-fragment, .showreel-copy, .showreel-visual { transform: none !important; }
+  .cover-fragment, .cover-copy > *, .showreel-copy, .showreel-visual { animation: none !important; transform: none !important; }
 }
 
 /* Final precedence for the floating glass navigation. */

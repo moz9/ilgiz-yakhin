@@ -22,12 +22,23 @@ test("catalog filters cases and opens a technical breakdown", async ({ page }) =
 
 test("resume files and email are reachable", async ({ page, request }) => {
   await page.goto("/resume");
-  await expect(page.getByRole("main").getByRole("link", { name: "Написать" })).toHaveAttribute("href", "mailto:im@angelius.ru");
+  await expect(page.getByRole("heading", { name: "Full-stack / AI-разработчик" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Коммерческая практика" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "PDF-версии" })).toBeVisible();
+  await expect(page.getByRole("main").getByRole("link", { name: /im@angelius.ru/ }).first()).toHaveAttribute("href", "mailto:im@angelius.ru");
+  await expect(page.getByRole("link", { name: "Скачать PDF" })).toHaveCount(2);
   for (const file of ["/resume/ilgiz-yakhin-compact.pdf", "/resume/ilgiz-yakhin-extended.pdf"]) {
     const response = await request.get(file);
     expect(response.ok()).toBeTruthy();
     expect(response.headers()["content-type"]).toContain("application/pdf");
   }
+});
+
+test("resume remains complete with reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/resume");
+  await expect(page.getByRole("main")).toContainText("Казанский государственный энергетический университет");
+  await expect(page.locator(".resume-scroll-progress")).toBeHidden();
 });
 
 test("pages do not overflow horizontally", async ({ page }) => {

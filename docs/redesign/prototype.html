@@ -16,7 +16,7 @@
   --body:"Geologica","Segoe UI",system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
   --gut:clamp(16px,5vw,80px);
-  --mx:70%; --my:40%; --rx:0deg; --ry:0deg;
+  --mx:66%; --my:42%;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -30,7 +30,7 @@ a{color:inherit}
 .wall-wrap{position:absolute;inset:0;perspective:1600px;pointer-events:none}
 .wall-base{z-index:1;filter:grayscale(1) brightness(.32) contrast(1.1)}
 .wall-color{z-index:2;-webkit-mask-image:radial-gradient(circle 190px at var(--mx) var(--my),#000 55%,transparent 100%);mask-image:radial-gradient(circle 190px at var(--mx) var(--my),#000 55%,transparent 100%)}
-.wall{position:absolute;left:34%;top:-30%;width:82vw;min-width:760px;height:170%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;transform:rotateX(calc(24deg + var(--ry))) rotateY(calc(-16deg + var(--rx))) rotateZ(8deg);transform-style:preserve-3d;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.wall{position:absolute;left:34%;top:-30%;width:82vw;min-width:760px;height:170%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;transform:rotateX(24deg) rotateY(-16deg) rotateZ(8deg);transform-style:preserve-3d}
 .col{display:flex;flex-direction:column;gap:22px;animation:rise 46s linear infinite}
 .col:nth-child(2){animation-duration:60s;animation-direction:reverse}
 .col:nth-child(3){animation-duration:52s}
@@ -129,6 +129,8 @@ a{color:inherit}
 .dock{position:fixed;z-index:50;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;gap:4px;padding:6px;border-radius:999px;
   background:rgba(22,27,35,.55);-webkit-backdrop-filter:blur(18px) saturate(1.8);backdrop-filter:blur(18px) saturate(1.8);
   border:1px solid rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 20px 50px rgba(0,0,0,.45)}
+.dock{transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .35s}
+.dock.hide{transform:translate(-50%,calc(100% + 40px));opacity:0}
 .dock a{position:relative;z-index:1;padding:10px 18px;border-radius:999px;text-decoration:none;font-size:14px;font-weight:500;color:#c9d0d8;white-space:nowrap;transition:color .3s}
 .dock a.active{color:var(--ink)}
 .pill{position:absolute;z-index:0;top:6px;height:calc(100% - 12px);border-radius:999px;background:var(--text);transition:left .45s cubic-bezier(.3,1.3,.5,1),width .45s cubic-bezier(.3,1.3,.5,1)}
@@ -141,7 +143,6 @@ a{color:inherit}
   .shade{background:linear-gradient(0deg,var(--ink) 30%,rgba(13,16,21,.55) 70%,rgba(13,16,21,.3))}
   .lens{width:240px;height:240px}
   .wall-color{-webkit-mask-image:radial-gradient(circle 120px at var(--mx) var(--my),#000 55%,transparent 100%);mask-image:radial-gradient(circle 120px at var(--mx) var(--my),#000 55%,transparent 100%)}
-  .hero-top .where{display:none}
   .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
   .fact{padding:22px 16px}
   .fact:nth-child(3){border-left:0}
@@ -174,14 +175,13 @@ a{color:inherit}
 </head>
 <body>
 <section class="hero" id="top" aria-labelledby="hero-name">
-  <div class="wall-wrap wall-base" aria-hidden="true"><div class="wall"><div class="col"><div class="wi im-chessrise"></div><div class="wi im-lunafantasy"></div><div class="wi im-worktime"></div><div class="wi im-chessrise"></div><div class="wi im-lunafantasy"></div><div class="wi im-worktime"></div></div><div class="col"><div class="wi im-pioner"></div><div class="wi im-revalib"></div><div class="wi im-sysinvent"></div><div class="wi im-pioner"></div><div class="wi im-revalib"></div><div class="wi im-sysinvent"></div></div><div class="col"><div class="wi im-lunafantasy"></div><div class="wi im-chessrise"></div><div class="wi im-pioner"></div><div class="wi im-lunafantasy"></div><div class="wi im-chessrise"></div><div class="wi im-pioner"></div></div></div></div>
-  <div class="wall-wrap wall-color" aria-hidden="true"><div class="wall"><div class="col"><div class="wi im-chessrise"></div><div class="wi im-lunafantasy"></div><div class="wi im-worktime"></div><div class="wi im-chessrise"></div><div class="wi im-lunafantasy"></div><div class="wi im-worktime"></div></div><div class="col"><div class="wi im-pioner"></div><div class="wi im-revalib"></div><div class="wi im-sysinvent"></div><div class="wi im-pioner"></div><div class="wi im-revalib"></div><div class="wi im-sysinvent"></div></div><div class="col"><div class="wi im-lunafantasy"></div><div class="wi im-chessrise"></div><div class="wi im-pioner"></div><div class="wi im-lunafantasy"></div><div class="wi im-chessrise"></div><div class="wi im-pioner"></div></div></div></div>
+  <div class="wall-wrap wall-base" aria-hidden="true"><div class="wall"><div class="col"><div class="wi im-chessrise"></div><div class="wi im-worktime"></div><div class="wi im-pioner"></div><div class="wi im-chessrise"></div><div class="wi im-worktime"></div><div class="wi im-pioner"></div></div><div class="col"><div class="wi im-pioner"></div><div class="wi im-sysinvent"></div><div class="wi im-chessrise"></div><div class="wi im-pioner"></div><div class="wi im-sysinvent"></div><div class="wi im-chessrise"></div></div><div class="col"><div class="wi im-worktime"></div><div class="wi im-chessrise"></div><div class="wi im-sysinvent"></div><div class="wi im-worktime"></div><div class="wi im-chessrise"></div><div class="wi im-sysinvent"></div></div></div></div>
+  <div class="wall-wrap wall-color" aria-hidden="true"><div class="wall"><div class="col"><div class="wi im-chessrise"></div><div class="wi im-worktime"></div><div class="wi im-pioner"></div><div class="wi im-chessrise"></div><div class="wi im-worktime"></div><div class="wi im-pioner"></div></div><div class="col"><div class="wi im-pioner"></div><div class="wi im-sysinvent"></div><div class="wi im-chessrise"></div><div class="wi im-pioner"></div><div class="wi im-sysinvent"></div><div class="wi im-chessrise"></div></div><div class="col"><div class="wi im-worktime"></div><div class="wi im-chessrise"></div><div class="wi im-sysinvent"></div><div class="wi im-worktime"></div><div class="wi im-chessrise"></div><div class="wi im-sysinvent"></div></div></div></div>
   <div class="shade"></div>
   <div class="lens" aria-hidden="true"></div>
 
   <div class="hero-top mono">
     <span class="live"><span class="dot"></span>Открыт к удалённой работе</span>
-    <span class="where">Барнаул · UTC+7</span>
     <span>Full-stack / AI-разработчик</span>
   </div>
 
@@ -213,7 +213,7 @@ a{color:inherit}
   </div>
   <div class="pin-wrap" id="pinWrap">
     <div class="pin">
-      <div class="track" id="track"><a class="card" href="#work" aria-label="ChessRise"><div class="shot"><div class="si im-chessrise" role="img" aria-label="Интерфейс ChessRise"></div></div><div class="info"><span class="status mono" style="--c:var(--ok)"><i></i>Принят и оплачен</span><h3>ChessRise</h3><p class="task">Представить школу, провести родителя от первого знакомства до заявки и отдать заказчику работающий продукт, а не макет.</p><ul class="res"><li>Полный цикл заявки: проверка, база, Telegram, PDF</li><li>SEO и Schema.org</li><li>Versioned deployment и откат</li></ul><span class="mono stack">Next.js · Supabase · PostgreSQL · RLS</span></div></a><a class="card" href="#work" aria-label="LunaFantasy"><div class="shot"><div class="si im-lunafantasy" role="img" aria-label="Интерфейс LunaFantasy"></div></div><div class="info"><span class="status mono" style="--c:var(--ok)"><i></i>Production</span><h3>LunaFantasy</h3><p class="task">Поддерживаемый продукт вокруг большого каталога: быстрый поиск, безопасное редактирование, релиз с откатом.</p><ul class="res"><li>Production-сборка на 488 страниц</li><li>31 Node-тест и 9 deployment-тестов</li><li>Auth, RBAC, CSRF и security headers</li></ul><span class="mono stack">Next.js 16 · PostgreSQL 16 · Docker · Nginx</span></div></a><a class="card" href="#work" aria-label="RevaLib"><div class="shot"><div class="si im-revalib" role="img" aria-label="Интерфейс RevaLib"></div></div><div class="info"><span class="status mono" style="--c:var(--ok)"><i></i>Production</span><h3>RevaLib</h3><p class="task">Перевести контент из набора файлов в редакторский workflow с версиями, модерацией и контролируемой публикацией.</p><ul class="res"><li>41 локальный тест</li><li>CI с миграциями и откатом</li><li>Проверенное восстановление из бэкапа</li></ul><span class="mono stack">Next.js 16 · PostgreSQL 16 · Zod · Playwright</span></div></a><a class="card" href="#work" aria-label="ТРЦ «Пионер»"><div class="shot"><div class="si im-pioner" role="img" aria-label="Интерфейс ТРЦ «Пионер»"></div></div><div class="info"><span class="status mono" style="--c:var(--warn)"><i></i>Preview · в разработке</span><h3>ТРЦ «Пионер»</h3><p class="task">Заменить устаревший сайт торгового центра быстрым сервисом с реальным брендом, арендаторами и афишей.</p><ul class="res"><li>Каталог и страницы арендаторов</li><li>Карта этажей, поиск и афиша</li><li>Полноценная мобильная навигация</li></ul><span class="mono stack">Next.js · React · Vercel</span></div></a><a class="card" href="#work" aria-label="Отчётность рабочего времени"><div class="shot"><div class="si im-worktime" role="img" aria-label="Интерфейс Отчётность рабочего времени"></div></div><div class="info"><span class="status mono" style="--c:var(--muted)"><i></i>Windows · демо</span><h3>Отчётность рабочего времени</h3><p class="task">Сохранить привычный расчёт, но убрать ручную перекладку: импорт, проверка и экспорт в Excel для обычного сотрудника.</p><ul class="res"><li>Исходная выгрузка не меняется, подтверждено SHA-256</li><li>E2E в трёх масштабах Windows: 100/125/150%</li><li>Проверенный Windows EXE</li></ul><span class="mono stack">React · FastAPI · Pydantic · Zod</span></div></a><a class="card" href="#work" aria-label="Учёт ИТ-инфраструктуры"><div class="shot"><div class="si im-sysinvent" role="img" aria-label="Интерфейс Учёт ИТ-инфраструктуры"></div></div><div class="info"><span class="status mono" style="--c:var(--muted)"><i></i>Windows · демо</span><h3>Учёт ИТ-инфраструктуры</h3><p class="task">Единое рабочее место для учёта оборудования и безопасная демо-версия, полностью отделённая от рабочих данных.</p><ul class="res"><li>8 unit и 17 интеграционных тестов</li><li>4 Electron E2E-сценария</li><li>Проверенный NSIS-установщик</li></ul><span class="mono stack">Electron · React · SQLite · typed IPC</span></div></a></div>
+      <div class="track" id="track"><a class="card" href="#work" aria-label="ChessRise"><div class="shot"><div class="si im-chessrise" role="img" aria-label="Интерфейс ChessRise"></div></div><div class="info"><span class="status mono" style="--c:var(--ok)"><i></i>Принят и оплачен</span><h3>ChessRise</h3><p class="task">Представить школу, провести родителя от первого знакомства до заявки и отдать заказчику работающий продукт, а не макет.</p><ul class="res"><li>Полный цикл заявки: проверка, база, Telegram, PDF</li><li>SEO и Schema.org</li><li>Versioned deployment и откат</li></ul><span class="mono stack">Next.js · Supabase · PostgreSQL · RLS</span></div></a><a class="card" href="#work" aria-label="ТРЦ «Пионер»"><div class="shot"><div class="si im-pioner" role="img" aria-label="Интерфейс ТРЦ «Пионер»"></div></div><div class="info"><span class="status mono" style="--c:var(--warn)"><i></i>Preview · в разработке</span><h3>ТРЦ «Пионер»</h3><p class="task">Заменить устаревший сайт торгового центра быстрым сервисом с реальным брендом, арендаторами и афишей.</p><ul class="res"><li>Каталог и страницы арендаторов</li><li>Карта этажей, поиск и афиша</li><li>Полноценная мобильная навигация</li></ul><span class="mono stack">Next.js · React · Vercel</span></div></a><a class="card" href="#work" aria-label="Отчётность рабочего времени"><div class="shot"><div class="si im-worktime" role="img" aria-label="Интерфейс Отчётность рабочего времени"></div></div><div class="info"><span class="status mono" style="--c:var(--muted)"><i></i>Windows · демо</span><h3>Отчётность рабочего времени</h3><p class="task">Сохранить привычный расчёт, но убрать ручную перекладку: импорт, проверка и экспорт в Excel для обычного сотрудника.</p><ul class="res"><li>Исходная выгрузка не меняется, подтверждено SHA-256</li><li>E2E в трёх масштабах Windows: 100/125/150%</li><li>Проверенный Windows EXE</li></ul><span class="mono stack">React · FastAPI · Pydantic · Zod</span></div></a><a class="card" href="#work" aria-label="Учёт ИТ-инфраструктуры"><div class="shot"><div class="si im-sysinvent" role="img" aria-label="Интерфейс Учёт ИТ-инфраструктуры"></div></div><div class="info"><span class="status mono" style="--c:var(--muted)"><i></i>Windows · демо</span><h3>Учёт ИТ-инфраструктуры</h3><p class="task">Единое рабочее место для учёта оборудования и безопасная демо-версия, полностью отделённая от рабочих данных.</p><ul class="res"><li>8 unit и 17 интеграционных тестов</li><li>4 Electron E2E-сценария</li><li>Проверенный NSIS-установщик</li></ul><span class="mono stack">Electron · React · SQLite · typed IPC</span></div></a><a class="card" href="#work" aria-label="LunaFantasy"><div class="shot"><div class="si im-lunafantasy" role="img" aria-label="Интерфейс LunaFantasy"></div></div><div class="info"><span class="status mono" style="--c:var(--ok)"><i></i>Production</span><h3>LunaFantasy</h3><p class="task">Поддерживаемый продукт вокруг большого каталога: быстрый поиск, безопасное редактирование, релиз с откатом.</p><ul class="res"><li>Production-сборка на 488 страниц</li><li>31 Node-тест и 9 deployment-тестов</li><li>Auth, RBAC, CSRF и security headers</li></ul><span class="mono stack">Next.js 16 · PostgreSQL 16 · Docker · Nginx</span></div></a><a class="card" href="#work" aria-label="RevaLib"><div class="shot"><div class="si im-revalib" role="img" aria-label="Интерфейс RevaLib"></div></div><div class="info"><span class="status mono" style="--c:var(--ok)"><i></i>Production</span><h3>RevaLib</h3><p class="task">Перевести контент из набора файлов в редакторский workflow с версиями, модерацией и контролируемой публикацией.</p><ul class="res"><li>41 локальный тест</li><li>CI с миграциями и откатом</li><li>Проверенное восстановление из бэкапа</li></ul><span class="mono stack">Next.js 16 · PostgreSQL 16 · Zod · Playwright</span></div></a></div>
       <div class="progress mono" aria-hidden="true"><span class="count" id="count">01</span><span class="bar"><i id="bar"></i></span><span>06</span></div>
     </div>
   </div>
@@ -265,17 +265,15 @@ a{color:inherit}
   const root=document.documentElement, hero=document.querySelector('.hero');
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* lens + tilt */
-  let tx=.7,ty=.4,cx=.7,cy=.4,last=-1e9,t0=performance.now();
-  hero.addEventListener('pointermove',e=>{const r=hero.getBoundingClientRect();tx=(e.clientX-r.left)/r.width;ty=(e.clientY-r.top)/r.height;last=performance.now();});
+  /* lens: moves on its own path, never follows the pointer */
+  const t0=performance.now();
   function tick(now){
-    if(now-last>2500){const t=(now-t0)/1000;tx=.62+.22*Math.sin(t*.45);ty=.42+.2*Math.sin(t*.7+1);}
-    const k=reduce?1:.08;cx+=(tx-cx)*k;cy+=(ty-cy)*k;
-    hero.style.setProperty('--mx',(cx*100).toFixed(2)+'%');hero.style.setProperty('--my',(cy*100).toFixed(2)+'%');
-    hero.style.setProperty('--rx',((cx-.5)*6).toFixed(2)+'deg');hero.style.setProperty('--ry',((.5-cy)*6).toFixed(2)+'deg');
-    if(!reduce)requestAnimationFrame(tick);
+    const t=(now-t0)/1000;
+    const x=.64+.2*Math.sin(t*.32), y=.44+.18*Math.sin(t*.51+1);
+    hero.style.setProperty('--mx',(x*100).toFixed(2)+'%');hero.style.setProperty('--my',(y*100).toFixed(2)+'%');
+    requestAnimationFrame(tick);
   }
-  requestAnimationFrame(tick);
+  if(reduce){hero.style.setProperty('--mx','66%');hero.style.setProperty('--my','42%');}else requestAnimationFrame(tick);
 
   /* count up (only for numbers not already visible) */
   const io=new IntersectionObserver(es=>es.forEach(en=>{if(!en.isIntersecting)return;io.unobserve(en.target);const el=en.target,end=+el.dataset.count,st=performance.now();
@@ -305,6 +303,8 @@ a{color:inherit}
   }
   const dock=document.getElementById('dock'),pill=document.getElementById('pill');let active='';
   function setActive(id){if(id===active)return;active=id;dock.querySelectorAll('a').forEach(a=>{const on=a.dataset.s===id;a.classList.toggle('active',on);if(on){pill.style.left=a.offsetLeft+'px';pill.style.width=a.offsetWidth+'px';}});}
+  let lastY=scrollY;
+  addEventListener('scroll',()=>{const y=scrollY;dock.classList.toggle('hide',y>lastY+4&&y>200&&innerHeight+y<document.documentElement.scrollHeight-40);if(Math.abs(y-lastY)>4)lastY=y;},{passive:true});
   addEventListener('scroll',onScroll,{passive:true});
   addEventListener('resize',()=>{size();active='';onScroll();});
   document.fonts&&document.fonts.ready.then(()=>{size();active='';onScroll();});

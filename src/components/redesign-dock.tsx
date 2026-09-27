@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 const links = [
   { label: "Главная", href: "/" },
   { label: "Проекты", href: "/projects" },
-  { label: "Опыт", href: "/experience" },
+  { label: "Обо мне", href: "/about" },
   { label: "Резюме", href: "/resume" },
   { label: "Контакт", href: "mailto:im@angelius.ru" },
 ];

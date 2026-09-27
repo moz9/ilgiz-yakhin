@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ProjectExplorer } from "@/components/project-explorer";
 
-export const metadata: Metadata = { title: "Проекты", description: "Шесть кейсов web-, desktop-, automation- и infrastructure-разработки." };
+export const metadata: Metadata = { title: "Проекты", description: "Тринадцать кейсов web-, mobile-, desktop-, automation- и infrastructure-разработки." };
 
 export default function ProjectsPage() {
   return (
@@ -9,7 +9,7 @@ export default function ProjectsPage() {
       <section className="page-hero">
         <div className="eyebrow"><span>PROJECT INDEX</span><span>2023—2026</span></div>
         <h1>Проекты</h1>
-        <p>Web, desktop-приложения, автоматизация и инфраструктура.</p>
+        <p>Web, Android, desktop-приложения, автоматизация и инфраструктура.</p>
       </section>
       <section className="section project-index-section"><ProjectExplorer /></section>
     </main>

@@ -4,7 +4,6 @@ import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { ThemeToggle } from "./theme-toggle";
 
 const navigation = [
   ["Проекты", "/projects"],
@@ -30,7 +29,6 @@ export function SiteHeader() {
         <a className="nav-contact" href="mailto:im@angelius.ru">Написать</a>
       </nav>
       <div className="header-tools">
-        <ThemeToggle />
         <button className="icon-button menu-button" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-controls="main-navigation" aria-label={open ? "Закрыть меню" : "Открыть меню"}>
           {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
         </button>

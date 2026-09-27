@@ -10,10 +10,19 @@ import {
   GraduationCap,
   Mail,
 } from "lucide-react";
-import { motion, useReducedMotion, useScroll, useSpring } from "motion/react";
-import Image from "next/image";
+import { motion, useScroll, useSpring } from "motion/react";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useSyncExternalStore, type ReactNode } from "react";
+
+function subscribeReducedMotion(callback: () => void) {
+  const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+  query.addEventListener("change", callback);
+  return () => query.removeEventListener("change", callback);
+}
+
+function useHydratedReducedMotion() {
+  return useSyncExternalStore(subscribeReducedMotion, () => window.matchMedia("(prefers-reduced-motion: reduce)").matches, () => false);
+}
 
 const experience = [
   {
@@ -102,7 +111,7 @@ const approach = [
 ];
 
 function Reveal({ children, className = "" }: { children: ReactNode; className?: string }) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
 
   return (
     <motion.div
@@ -118,7 +127,7 @@ function Reveal({ children, className = "" }: { children: ReactNode; className?:
 }
 
 export function ResumeStory() {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 110, damping: 30, restDelta: 0.001 });
 
@@ -140,14 +149,6 @@ export function ResumeStory() {
           <p className="resume-cover-lead">ИТ-инженер с более чем тремя годами коммерческого опыта в инфраструктуре, автоматизации и разработке внутренних инструментов.</p>
           <div className="resume-cover-meta"><span>Web</span><span>Desktop</span><span>Automation</span><span>Infrastructure</span></div>
         </motion.div>
-        <motion.figure
-          className="resume-portrait"
-          initial={false}
-          animate={reduceMotion ? undefined : { opacity: [0.45, 1], x: [28, 0] }}
-          transition={{ duration: 0.9, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <Image src="/profile/ilgiz-yakhin.webp" alt="Ильгиз Яхин" fill priority sizes="(max-width: 760px) 48vw, 31vw" />
-        </motion.figure>
         <a className="resume-scroll-cue" href="#profile"><ArrowDown aria-hidden="true" /><span>Смотреть резюме</span></a>
       </section>
 

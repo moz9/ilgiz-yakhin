@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">Launcher</title>
+  <desc id="desc">Типографская обложка кейса WinUI 3. Это не снимок приложения.</desc>
+  <rect width="1440" height="900" fill="#141920"/>
+  <path d="M72 76h1296M72 824h1296" stroke="#414b59" stroke-width="2"/>
+  <text x="72" y="138" fill="#8c96a3" font-family="Arial,sans-serif" font-size="28">DESKTOP APPLICATION / WINUI 3</text>
+  <text x="72" y="500" fill="#eef1f4" font-family="Arial,sans-serif" font-size="170" font-weight="700">Launcher</text>
+  <text x="74" y="765" fill="#ffb23f" font-family="Arial,sans-serif" font-size="28">Схема интерфейса на странице кейса</text>
+</svg>

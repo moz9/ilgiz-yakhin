@@ -1,4 +1,54 @@
 import { expect, test } from "@playwright/test";
+import { projects } from "../../src/lib/projects";
+
+test("all case images render when Vercel image delivery fails", async ({ page }, testInfo) => {
+  test.setTimeout(180_000);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.route(/\/(_next\/image|cases\/)/, async (route) => {
+    if (new URL(route.request().url()).hostname === "raw.githubusercontent.com") {
+      await route.continue();
+    } else {
+      await route.abort("connectionreset");
+    }
+  });
+  for (const project of projects) {
+    await page.goto(`/projects/${project.slug}`);
+    for (const image of await page.locator("main img:not(dialog img)").all()) {
+      await image.scrollIntoViewIfNeeded({ timeout: 5_000 });
+      await expect(image).toBeVisible();
+      await expect(image).toHaveAttribute("src", /^https:\/\/raw\.githubusercontent\.com\//);
+      await expect.poll(() => image.evaluate((element: HTMLImageElement) => element.naturalWidth), { timeout: 15_000 }).toBeGreaterThan(0);
+    }
+  }
+  await page.locator(".case-presentation").scrollIntoViewIfNeeded();
+  await page.screenshot({ path: testInfo.outputPath("external-case-images.png") });
+});
+
+test("home previews and every scenario step contain decoded screenshots", async ({ page, isMobile }, testInfo) => {
+  test.setTimeout(90_000);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const section = page.locator(".redesign-other");
+  if (!isMobile) {
+    for (const link of await section.getByRole("link").all()) {
+      await link.focus();
+      for (const image of await section.locator(".other-preview-stage img").all()) {
+        await expect.poll(() => image.evaluate((element: HTMLImageElement) => element.naturalWidth), { timeout: 15_000 }).toBeGreaterThan(0);
+      }
+    }
+  }
+  const showcase = page.locator(".workbench");
+  await showcase.scrollIntoViewIfNeeded();
+  for (const tab of await showcase.getByRole("group", { name: "Проект в деталях" }).getByRole("button").all()) {
+    await tab.click();
+    for (const step of await showcase.getByRole("group", { name: "Этап сценария" }).getByRole("button").all()) {
+      await step.click();
+      const image = showcase.locator(".workbench-frame img");
+      await expect.poll(() => image.evaluate((element: HTMLImageElement) => element.naturalWidth), { timeout: 15_000 }).toBeGreaterThan(0);
+    }
+  }
+  await page.screenshot({ path: testInfo.outputPath("external-scenario-images.png") });
+});
 
 test("real scenario showcase switches projects and steps", async ({ page }) => {
   await page.goto("/");
@@ -31,7 +81,7 @@ test("gallery supports full-size viewing, keyboard navigation and focus restorat
   const dialog = page.getByRole("dialog", { name: "Просмотр интерфейса" });
   await expect(dialog).toBeVisible();
   await page.keyboard.press("ArrowRight");
-  await expect(dialog.locator("img")).toHaveAttribute("src", "/cases/worktime.webp");
+  await expect(dialog.locator("img")).toHaveAttribute("src", "https://raw.githubusercontent.com/moz9/ilgiz-yakhin/main/public/cases/worktime.webp");
   await dialog.getByRole("button", { name: "Увеличить изображение" }).click();
   await expect(dialog.locator(".lightbox-image")).toHaveClass(/is-zoomed/);
   await page.keyboard.press("Escape");

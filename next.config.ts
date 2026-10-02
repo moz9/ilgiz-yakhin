@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
     return [{ source: "/projects/lunafantasy", destination: "/projects/content-platform", permanent: true }, { source: "/og.jpg", destination: "/og-v2.jpg", permanent: true }];
   },
   images: {
+    // Case assets are already compressed; serve them directly when Vercel's CDN is unreachable.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",

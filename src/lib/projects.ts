@@ -45,7 +45,7 @@ export type Project = {
   coverAlt: string;
 };
 
-const caseAssetBase = "/cases";
+const caseAssetBase = "https://raw.githubusercontent.com/moz9/ilgiz-yakhin/main/public/cases";
 
 const projectCatalog: Project[] = [
   {

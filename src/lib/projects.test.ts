@@ -1,9 +1,22 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
+import { getImageProps } from "next/image";
 import { describe, expect, it } from "vitest";
+import nextConfig from "../../next.config";
 import { filterProjects, getProject, projectCategories, projects } from "./projects";
 
 describe("project catalog", () => {
+  it("delivers case images without depending on the Vercel image endpoint", () => {
+    for (const project of projects) {
+      for (const src of [project.cover, ...(project.media ?? []).map((media) => media.src)]) {
+        expect(src).toMatch(/^https:\/\/raw\.githubusercontent\.com\/moz9\/ilgiz-yakhin\/main\/public\/cases\//);
+        const { props } = getImageProps({ src, alt: "Case", width: 1440, height: 900, unoptimized: nextConfig.images?.unoptimized });
+        expect(props.src).toBe(src);
+        expect(props.srcSet).toBeUndefined();
+      }
+    }
+  });
+
   it("publishes thirteen unique cases", () => {
     expect(projects).toHaveLength(13);
     expect(new Set(projects.map(({ slug }) => slug)).size).toBe(13);
@@ -34,8 +47,8 @@ describe("project catalog", () => {
       expect(project.decisions).toHaveLength(3);
       expect(project.evidence.length).toBeGreaterThanOrEqual(3);
       expect(project.limitations.length).toBeGreaterThan(0);
-      expect(project.cover).toMatch(/^\/cases\/.+\.(webp|svg)$/);
-      expect(existsSync(path.resolve("public", project.cover.slice(1)))).toBe(true);
+      expect(project.cover).toMatch(/\/cases\/.+\.(webp|svg)$/);
+      expect(existsSync(path.resolve("public/cases", path.basename(new URL(project.cover).pathname)))).toBe(true);
       expect(project.coverAlt.length).toBeGreaterThan(12);
       expect(getProject(project.slug)).toEqual(project);
       expect(project.capabilities?.length).toBeGreaterThanOrEqual(4);
@@ -49,8 +62,8 @@ describe("project catalog", () => {
         expect(project.media?.length).toBeGreaterThanOrEqual(1);
       }
       for (const media of project.media ?? []) {
-        expect(media.src).toMatch(/^\/cases\/.+\.webp$/);
-        expect(existsSync(path.resolve("public", media.src.slice(1)))).toBe(true);
+        expect(media.src).toMatch(/\/cases\/.+\.webp$/);
+        expect(existsSync(path.resolve("public/cases", path.basename(new URL(media.src).pathname)))).toBe(true);
         expect(media.alt.length).toBeGreaterThan(20);
         expect(media.caption.length).toBeGreaterThan(30);
       }

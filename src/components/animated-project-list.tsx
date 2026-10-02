@@ -13,7 +13,8 @@ const other = projects.filter((project) => !featuredSlugs.includes(project.slug)
 export function AnimatedProjectList() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const [progress, setProgress] = useState(0);
+  const progressRef = useRef<HTMLElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [preview, setPreview] = useState(other[0]);
 
   useEffect(() => {
@@ -21,19 +22,27 @@ export function AnimatedProjectList() {
     const track = trackRef.current;
     if (!wrap || !track) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const cards = Array.from(track.querySelectorAll<HTMLElement>(".redesign-project-card"));
     let frame = 0;
     const update = () => {
       if (window.innerWidth <= 860 || reduced.matches) {
         wrap.style.height = "";
         track.style.transform = "";
-        setProgress(0);
+        cards.forEach((card) => card.style.removeProperty("--travel"));
+        setActiveIndex(0);
+        if (progressRef.current) progressRef.current.style.transform = "scaleX(0)";
         return;
       }
       const distance = Math.max(0, track.scrollWidth - window.innerWidth);
       wrap.style.height = `${distance + window.innerHeight}px`;
       const amount = Math.max(0, Math.min(1, -wrap.getBoundingClientRect().top / Math.max(distance, 1)));
       track.style.transform = `translate3d(${-amount * distance}px,0,0)`;
-      setProgress(amount);
+      cards.forEach((card) => {
+        const offset = (card.offsetLeft + card.offsetWidth / 2 - amount * distance - innerWidth / 2) / (innerWidth * .7);
+        card.style.setProperty("--travel", String(Math.max(-1, Math.min(1, offset))));
+      });
+      if (progressRef.current) progressRef.current.style.transform = `scaleX(${amount})`;
+      setActiveIndex(Math.round(amount * (featured.length - 1)));
     };
     const schedule = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(update); };
     const observer = new ResizeObserver(schedule);
@@ -59,13 +68,14 @@ export function AnimatedProjectList() {
     <div className="redesign-pin-wrap" ref={wrapRef}>
       <div className="redesign-pin">
         <div className="redesign-progress redesign-mono" aria-hidden="true">
-          <span>{String(Math.min(featured.length, Math.round(progress * (featured.length - 1)) + 1)).padStart(2, "0")}</span>
-          <span className="redesign-progress-track"><i style={{ transform: `scaleX(${progress})` }} /></span>
+          <span>{String(activeIndex + 1).padStart(2, "0")}</span>
+          <span className="redesign-progress-track"><i ref={progressRef} style={{ transform: "scaleX(0)" }} /></span>
           <span>{String(featured.length).padStart(2, "0")}</span>
         </div>
         <div className="redesign-track" ref={trackRef}>
-          {featured.map((project) =>
+          {featured.map((project, index) =>
             <Link className="redesign-project-card" href={`/projects/${project.slug}`} key={project.slug}>
+              <span className="project-scene-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
               <ProjectStage project={project} compact />
               <span className="redesign-card-copy">
                 <span className="redesign-card-status redesign-mono"><i />{project.status}</span>

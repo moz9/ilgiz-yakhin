@@ -7,6 +7,7 @@ import { getProject, projects } from "@/lib/projects";
 import { ProjectStage } from "@/components/project-stage";
 import { ProjectGallery } from "@/components/project-gallery";
 import { RevealSection } from "@/components/reveal-section";
+import { CaseNavigation } from "@/components/case-navigation";
 
 export function generateStaticParams() {
   return projects.map(({ slug }) => ({ slug }));
@@ -51,12 +52,19 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           </div> :
           <ProjectStage project={project} priority />}
       </RevealSection>
-      <section className="redesign-case-tldr" aria-label="Коротко о проекте">
+      <CaseNavigation sections={[
+        { id: "overview", label: "Коротко" },
+        ...(project.capabilities ? [{ id: "capabilities", label: "Возможности" }] : []),
+        ...(project.media?.length ? [{ id: "interfaces", label: "Интерфейсы" }] : []),
+        { id: "decisions", label: "Решения" },
+        { id: "results", label: "Результаты" },
+      ]} />
+      <section id="overview" className="redesign-case-tldr" aria-label="Коротко о проекте">
         <div><span>Задача</span><p>{project.task}</p></div>
         <div><span>Моя работа</span><p>{project.decisions.map((item) => item.title).join("; ")}.</p></div>
         <div><span>Результат</span><p>{project.results[0]}</p></div>
       </section>
-      {project.capabilities && <section className="redesign-case-flow" aria-labelledby="capabilities-title">
+      {project.capabilities && <section id="capabilities" className="redesign-case-flow" aria-labelledby="capabilities-title">
         <div className="redesign-case-section-head"><h2 id="capabilities-title">Функциональные контуры</h2><p>Как устроены основные пользовательские и операционные сценарии.</p></div>
         <div className="redesign-case-flow-grid">
           {project.capabilities.map((group, step) => <article key={group.title}>
@@ -67,14 +75,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           </article>)}
         </div>
       </section>}
-      {Boolean(project.media?.length) && <ProjectGallery media={project.media!} />}
-      <section className="redesign-case-decisions" aria-labelledby="decisions-title">
+      {Boolean(project.media?.length) && <div id="interfaces"><ProjectGallery media={project.media!} /></div>}
+      <section id="decisions" className="redesign-case-decisions" aria-labelledby="decisions-title">
         <h2 id="decisions-title">Ключевые решения</h2>
         <div>{project.decisions.map((decision, decisionIndex) => <article key={decision.title}>
           <span className="redesign-mono">0{decisionIndex + 1}</span><h3>{decision.title}</h3><p>{decision.text}</p>
         </article>)}</div>
       </section>
-      <section className="redesign-case-proof" aria-labelledby="results-title">
+      <section id="results" className="redesign-case-proof" aria-labelledby="results-title">
         <h2 id="results-title">Результаты и проверки</h2>
         <div className="redesign-case-evidence">
           {project.evidence.map((item) => <div key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>)}

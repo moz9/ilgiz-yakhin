@@ -4,6 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { filterProjects, projectCategories, projects } from "@/lib/projects";
+import { ProjectStage } from "@/components/project-stage";
 
 export function ProjectExplorer() {
   const [category, setCategory] = useState<(typeof projectCategories)[number]>("Все");
@@ -22,7 +23,7 @@ export function ProjectExplorer() {
       <div className="project-list" aria-live="polite">
         {visible.map((project) => (
           <article className={`project-row accent-${project.accent}`} key={project.slug}>
-            <div className="project-index">{project.index}</div>
+            <Link className="catalog-stage-link" href={`/projects/${project.slug}`} aria-label={`Экраны проекта: ${project.title}`} tabIndex={-1}><ProjectStage project={project} compact /></Link>
             <div className="project-main">
               <div className="project-meta"><span>{project.shortTitle}</span><span>{project.status}</span></div>
               <h2><Link href={`/projects/${project.slug}`}>{project.title}</Link></h2>

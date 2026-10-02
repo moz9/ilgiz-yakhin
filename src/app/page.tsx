@@ -2,6 +2,8 @@ import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { AnimatedProjectList } from "@/components/animated-project-list";
 import { HeroReel } from "@/components/hero-reel";
+import { Workbench } from "@/components/workbench";
+import { RevealSection } from "@/components/reveal-section";
 
 const pipeline = [
   ["Интерфейс", "Сценарии, адаптивность, доступность", "Next.js · React · Electron"],
@@ -16,18 +18,19 @@ export default function Home() {
   return <main className="redesign-home">
     <HeroReel />
     <AnimatedProjectList />
+    <RevealSection><Workbench /></RevealSection>
     <section className="redesign-pipeline" id="approach" aria-labelledby="pipeline-title">
       <div className="redesign-pipeline-heading">
         <h2 id="pipeline-title">До production<br />и дальше</h2>
         <p>Разработка не заканчивается на интерфейсе: важны данные, проверки, запуск и возможность восстановить работу.</p>
       </div>
-      <div className="redesign-pipeline-rail">
+      <RevealSection className="redesign-pipeline-rail">
         {pipeline.map(([title, description, tools], index) =>
           <div className="redesign-pipeline-node" key={title}>
             <span className="redesign-mono">0{index + 1}</span>
             <h3>{title}</h3><p>{description}</p><small>{tools}</small>
           </div>)}
-      </div>
+      </RevealSection>
     </section>
     <section className="redesign-experience" aria-labelledby="experience-title">
       <h2 id="experience-title">Опыт</h2>

@@ -49,14 +49,14 @@ const caseAssetBase = "/cases";
 
 const projectCatalog: Project[] = [
   {
-    slug: "lunafantasy",
-    cover: `${caseAssetBase}/lunafantasy.webp`,
-    coverAlt: "Главная страница платформы LunaFantasy",
+    slug: "content-platform",
+    cover: `${caseAssetBase}/content-platform-home.webp`,
+    coverAlt: "Реальный интерфейс контентной платформы с демонстрационным названием Атлас и нейтральными объектами",
     index: "13",
-    title: "LunaFantasy",
+    title: "Контентная платформа",
     shortTitle: "Full-stack platform",
     category: ["Web", "Infrastructure"],
-    status: "Production / private repository",
+    status: "Обезличенный production-кейс",
     role: "Full-stack разработка, архитектура и эксплуатация",
     summary: "Контентная web-платформа с собственным backend-контуром, ролевой моделью и проверяемым процессом выпуска.",
     task: "Собрать поддерживаемый продукт вокруг большого каталога: дать пользователю быстрый поиск и навигацию, редактору — безопасное управление, а релизу — воспроизводимость и откат.",
@@ -89,7 +89,9 @@ const projectCatalog: Project[] = [
       },
     ],
     media: [
-      { src: `${caseAssetBase}/lunafantasy.webp`, alt: "Безопасный обзор интерфейса full-stack платформы без раскрытия предметных материалов", label: "PRODUCT SURFACE", caption: "Публичная поверхность показана в общем масштабе; предметные данные и закрытые редакторские экраны исключены.", presentation: "browser" },
+      { src: `${caseAssetBase}/content-platform-home.webp`, alt: "Обезличенная главная страница реальной контентной платформы с каталогом и многослойной витриной", label: "01 / ВИТРИНА", caption: "Снимок работающего интерфейса. Сохранены разметка, навигация и многослойная композиция; бренд, персонажи и подписи заменены демонстрационным контентом.", presentation: "browser" },
+      { src: `${caseAssetBase}/content-platform-catalog.webp`, alt: "Обезличенный каталог предметов с карточками и структурированными характеристиками", label: "02 / КАТАЛОГ", caption: "Настоящая страница каталога: группы, карточки и свойства. Название платформы и изображения заменены для публичной демонстрации.", presentation: "browser" },
+      { src: `${caseAssetBase}/content-platform-mobile.webp`, alt: "Мобильная версия обезличенного каталога контентной платформы Атлас", label: "03 / МОБИЛЬНАЯ ВЕРСИЯ", caption: "Тот же интерфейс на экране телефона: адаптивная навигация и вертикальный каталог, без исходного бренда и персонажей.", presentation: "phone" },
     ],
     results: ["31 Node-тест, 9 deployment-тестов и 9 browser E2E", "Production build на 488 страниц", "Проверенные auth/RBAC, CSRF и security headers", "Green CI с PostgreSQL и миграциями"],
     evidence: [
@@ -97,7 +99,7 @@ const projectCatalog: Project[] = [
       { label: "Build", value: "488 routes" },
       { label: "Security", value: "Auth / RBAC / CSRF" },
     ],
-    limitations: ["Репозиторий закрыт: в портфолио публикуются архитектура и безопасные фрагменты.", "Предметные данные и редакторский доступ не раскрываются."],
+    limitations: ["Название «Атлас» и содержимое экранов демонстрационные; интерфейс снят с реального приложения. Это не отдельный запущенный продукт.", "Репозиторий, исходный бренд и редакторский доступ не раскрываются. Числа тестов относятся к зафиксированному проверенному релизу, а не к текущему состоянию разработки."],
     access: "mixed",
     accent: "teal",
   },
@@ -270,7 +272,7 @@ const projectCatalog: Project[] = [
   },
   {
     slug: "chessrise",
-    cover: `${caseAssetBase}/chessrise.webp`,
+    cover: `${caseAssetBase}/chessrise-desktop.webp`,
     coverAlt: "Главная страница шахматной школы ChessRise",
     index: "01",
     title: "ChessRise",
@@ -309,7 +311,9 @@ const projectCatalog: Project[] = [
       },
     ],
     media: [
-      { src: `${caseAssetBase}/chessrise.webp`, alt: "Коммерческий сайт ChessRise в широком браузерном представлении", label: "LIVE PRODUCT", caption: "Крупный продуктовый кадр показывает навигацию, интерактивную задачу и путь к диагностической заявке без декоративной обрезки.", presentation: "browser" },
+      { src: `${caseAssetBase}/chessrise-desktop.webp`, alt: "Коммерческий сайт ChessRise в широком браузерном представлении", label: "01 / ПЕРВЫЙ ЭКРАН", caption: "Актуальный снимок публичного сайта: навигация, интерактивная шахматная задача и путь к диагностической заявке. Без cookie-плашки и обрезанного заголовка.", presentation: "browser" },
+      { src: `${caseAssetBase}/chessrise-learning.webp`, alt: "Раздел ChessRise с четырьмя этапами обучения от диагностики до практики", label: "02 / МАРШРУТ УЧЕНИКА", caption: "Отдельный кадр целого раздела: четыре этапа обучения, строгая сетка и контрастная типографика. Снят с рабочего сайта, а не собран из обложки.", presentation: "browser" },
+      { src: `${caseAssetBase}/chessrise-mobile.webp`, alt: "Мобильная главная страница ChessRise с записью на диагностику и преимуществами обучения", label: "03 / ТЕЛЕФОН", caption: "Мобильный вариант сохраняет главное действие и читаемость текста; декоративная шахматная сцена уступает место содержимому.", presentation: "phone" },
     ],
     results: ["Проект принят и оплачен заказчиком", "Заявка сохраняется в БД и уходит в Telegram с PDF", "SEO и Schema.org", "Versioned deployment и rollback"],
     evidence: [

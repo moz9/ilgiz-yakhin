@@ -1250,7 +1250,6 @@ button { color: inherit; font: inherit; }
 .case-poster-chessrise { --poster-accent: #ff684f; --poster-bg: #f2c5bb; }
 .case-poster-worktime-reporting { --poster-accent: #7c86ff; --poster-bg: #d7d9ff; }
 .case-poster-infrastructure-inventory { --poster-accent: #71d6c4; --poster-bg: #d7efea; }
-.case-poster-lunafantasy { --poster-accent: #ff684f; --poster-bg: #e7e0dc; }
 .case-poster-revalib { --poster-accent: #d1ed67; --poster-bg: #dce4cb; }
 .case-poster::after { border: 1px solid rgba(16,18,19,.32); content: ""; inset: 0; pointer-events: none; position: absolute; z-index: 4; }
 .case-poster-head { display: flex; font-family: var(--font-mono), monospace; font-size: 9px; font-weight: 700; justify-content: space-between; position: relative; text-transform: uppercase; z-index: 3; }

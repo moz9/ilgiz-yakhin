@@ -4,6 +4,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, Check } from "lucide-react";
 import { getProject, projects } from "@/lib/projects";
+import { ProjectStage } from "@/components/project-stage";
+import { ProjectGallery } from "@/components/project-gallery";
+import { RevealSection } from "@/components/reveal-section";
 
 export function generateStaticParams() {
   return projects.map(({ slug }) => ({ slug }));
@@ -11,7 +14,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const project = getProject((await params).slug);
-  return project ? { title: project.title, description: project.summary } : {};
+  return project ? { title: project.title, description: project.summary, alternates: { canonical: `/projects/${project.slug}` } } : {};
 }
 
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -37,7 +40,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           <div><span>Доступ</span><strong>{project.access === "public" ? "Публичный" : project.access === "mixed" ? "Смешанный" : "Обезличенное демо"}</strong></div>
         </div>
       </header>
-      <div className="redesign-case-stage" aria-label={project.slug === "launcher" ? "Схема навигации WinUI 3" : project.coverAlt}>
+      <RevealSection className="case-presentation">
         {project.slug === "launcher" ?
           <div className="redesign-case-winui">
             <div className="redesign-case-chrome"><i /><i /><i /><span>Схема текущей WinUI 3 оболочки · не скриншот</span></div>
@@ -46,11 +49,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                 <div><span>Конфигурация</span><span>Видео</span><span>Статус</span></div>
               </section></div>
           </div> :
-          <div className="redesign-case-browser">
-            <div className="redesign-case-chrome" aria-hidden="true"><i /><i /><i /><span>{project.shortTitle}</span></div>
-            <Image src={project.cover} alt={project.coverAlt} width={1440} height={900} priority sizes="(max-width: 900px) 100vw, 1400px" />
-          </div>}
-      </div>
+          <ProjectStage project={project} priority />}
+      </RevealSection>
       <section className="redesign-case-tldr" aria-label="Коротко о проекте">
         <div><span>Задача</span><p>{project.task}</p></div>
         <div><span>Моя работа</span><p>{project.decisions.map((item) => item.title).join("; ")}.</p></div>
@@ -67,18 +67,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           </article>)}
         </div>
       </section>}
-      {Boolean(project.media?.length) && <section className="redesign-case-gallery" aria-label="Интерфейс проекта">
-        {project.media?.map((item, mediaIndex) => {
-          const presentation = item.presentation ?? "browser";
-          return <figure key={item.src} data-presentation={presentation}>
-            <div className={`redesign-case-media redesign-case-media-${presentation}`}>
-              {(presentation === "browser" || presentation === "desktop") && <div className="redesign-case-chrome" aria-hidden="true"><i /><i /><i /><span>{item.label}</span></div>}
-              <Image src={item.src} alt={item.alt} width={1040} height={700} loading={mediaIndex < 2 ? "eager" : "lazy"} sizes="(max-width: 900px) 100vw, 660px" />
-            </div>
-            <figcaption><strong>{item.label}</strong><span>{item.caption}</span></figcaption>
-          </figure>;
-        })}
-      </section>}
+      {Boolean(project.media?.length) && <ProjectGallery media={project.media!} />}
       <section className="redesign-case-decisions" aria-labelledby="decisions-title">
         <h2 id="decisions-title">Ключевые решения</h2>
         <div>{project.decisions.map((decision, decisionIndex) => <article key={decision.title}>

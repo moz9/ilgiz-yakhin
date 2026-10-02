@@ -4,8 +4,9 @@ import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { projects, type Project } from "@/lib/projects";
+import { ProjectStage } from "@/components/project-stage";
 
-const featuredSlugs = ["chessrise", "pioner", "worktime-reporting", "infrastructure-inventory", "lunafantasy", "revalib"];
+const featuredSlugs = ["chessrise", "pioner", "worktime-reporting", "infrastructure-inventory", "content-platform", "revalib"];
 const featured = featuredSlugs.map((slug) => projects.find((project) => project.slug === slug)).filter((project): project is Project => Boolean(project));
 const other = projects.filter((project) => !featuredSlugs.includes(project.slug));
 
@@ -13,6 +14,7 @@ export function AnimatedProjectList() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
+  const [preview, setPreview] = useState(other[0]);
 
   useEffect(() => {
     const wrap = wrapRef.current;
@@ -64,7 +66,7 @@ export function AnimatedProjectList() {
         <div className="redesign-track" ref={trackRef}>
           {featured.map((project) =>
             <Link className="redesign-project-card" href={`/projects/${project.slug}`} key={project.slug}>
-              <span className="redesign-card-image" style={{ backgroundImage: `url(${project.cover})` }} role="img" aria-label={project.coverAlt} />
+              <ProjectStage project={project} compact />
               <span className="redesign-card-copy">
                 <span className="redesign-card-status redesign-mono"><i />{project.status}</span>
                 <strong>{project.title}</strong>
@@ -78,9 +80,9 @@ export function AnimatedProjectList() {
       </div>
     </div>
     <div className="redesign-other">
-      <h3>Другие проекты</h3>
-      <div>{other.map((project) =>
-        <Link href={`/projects/${project.slug}`} key={project.slug}><span>{project.title}</span><ArrowUpRight aria-hidden="true" /></Link>)}</div>
+      <div className="other-preview"><h3>Другие проекты</h3><div key={preview.slug} className="other-preview-stage"><ProjectStage project={preview} compact /></div><span className="redesign-mono">{preview.stack.slice(0, 3).join(" · ")}</span></div>
+      <div className="other-project-links">{other.map((project, index) =>
+        <Link href={`/projects/${project.slug}`} key={project.slug} data-preview={preview.slug === project.slug} onMouseEnter={() => setPreview(project)} onFocus={() => setPreview(project)}><small className="redesign-mono">{String(index + 1).padStart(2, "0")}</small><span>{project.title}</span><ArrowUpRight aria-hidden="true" /></Link>)}</div>
     </div>
   </section>;
 }

@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/site-header";
 import { RedesignDock } from "@/components/redesign-dock";
 import "./globals.css";
 import "./redesign.css";
+import "./showcase.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://ilgiz-yakhin.vercel.app"),

@@ -24,7 +24,7 @@ describe("project catalog", () => {
       "revalib",
       "backup-lifecycle-automation",
       "ilgiz-portfolio",
-      "lunafantasy",
+      "content-platform",
     ]);
   });
 
@@ -72,5 +72,14 @@ describe("project catalog", () => {
     const publicDemoCases = projects.filter(({ slug }) => slug.startsWith("streaming-"));
     expect(publicDemoCases).toHaveLength(2);
     expect(JSON.stringify(publicDemoCases)).not.toMatch(/animego|shikimori|kodik|anixart|dorama|192\.168|\.vc|\.biz/i);
+  });
+
+  it("anonymizes the content platform and removes the unsafe public images", () => {
+    const project = getProject("content-platform")!;
+    expect(project.title).toBe("Контентная платформа");
+    expect(project.media).toHaveLength(3);
+    expect(JSON.stringify(projects)).not.toMatch(/luna.?fantasy/i);
+    expect(existsSync("public/cases/lunafantasy.webp")).toBe(false);
+    expect(existsSync("public/og.jpg")).toBe(false);
   });
 });

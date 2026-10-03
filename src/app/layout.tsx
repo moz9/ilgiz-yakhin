@@ -7,6 +7,7 @@ import "./redesign.css";
 import "./showcase.css";
 import "./motion-glass.css";
 import "./project-controls.css";
+import "./home-work.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://ilgiz-yakhin.vercel.app"),

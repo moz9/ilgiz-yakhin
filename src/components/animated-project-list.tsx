@@ -2,6 +2,8 @@
 
 import { ArrowUpRight, BookOpen, Building2, Clock3, Crown, Library, Monitor } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { projects, type Project } from "@/lib/projects";
 import { ProjectStage } from "@/components/project-stage";
@@ -11,6 +13,7 @@ const featuredSlugs = ["chessrise", "pioner", "worktime-reporting", "infrastruct
 const featured = featuredSlugs.map((slug) => projects.find((project) => project.slug === slug)).filter((project): project is Project => Boolean(project));
 const other = projects.filter((project) => !featuredSlugs.includes(project.slug));
 const projectIcons = [Crown, Building2, Clock3, Monitor, Library, BookOpen];
+const featuredStatuses = ["Принят и оплачен", "Публичный preview", "Windows / Демо", "Windows / Демо", "Обезличенный production-кейс", "Production"];
 
 export function AnimatedProjectList() {
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -18,6 +21,7 @@ export function AnimatedProjectList() {
   const progressRef = useRef<HTMLElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [preview, setPreview] = useState(other[0]);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
     const wrap = wrapRef.current;
@@ -75,7 +79,7 @@ export function AnimatedProjectList() {
 
   return <section className="redesign-work" id="work" aria-labelledby="work-title">
     <div className="redesign-section-head">
-      <h2 id="work-title">Проекты</h2>
+      <div><span className="section-kicker redesign-mono">Избранные работы / 06</span><h2 id="work-title">Проекты<span className="section-period">.</span></h2></div>
       <Link href="/projects">Все {projects.length} проектов <ArrowUpRight aria-hidden="true" /></Link>
     </div>
     <div className="redesign-pin-wrap" ref={wrapRef}>
@@ -88,10 +92,13 @@ export function AnimatedProjectList() {
         <div className="redesign-track" ref={trackRef}>
           {featured.map((project, index) =>
             <Link className="redesign-project-card" href={`/projects/${project.slug}`} key={project.slug}>
-              <span className="project-scene-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-              <ProjectStage project={project} compact />
+              <span className="project-media">
+                <ProjectStage project={project} compact />
+                <span className="project-caption liquid-surface"><GlassLayer /><span className="project-caption-status"><i />{featuredStatuses[index]}</span><span className="project-caption-open">Кейс <ArrowUpRight aria-hidden="true" /></span></span>
+              </span>
               <span className="redesign-card-copy">
-                <span className="redesign-card-status redesign-mono"><i />{project.status}</span>
+                <span className="project-scene-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                <span className="redesign-card-category redesign-mono">{project.category.join(" / ")}</span>
                 <strong>{project.title}</strong>
                 <span className="redesign-card-task">{project.task}</span>
                 <span className="redesign-card-results">{project.results.slice(0, 3).map((item) => <span key={item}>{item}</span>)}</span>
@@ -102,14 +109,14 @@ export function AnimatedProjectList() {
         </div>
         <div className="project-jump-controls liquid-surface" role="group" aria-label="Быстрый выбор проекта"><GlassLayer />{featured.map((project, index) => {
           const Icon = projectIcons[index];
-          return <button key={project.slug} aria-label={project.title} title={project.title} aria-pressed={activeIndex === index} onClick={() => selectProject(index)}><Icon aria-hidden="true" /></button>;
+          return <button key={project.slug} aria-label={project.title} title={project.title} aria-pressed={activeIndex === index} onClick={() => selectProject(index)}>{activeIndex === index && <motion.i className="project-selection" layoutId="project-selection" transition={reducedMotion ? { duration: 0 } : { type: "spring", stiffness: 350, damping: 30 }} />}<Icon aria-hidden="true" /><span className="project-control-tooltip" aria-hidden="true">{project.title}</span></button>;
         })}</div>
       </div>
     </div>
     <div className="redesign-other">
       <div className="other-preview"><h3>Другие проекты</h3><div key={preview.slug} className="other-preview-stage"><ProjectStage project={preview} compact /></div><span className="redesign-mono">{preview.stack.slice(0, 3).join(" · ")}</span></div>
       <div className="other-project-links">{other.map((project, index) =>
-        <Link href={`/projects/${project.slug}`} key={project.slug} data-preview={preview.slug === project.slug} onMouseEnter={() => setPreview(project)} onFocus={() => setPreview(project)}><small className="redesign-mono">{String(index + 1).padStart(2, "0")}</small><span>{project.title}</span><ArrowUpRight aria-hidden="true" /></Link>)}</div>
+        <Link href={`/projects/${project.slug}`} key={project.slug} data-preview={preview.slug === project.slug} onMouseEnter={() => setPreview(project)} onFocus={() => setPreview(project)}><small className="redesign-mono">{String(index + 1).padStart(2, "0")}</small><Image className="other-project-thumb" src={project.cover} alt="" width={160} height={100} sizes="80px" /><span>{project.title}<small>{project.category.join(" / ")}</small></span><ArrowUpRight aria-hidden="true" /></Link>)}</div>
     </div>
   </section>;
 }

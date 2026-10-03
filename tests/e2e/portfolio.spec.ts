@@ -8,9 +8,7 @@ test("home follows the approved visual direction and keeps all cases reachable",
   const socialPreview = await request.get("/og-v2.jpg");
   expect(socialPreview.ok()).toBeTruthy();
   expect(socialPreview.headers()["content-type"]).toContain("image/jpeg");
-  const heroImage = page.locator('.hero-screen[data-active="true"] img');
-  await expect(heroImage).toBeVisible();
-  await expect.poll(() => heroImage.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+  await expect(page.locator(".redesign-wall-tile")).toHaveCount(36);
   await expect(page.locator(".redesign-project-card")).toHaveCount(6);
   await expect(page.locator(".redesign-other a")).toHaveCount(7);
   await expect(page.locator(".redesign-project-card").first()).toHaveAttribute("href", "/projects/chessrise");
@@ -26,6 +24,7 @@ test("featured projects remain accessible without motion", async ({ page }) => {
   await page.locator(".redesign-project-card").last().scrollIntoViewIfNeeded();
   await expect(page.locator(".redesign-project-card").last()).toBeVisible();
   await expect(page.getByRole("group", { name: "Быстрый выбор проекта" })).toBeHidden();
+  await expect(page.locator(".redesign-lens")).toBeHidden();
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
 });
 

@@ -1,14 +1,16 @@
 "use client";
 
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, BookOpen, Building2, Clock3, Crown, Library, Monitor } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { projects, type Project } from "@/lib/projects";
 import { ProjectStage } from "@/components/project-stage";
+import { GlassLayer } from "@/components/glass-layer";
 
 const featuredSlugs = ["chessrise", "pioner", "worktime-reporting", "infrastructure-inventory", "content-platform", "revalib"];
 const featured = featuredSlugs.map((slug) => projects.find((project) => project.slug === slug)).filter((project): project is Project => Boolean(project));
 const other = projects.filter((project) => !featuredSlugs.includes(project.slug));
+const projectIcons = [Crown, Building2, Clock3, Monitor, Library, BookOpen];
 
 export function AnimatedProjectList() {
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -42,7 +44,8 @@ export function AnimatedProjectList() {
         card.style.setProperty("--travel", String(Math.max(-1, Math.min(1, offset))));
       });
       if (progressRef.current) progressRef.current.style.transform = `scaleX(${amount})`;
-      setActiveIndex(Math.round(amount * (featured.length - 1)));
+      const center = amount * distance + innerWidth / 2;
+      setActiveIndex(cards.reduce((nearest, card, index) => Math.abs(card.offsetLeft + card.offsetWidth / 2 - center) < Math.abs(cards[nearest].offsetLeft + cards[nearest].offsetWidth / 2 - center) ? index : nearest, 0));
     };
     const schedule = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(update); };
     const observer = new ResizeObserver(schedule);
@@ -59,6 +62,16 @@ export function AnimatedProjectList() {
       reduced.removeEventListener("change", schedule);
     };
   }, []);
+
+  const selectProject = (index: number) => {
+    const wrap = wrapRef.current;
+    const track = trackRef.current;
+    const card = track?.children[index] as HTMLElement | undefined;
+    if (!wrap || !track || !card) return;
+    const distance = Math.max(0, track.scrollWidth - innerWidth);
+    const offset = Math.max(0, Math.min(distance, card.offsetLeft + card.offsetWidth / 2 - innerWidth / 2));
+    window.scrollTo({ top: scrollY + wrap.getBoundingClientRect().top + offset, behavior: "smooth" });
+  };
 
   return <section className="redesign-work" id="work" aria-labelledby="work-title">
     <div className="redesign-section-head">
@@ -87,6 +100,10 @@ export function AnimatedProjectList() {
               </span>
             </Link>)}
         </div>
+        <div className="project-jump-controls liquid-surface" role="group" aria-label="Быстрый выбор проекта"><GlassLayer />{featured.map((project, index) => {
+          const Icon = projectIcons[index];
+          return <button key={project.slug} aria-label={project.title} title={project.title} aria-pressed={activeIndex === index} onClick={() => selectProject(index)}><Icon aria-hidden="true" /></button>;
+        })}</div>
       </div>
     </div>
     <div className="redesign-other">

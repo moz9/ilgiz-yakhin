@@ -8,9 +8,9 @@
   --muted: #8c96a3;
   --line: #252c36;
   --line-strong: #414b59;
-  --teal: #ffb23f;
-  --teal-dark: #ffd087;
-  --teal-soft: #302516;
+  --teal: #b8e4cf;
+  --teal-dark: #d0eee0;
+  --teal-soft: #1b3226;
   --red: #5bd68a;
   --red-soft: #193628;
   --header: rgba(13, 16, 21, .9);
@@ -134,7 +134,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--font-sans
 .resume-band { background: var(--surface); color: var(--ink); }
 .swatch-paper { background: #eef1f4; color: #0d1015; border-color: #eef1f4; }
 .swatch-ink { background: #0d1015; color: #eef1f4; border: 1px solid var(--line-strong); }
-.swatch-teal { background: #ffb23f; color: #0d1015; }
+.swatch-teal { background: var(--teal); color: #0d1015; }
 .swatch-red { background: #5bd68a; color: #0d1015; }
 
 .redesign-case { padding: 0 clamp(24px, 5%, 80px) 150px; }

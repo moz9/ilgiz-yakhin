@@ -132,6 +132,13 @@
 @keyframes tour-slide { to { transform: translateX(calc(var(--tour-frames, 6) / (var(--tour-frames, 6) + 1) * -100%)); } }
 .gallery-shot.is-tour:hover .gallery-tour-track { animation-play-state: paused; }
 
+/* A detail crop: one claim, cropped tight, presented on the stage surface. */
+.gallery-shot.shot-detail { aspect-ratio: auto; background: linear-gradient(150deg, #101720, #0a0e13); padding: 14px; }
+.gallery-shot.shot-detail img { max-height: none; object-fit: contain; height: auto; width: 100%; }
+.gallery-shot.shot-detail::after { content: "ДЕТАЛЬ"; position: absolute; right: 24px; top: 24px; z-index: 2; font: 9px/1 var(--font-mono), monospace; letter-spacing: .12em; color: #9aa5b2; background: #0d1218cc; border: 1px solid #ffffff1f; padding: 6px 9px; }
+.gallery-shot.shot-detail .gallery-expand { width: 34px; height: 34px; right: 22px; top: 22px; bottom: auto; opacity: 0; }
+.gallery-shot.shot-detail:hover .gallery-expand { opacity: 1; }
+
 /* A collage composes several screens into one designed frame. */
 .gallery-shot.is-collage { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; aspect-ratio: 16 / 10; }
 .gallery-shot.is-collage .gallery-shot-bar { position: relative; z-index: 3; flex: none; }

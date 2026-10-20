@@ -5,7 +5,7 @@ type Props = { project: Project; priority?: boolean; compact?: boolean };
 
 export function ProjectStage({ project, priority = false, compact = false }: Props) {
   const phone = project.media?.find((item) => item.presentation === "phone");
-  const detail = project.media?.find((item) => item.src !== project.cover && item.presentation !== "phone");
+  const detail = project.coverDetail ? { src: project.coverDetail, alt: project.coverAlt, label: "ДЕТАЛЬ" } : null;
   const kind = project.category.includes("Mobile") ? "tv" : project.category.includes("Desktop") ? "desktop" : "web";
   const schematic = project.cover.endsWith(".svg") || project.media?.[0]?.presentation === "diagram";
 
@@ -18,7 +18,7 @@ export function ProjectStage({ project, priority = false, compact = false }: Pro
       {kind === "tv" && <span className="stage-tv-foot" aria-hidden="true" />}
     </div>
     {phone ? <div className="stage-phone"><Image src={phone.src} alt={phone.alt} width={390} height={844} sizes="(max-width: 700px) 20vw, 230px" /><span aria-hidden="true" /></div> : detail && !compact && !schematic ?
-      <div className="stage-detail"><div className="stage-window-bar" aria-hidden="true"><span>{detail.label}</span></div><Image src={detail.src} alt={detail.alt} width={1440} height={900} sizes="(max-width: 700px) 34vw, 450px" /></div> : null}
+      <div className="stage-detail"><div className="stage-window-bar" aria-hidden="true"><span>{detail.label}</span></div><Image src={detail.src} alt={detail.alt} width={1024} height={640} sizes="(max-width: 700px) 34vw, 450px" /></div> : null}
     <div className="stage-caption" aria-hidden="true"><span>{project.stack.slice(0, 2).join(" / ")}</span><span>{project.index} / IY</span></div>
   </div>;
 }

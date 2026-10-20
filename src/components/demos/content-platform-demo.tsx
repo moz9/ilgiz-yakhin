@@ -9,6 +9,7 @@ import {
   ChevronDown,
   ChevronRight,
   CircleUserRound,
+  Download,
   Film,
   Grid2X2,
   Heart,
@@ -17,6 +18,7 @@ import {
   MessageSquareText,
   Newspaper,
   Play,
+  Plus,
   RefreshCw,
   Search,
   Send,
@@ -24,6 +26,7 @@ import {
   Sparkles,
   Star,
   Table2,
+  Upload,
   Workflow,
 } from "lucide-react";
 import Image from "next/image";
@@ -31,7 +34,7 @@ import { useMemo, useState } from "react";
 import styles from "./content-platform-demo.module.css";
 
 type Surface = "modern" | "editorial";
-type Section = "home" | "catalog" | "schedule" | "news" | "detail" | "discover" | "profile" | "ai" | "operations" | "release";
+type Section = "home" | "catalog" | "schedule" | "news" | "detail" | "discover" | "profile" | "lists" | "persons" | "ai" | "operations" | "release";
 type ViewMode = "grid" | "compact" | "list";
 
 const sections: { id: Section; label: string }[] = [
@@ -42,6 +45,8 @@ const sections: { id: Section; label: string }[] = [
   { id: "detail", label: "Карточка" },
   { id: "discover", label: "Разделы" },
   { id: "profile", label: "Профиль" },
+  { id: "lists", label: "Мои списки" },
+  { id: "persons", label: "Персоны" },
   { id: "ai", label: "AI-подбор" },
   { id: "operations", label: "Контент" },
   { id: "release", label: "Релиз" },
@@ -168,6 +173,31 @@ function AiSearch({ surface }: { surface: Surface }) {
   return <div className={surface === "modern" ? styles.modernPage : styles.editorialPage}>{surface === "modern" ? <ModernHeader /> : <EditorialHeader />}<main className={styles.aiPage}><section className={styles.aiCard}><span>AI-ПОДБОР</span><h1>Опишите, что хотите посмотреть</h1><p>Подбор учитывает каталожные признаки, ваши списки, оценки и историю. Если запрос пока не сформулирован, можно пройти мини-анкету.</p><button className={styles.quizButton}>Не знаете, что выбрать? Ответьте на 5 вопросов <ChevronRight /></button><details><summary>Пресеты <b>+</b></summary><div><button>Короткий сериал на вечер</button><button>Без тяжёлых сцен</button><button>По любимым жанрам</button></div></details><div className={styles.aiMessage}><strong>MEDIA GO AI</strong><p>{sent ? "Подойдут «Северная станция» и «Контур сигнала»: в обоих проектах напряжение строится на расследовании и атмосфере, а не на жестоких сценах." : "Могу подобрать материал под настроение, жанр, длину или просто ваш текущий вкус. Напишите запрос своими словами."}</p></div><form onSubmit={(event) => { event.preventDefault(); setSent(true); }}><textarea value={query} onChange={(event) => { setQuery(event.target.value); setSent(false); }} aria-label="Запрос к AI-подбору" /><button aria-label="Подобрать"><Send /> Подобрать</button></form>{sent && <div className={styles.aiResults}>{titles.slice(0, 2).map((item) => <article key={item.title}><Image src={item.image} alt="" width={62} height={84} /><div><strong>{item.title}</strong><small>{item.meta}</small><span>Совпадение по запросу</span></div></article>)}</div>}<small className={styles.aiBoundary}>Пользовательский smart search. Серверный OmniRoute-конвейер редакции показан отдельно.</small></section></main>{surface === "modern" && <ModernBottomNav />}</div>;
 }
 
+function Lists({ surface, onOpen }: { surface: Surface; onOpen: () => void }) {
+  const [active, setActive] = useState(0);
+  const [imported, setImported] = useState(false);
+  const userLists = [
+    { name: "Вечерний сериал", count: 8, note: "Короткие истории до 40 минут" },
+    { name: "Технологичные триллеры", count: 5, note: "Сигналы, станции, расследования" },
+    { name: "Посмотреть позже", count: 12, note: "Без сортировки по дате" },
+  ];
+  return <div className={surface === "modern" ? styles.modernPage : styles.editorialPage}>{surface === "modern" ? <ModernHeader /> : <EditorialHeader />}<main className={`${styles.subPage} ${styles.listsPage} ${surface === "editorial" ? styles.editorialSubPage : ""}`}><header><div><span>FAVORITES / LISTS</span><h1>Мои списки</h1><p>Пользовательские списки живут в отдельном плагине: именованные коллекции, перенос между устройствами и перенос файлом.</p></div><button className={styles.listCreate}><Plus /> Создать список</button></header><div className={styles.listsLayout}><nav>{userLists.map((list, index) => <button key={list.name} className={active === index ? styles.active : ""} onClick={() => setActive(index)}><span>{list.name}</span><small>{list.note}</small><i>{list.count}</i></button>)}</nav><section><header><div><h2>{userLists[active].name}</h2><p>{userLists[active].count} материалов · обновляется вместе с каталогом</p></div><div><button><Download /> Экспорт</button><button><Upload /> Импорт</button></div></header><div className={styles.listRows}>{titles.slice(0, 4).map((item, index) => <button key={item.title} onClick={onOpen}><Image src={item.image} alt="" width={48} height={62} /><span><strong>{item.title}</strong><small>{item.meta}</small></span><i><b style={{ width: `${30 + index * 15}%` }} /></i><em>{index + 1}/{index + 8}</em><Check /></button>)}</div></section></div><section className={styles.transferPanel}><header><div><span>TRANSFER</span><h2>Перенос списков</h2></div><p>Списки выгружаются в JSON и возвращаются в каталог: при импорте выбирается замена или объединение, а перед записью снимается бэкап.</p></header><div className={styles.transferModes}><button className={styles.active}>Объединить</button><button>Заменить</button><button>Только новые</button></div>{imported && <div className={styles.transferResult}><Check /><span>Импорт завершён</span><small>3 списка · 25 материалов · дубликаты пропущены</small></div>}<footer><button onClick={() => setImported(true)}><Upload /> Импортировать файл</button><span>Формат: JSON со схемой списков, материалов и позиций</span></footer></section></main>{surface === "modern" && <ModernBottomNav />}</div>;
+}
+
+function Persons({ surface, onOpen }: { surface: Surface; onOpen: () => void }) {
+  const characters = [
+    { name: "Мария Соколова", role: "Главная роль · 6 проектов", image: "/demo-assets/poster-observatory.webp" },
+    { name: "Илья Ветров", role: "Главная роль · 4 проекта", image: "/demo-assets/poster-beacon.webp" },
+    { name: "Анна Дорн", role: "Второй план · 9 проектов", image: "/demo-assets/poster-signal.webp" },
+  ];
+  const people = [
+    { name: "Режиссёр", value: "Пётр Ковалев", note: "12 проектов" },
+    { name: "Сценарий", value: "Ольга Ланская", note: "7 проектов" },
+    { name: "Актёры", value: "Мария Соколова, Илья Ветров", note: "озвучка и роли" },
+  ];
+  return <div className={surface === "modern" ? styles.modernPage : styles.editorialPage}>{surface === "modern" ? <ModernHeader /> : <EditorialHeader />}<main className={`${styles.subPage} ${styles.personsPage} ${surface === "editorial" ? styles.editorialSubPage : ""}`}><header><div><span>PEOPLE / INDEX</span><h1>Персоны и персонажи</h1><p>Индексы связаны с карточками: персонаж ведёт к своим проектам, автор — к работам и подборкам.</p></div></header><section className={styles.charactersBlock}><header><div><span>ПЕРСОНАЖИ</span><h2>Герои каталога</h2></div></header><div>{characters.map((person) => <button key={person.name} onClick={onOpen}><div><Image src={person.image} alt="" fill sizes="18vw" /></div><strong>{person.name}</strong><small>{person.role}</small></button>)}</div></section><section className={styles.peopleBlock}><header><div><span>ПЕРСОНЫ</span><h2>Авторы и творческие команды</h2></div></header><div>{people.map((person) => <article key={person.name}><span>{person.name}</span><strong>{person.value}</strong><small>{person.note}</small><button onClick={onOpen}>Открыть <ArrowRight /></button></article>)}</div></section></main>{surface === "modern" && <ModernBottomNav />}</div>;
+}
+
 function Operations() {
   const [running, setRunning] = useState(false);
   return <main className={styles.opsPage}><header><div><span>CONTENT OPERATIONS / VERIFIED SCOPE</span><h1>Каталог и редакция</h1><p>Два независимых контура: пользовательский smart search не выдается за серверный AI Contentmaker.</p></div><button onClick={() => setRunning((value) => !value)}><RefreshCw className={running ? styles.spin : ""} /> {running ? "Обработка" : "Показать цикл"}</button></header><div className={styles.opsLanes}><section><div><Workflow /><span>CATALOG PARSER</span><strong>bounded queue</strong></div><h2>Карточки и эпизоды</h2><p>Получение → нормализация → сопоставление → дополнительные поля → проверка.</p>{["Метаданные и версии", "Эпизоды и озвучки", "Постеры и media fields", "Дубли и журнал"].map((item, index) => <article className={running && index <= 2 ? styles.processing : ""} key={item}><span>0{index + 1}</span><strong>{item}</strong><i>{running && index === 2 ? "processing" : "validated"}</i></article>)}</section><section><div><Bot /><span>AI CONTENTMAKER</span><strong>OmniRoute</strong></div><h2>Новости и карточки</h2><p>Этапные модели готовят факты, черновик, русификацию и проверку риска. Проблема провайдера не разрешает скрытый fallback.</p>{["Fact pack", "Draft + language cleanup", "Duplicate / risk review", "Human decision + outbox"].map((item, index) => <article className={running && index <= 2 ? styles.processing : ""} key={item}><span>0{index + 1}</span><strong>{item}</strong><i>{index === 3 ? "human gate" : "checked"}</i></article>)}</section></div><div className={styles.opsProof}><article><strong>2</strong><span>production themes</span></article><article><strong>155</strong><span>staging plugin rules</span></article><article><strong>0</strong><span>compile / PHP errors</span></article><article><strong>backup</strong><span>before every release</span></article></div></main>;
@@ -180,5 +210,5 @@ function Release() {
 export function ContentPlatformDemo() {
   const [surface, setSurface] = useState<Surface>("modern");
   const [section, setSection] = useState<Section>("home");
-  return <div className={styles.demo}><DemoToolbar surface={surface} section={section} onSurface={setSurface} onSection={setSection} /><div className={styles.stage} data-testid="content-demo-stage">{section === "home" && (surface === "modern" ? <ModernHome onOpen={setSection} /> : <EditorialHome onOpen={setSection} />)}{section === "catalog" && <Catalog surface={surface} onOpen={() => setSection("detail")} />}{section === "schedule" && <Schedule surface={surface} onOpen={() => setSection("detail")} />}{section === "news" && <News surface={surface} onOpen={() => setSection("detail")} />}{section === "detail" && <Detail surface={surface} />}{section === "discover" && <Discover surface={surface} onOpen={() => setSection("detail")} />}{section === "profile" && <Profile surface={surface} onOpen={() => setSection("detail")} />}{section === "ai" && <AiSearch surface={surface} />}{section === "operations" && <Operations />}{section === "release" && <Release />}</div><footer className={styles.demoFooter}><span>Обезличенная реконструкция реальных интерфейсов и подтвержденных технических контуров</span><strong>Нейтральный каталог · синтетические данные · без production-подключения</strong></footer></div>;
+  return <div className={styles.demo}><DemoToolbar surface={surface} section={section} onSurface={setSurface} onSection={setSection} /><div className={styles.stage} data-testid="content-demo-stage">{section === "home" && (surface === "modern" ? <ModernHome onOpen={setSection} /> : <EditorialHome onOpen={setSection} />)}{section === "catalog" && <Catalog surface={surface} onOpen={() => setSection("detail")} />}{section === "schedule" && <Schedule surface={surface} onOpen={() => setSection("detail")} />}{section === "news" && <News surface={surface} onOpen={() => setSection("detail")} />}{section === "detail" && <Detail surface={surface} />}{section === "discover" && <Discover surface={surface} onOpen={() => setSection("detail")} />}{section === "profile" && <Profile surface={surface} onOpen={() => setSection("detail")} />}{section === "lists" && <Lists surface={surface} onOpen={() => setSection("detail")} />}{section === "persons" && <Persons surface={surface} onOpen={() => setSection("detail")} />}{section === "ai" && <AiSearch surface={surface} />}{section === "operations" && <Operations />}{section === "release" && <Release />}</div><footer className={styles.demoFooter}><span>Обезличенная реконструкция реальных интерфейсов и подтвержденных технических контуров</span><strong>Нейтральный каталог · синтетические данные · без production-подключения</strong></footer></div>;
 }

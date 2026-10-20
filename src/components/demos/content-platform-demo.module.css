@@ -2223,3 +2223,67 @@
   .playerBlock > div { min-height: 300px; }
   .charactersBlock > div { grid-template-columns: 1fr 1fr; }
 }
+
+/* Named user lists with import and export, matching the favourites plugin. */
+.listsPage > header { align-items: start; display: flex; justify-content: space-between; }
+.listCreate { align-items: center; background: var(--ink); border: 0; color: #fff; display: inline-flex; font: inherit; font-size: 13px; gap: 8px; min-height: 42px; padding: 0 18px; }
+.listCreate svg { height: 15px; width: 15px; }
+.listsLayout { display: grid; gap: 34px; grid-template-columns: 280px 1fr; margin-top: 34px; }
+.listsLayout > nav { display: flex; flex-direction: column; gap: 8px; }
+.listsLayout > nav button { background: transparent; border: 1px solid var(--line); display: grid; gap: 3px; grid-template-columns: 1fr auto; padding: 14px 16px; text-align: left; }
+.listsLayout > nav button span { font-size: 14px; font-weight: 600; }
+.listsLayout > nav button small { color: var(--muted); font-size: 11px; grid-column: 1; }
+.listsLayout > nav button i { align-self: center; font-style: normal; font-size: 13px; grid-column: 2; grid-row: 1 / span 2; }
+.listsLayout > nav button.active { background: var(--ink); color: #fff; }
+.listsLayout > nav button.active small { color: #b9c2c0; }
+.listsLayout > section { border-top: 1px solid var(--line); }
+.listsLayout > section > header { align-items: start; display: flex; justify-content: space-between; padding: 18px 0 16px; }
+.listsLayout > section h2 { font-size: 22px; margin: 0; }
+.listsLayout > section header p { color: var(--muted); font-size: 12px; margin: 5px 0 0; }
+.listsLayout > section header > div:last-child { display: flex; gap: 8px; }
+.listsLayout > section header button { align-items: center; background: transparent; border: 1px solid var(--line-strong); display: inline-flex; font: inherit; font-size: 12px; gap: 7px; min-height: 34px; padding: 0 13px; }
+.listsLayout > section header button svg { height: 13px; width: 13px; }
+.listRows { display: flex; flex-direction: column; }
+.listRows > button { align-items: center; background: transparent; border: 0; border-top: 1px solid var(--line); display: grid; gap: 16px; grid-template-columns: 48px 1fr 130px 54px 16px; min-height: 78px; padding: 10px 0; text-align: left; width: 100%; }
+.listRows > button img { border-radius: 5px; height: 62px; object-fit: cover; width: 48px; }
+.listRows > button strong { display: block; font-size: 14px; }
+.listRows > button small { color: var(--muted); font-size: 11px; }
+.listRows > button > i { background: var(--line); display: block; height: 3px; }
+.listRows > button > i b { background: var(--green); display: block; height: 100%; }
+.listRows > button em { color: var(--muted); font-size: 11px; font-style: normal; }
+.listRows > button svg { color: var(--green); height: 15px; width: 15px; }
+.transferPanel { background: var(--ink); color: #fff; margin-top: 38px; padding: 26px 28px 24px; }
+.transferPanel header { display: flex; gap: 30px; justify-content: space-between; }
+.transferPanel header span { color: var(--coral); font-size: 10px; font-weight: 800; letter-spacing: .1em; }
+.transferPanel header h2 { font-size: 22px; margin: 8px 0 0; }
+.transferPanel header p { color: #b3bcba; font-size: 12px; line-height: 1.6; margin: 0; max-width: 52ch; }
+.transferModes { display: flex; gap: 8px; margin-top: 22px; }
+.transferModes button { background: rgba(255,255,255,.07); border: 1px solid #3a4443; color: #d6dcdb; font: inherit; font-size: 12px; min-height: 34px; padding: 0 14px; }
+.transferModes button.active { background: #fff; border-color: #fff; color: #111817; }
+.transferResult { align-items: center; background: rgba(255,255,255,.08); display: grid; gap: 4px 10px; grid-template-columns: 18px 1fr; margin-top: 18px; padding: 13px 15px; }
+.transferResult svg { color: #76d5c4; grid-row: 1 / span 2; height: 16px; width: 16px; }
+.transferResult span { font-size: 13px; }
+.transferResult small { color: #9fabaa; font-size: 11px; }
+.transferPanel footer { align-items: center; border-top: 1px solid #333c3b; display: flex; gap: 16px; justify-content: space-between; margin-top: 20px; padding-top: 18px; }
+.transferPanel footer button { align-items: center; background: #fff; border: 0; color: #111817; display: inline-flex; font: inherit; font-size: 12px; font-weight: 700; gap: 8px; min-height: 36px; padding: 0 15px; }
+.transferPanel footer button svg { height: 14px; width: 14px; }
+.transferPanel footer span { color: #93a09e; font-size: 11px; }
+
+/* Character and creator indexes. */
+.charactersBlock { margin-top: 34px; }
+.charactersBlock > header span,.peopleBlock > header span { color: var(--coral); font-size: 10px; font-weight: 800; letter-spacing: .1em; }
+.charactersBlock > header h2,.peopleBlock > header h2 { font-size: 24px; margin: 8px 0 20px; }
+.charactersBlock > div { display: grid; gap: 18px; grid-template-columns: repeat(3, 1fr); }
+.charactersBlock > div > button { background: transparent; border: 0; padding: 0; text-align: left; }
+.charactersBlock > div > button > div { aspect-ratio: 3 / 4; border-radius: 12px; overflow: hidden; position: relative; }
+.charactersBlock img { object-fit: cover; }
+.charactersBlock strong { display: block; font-size: 15px; margin-top: 12px; }
+.charactersBlock small { color: var(--muted); font-size: 12px; }
+.peopleBlock { margin-top: 44px; }
+.peopleBlock > div { display: grid; gap: 18px; grid-template-columns: repeat(3, 1fr); }
+.peopleBlock article { border-top: 1px solid var(--line); padding-top: 16px; }
+.peopleBlock article > span { color: var(--muted); font-size: 11px; }
+.peopleBlock article strong { display: block; font-size: 18px; margin: 8px 0 6px; }
+.peopleBlock article small { color: var(--muted); font-size: 11px; }
+.peopleBlock article button { align-items: center; background: transparent; border: 0; color: var(--green); display: inline-flex; font: inherit; font-size: 12px; gap: 6px; margin-top: 12px; padding: 0; }
+.peopleBlock article button svg { height: 13px; width: 13px; }

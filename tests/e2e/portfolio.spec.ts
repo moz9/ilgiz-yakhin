@@ -93,12 +93,18 @@ test("streaming web case exposes product functions and a safe interactive demo",
   await expect(page.getByRole("heading", { name: "Стриминговая web-платформа", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Функциональные контуры" })).toBeVisible();
   await expect(page.locator(".redesign-case-flow-grid article")).toHaveCount(6);
-  await expect(page.locator(".redesign-case-gallery figure")).toHaveCount(10);
+  await expect(page.locator(".redesign-case-gallery figure")).toHaveCount(6);
   await expect(page.locator(".redesign-case-stack")).toContainText("DLE CMS");
   await expect(page.getByRole("link", { name: "Открыть интерактивное демо" })).toHaveAttribute("href", "/demos/content-platform");
 
   await page.goto("/demos/content-platform");
   await expect(page.getByRole("heading", { name: "Фильмы и сериалы онлайн в хорошем качестве" })).toBeVisible();
+  await page.getByRole("button", { name: "Мои списки", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Мои списки" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Экспорт" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Импорт" })).toBeVisible();
+  await page.getByRole("button", { name: "Персоны", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Персоны и персонажи" })).toBeVisible();
   await page.getByRole("button", { name: "AI-подбор", exact: true }).click();
   await page.getByRole("button", { name: "Подобрать" }).click();
   await expect(page.getByText(/Пользовательский smart search/)).toBeVisible();

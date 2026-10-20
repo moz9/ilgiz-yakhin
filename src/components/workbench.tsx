@@ -11,7 +11,7 @@ import { GlassLayer } from "@/components/glass-layer";
 const scenes = [
   { slug: "worktime-reporting", label: "Отчётность", icon: FileSpreadsheet, title: "От выгрузки до Excel", note: "Импорт, проверка расчёта и готовый документ.", labels: ["Импорт", "Проверка", "Экспорт"], indices: [0, 1, 2], tone: "mint" },
   { slug: "revalib", label: "База знаний", icon: LibraryBig, title: "Библиотека и связанные материалы", note: "От общего каталога к подробному гайду, на компьютере и телефоне.", labels: ["Библиотека", "Гайд", "Телефон"], indices: [0, 2, 3], tone: "ice" },
-  { slug: "streaming-web-platform", label: "Стриминг", icon: MonitorPlay, title: "Расписание, профиль и AI-подбор", note: "Пользовательские сценарии стриминговой платформы. Обезличенное демо.", labels: ["Расписание", "Профиль", "AI-подбор"], indices: [2, 7, 8], tone: "lilac" },
+  { slug: "streaming-web-platform", label: "Стриминг", icon: MonitorPlay, title: "Расписание, списки и AI-контур", note: "Пользовательские сценарии стриминговой платформы. Обезличенное демо.", labels: ["Расписание", "Списки", "AI-контур"], indices: [1, 3, 4], tone: "lilac" },
 ];
 
 export function Workbench() {

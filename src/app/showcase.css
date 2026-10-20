@@ -103,7 +103,7 @@
 .reveal-arrived .redesign-pipeline-node:nth-child(6) { animation-delay: .5s; }
 @keyframes pipeline-arrive { from { opacity: .35; transform: translateY(22px); } }
 
-.editorial-gallery { gap: 56px 36px; }
+.editorial-gallery { align-items: start; gap: 56px 36px; }
 .editorial-gallery > figure { display: flex; flex-direction: column; min-width: 0; justify-content: flex-end; position: relative; }
 .editorial-gallery > figure:first-child { grid-column: 1 / -1; }
 /* A soft specular response follows the pointer across the frame. */

@@ -18,7 +18,7 @@ export type ProjectMedia = {
   alt: string;
   label: string;
   caption: string;
-  presentation?: "browser" | "desktop" | "phone" | "document" | "diagram" | "live" | "collage";
+  presentation?: "browser" | "desktop" | "phone" | "document" | "diagram" | "live" | "collage" | "strip";
   frames?: string[];
   width?: number;
   height?: number;
@@ -92,9 +92,8 @@ const projectCatalog: Project[] = [
       },
     ],
     media: [
-      { src: `${caseAssetBase}/content-platform-home.webp`, alt: "Обезличенная главная страница реальной контентной платформы с каталогом и многослойной витриной", label: "01 / ВИТРИНА", caption: "Снимок работающего интерфейса. Сохранены разметка, навигация и многослойная композиция; бренд, персонажи и подписи заменены демонстрационным контентом.", presentation: "browser" },
-      { src: `${caseAssetBase}/content-platform-catalog.webp`, alt: "Обезличенный каталог предметов с карточками и структурированными характеристиками", label: "02 / КАТАЛОГ", caption: "Настоящая страница каталога: группы, карточки и свойства. Название платформы и изображения заменены для публичной демонстрации.", presentation: "browser" },
-      { src: `${caseAssetBase}/content-platform-mobile.webp`, alt: "Мобильная версия обезличенного каталога контентной платформы Атлас", label: "03 / МОБИЛЬНАЯ ВЕРСИЯ", caption: "Тот же интерфейс на экране телефона: адаптивная навигация и вертикальный каталог, без исходного бренда и персонажей.", presentation: "phone" },
+      { src: `${caseAssetBase}/content-platform-home.webp`, alt: "Витрина контентной платформы", label: "01 / ВИТРИНА И КАТАЛОГ", caption: "Витрина ведёт в каталог: одна навигация, одна модель карточек и разные режимы выдачи на обоих экранах.", width: 1440, height: 900, presentation: "strip", frames: [`${caseAssetBase}/content-platform-home.webp`, `${caseAssetBase}/content-platform-catalog.webp`] },
+      { src: `${caseAssetBase}/content-platform-mobile.webp`, alt: "Мобильный вид каталога", label: "02 / МОБИЛЬНАЯ ВЕРСИЯ", caption: "Тот же каталог на телефоне: сетка, фильтры и быстрый переход к карточке без потери сценария.", width: 390, height: 844, presentation: "phone" },
     ],
     results: ["31 Node-тест, 9 deployment-тестов и 9 browser E2E", "Production build на 488 страниц", "Проверенные auth/RBAC, CSRF и security headers", "Green CI с PostgreSQL и миграциями"],
     evidence: [
@@ -147,10 +146,8 @@ const projectCatalog: Project[] = [
       },
     ],
     media: [
-      { src: `${caseAssetBase}/revalib.webp`, alt: "Главная страница базы знаний RevaLib", label: "01 / БИБЛИОТЕКА", caption: "Первый экран сразу ведет к обновлениям, гайдам, картам, источникам и отправке правок.", presentation: "browser" },
-      { src: `${caseAssetBase}/revalib-update.webp`, alt: "Навигационная карта обновления в RevaLib", label: "02 / ОБНОВЛЕНИЕ", caption: "Большой материал разбит на смысловые разделы, статусы уверенности и быстрые переходы к нужной части.", presentation: "browser" },
-      { src: `${caseAssetBase}/revalib-guide.webp`, alt: "Страница гайда RevaLib с источником и статусом актуальности", label: "03 / ГАЙД", caption: "Гайд показывает происхождение материала, состояние базы и практическую выжимку до основного текста.", presentation: "browser" },
-      { src: `${caseAssetBase}/revalib-mobile.webp`, alt: "Мобильный интерфейс каталога гайдов RevaLib", label: "04 / MOBILE", caption: "На телефоне навигация, типографика и действия пересобраны под вертикальный сценарий, а не просто уменьшены.", presentation: "phone" },
+      { src: `${caseAssetBase}/revalib.webp`, alt: "Главная страница библиотеки RevaLib", label: "01 / БИБЛИОТЕКА И ГАЙД", caption: "Библиотека ведёт в подробный гайд: связные материалы, а не набор вкладок, и один формат карточки на всех уровнях.", width: 1440, height: 900, presentation: "collage", frames: [`${caseAssetBase}/revalib.webp`, `${caseAssetBase}/revalib-guide.webp`] },
+      { src: `${caseAssetBase}/revalib-update.webp`, alt: "Лента обновлений RevaLib", label: "02 / ОБНОВЛЕНИЯ И ТЕЛЕФОН", caption: "Лента обновлений и мобильный вид: релиз виден на всех устройствах, с телефона открывается в тот же материал.", width: 1440, height: 900, presentation: "collage", frames: [`${caseAssetBase}/revalib-update.webp`, `${caseAssetBase}/revalib-mobile.webp`] },
     ],
     results: ["Production build на 89 маршрутов", "Типизированный поиск по нескольким видам контента", "41 тест и CI с PostgreSQL provisioning", "Миграции rollback/up и проверенный synthetic restore drill"],
     evidence: [
@@ -204,9 +201,7 @@ const projectCatalog: Project[] = [
       },
     ],
     media: [
-      { src: `${caseAssetBase}/worktime-source.webp`, alt: "Шаг выбора синтетической выгрузки в приложении отчетности рабочего времени", label: "01 / IMPORT", caption: "Первый шаг фиксирует источник и проверяет формат до запуска вычислений.", presentation: "desktop" },
-      { src: `${caseAssetBase}/worktime.webp`, alt: "Таблица проверки рассчитанного рабочего времени на синтетических данных", label: "02 / REVIEW", caption: "Расчет можно просмотреть и отфильтровать до формирования рабочего документа.", presentation: "desktop" },
-      { src: `${caseAssetBase}/worktime-export.webp`, alt: "Подтверждение экспорта Excel-отчета из локального Windows-приложения", label: "03 / EXPORT", caption: "Финальный шаг сохраняет Excel и показывает однозначный итог операции.", presentation: "document" },
+      { src: `${caseAssetBase}/worktime-source.webp`, alt: "Импорт выгрузки рабочего времени", label: "01 / ИМПОРТ, ПРОВЕРКА, ЭКСПОРТ", caption: "Весь путь данных слева направо: выгрузка, проверка расчёта и готовый документ — с отчётом о расхождениях.", width: 1440, height: 900, presentation: "strip", frames: [`${caseAssetBase}/worktime-source.webp`, `${caseAssetBase}/worktime.webp`, `${caseAssetBase}/worktime-export.webp`] },
     ],
     results: ["8 backend/API тестов", "3 browser-профиля: 100/125/150%", "Проверенный Windows EXE", "Структурный baseline Excel-результата"],
     evidence: [
@@ -259,9 +254,7 @@ const projectCatalog: Project[] = [
       },
     ],
     media: [
-      { src: `${caseAssetBase}/visitor-flow-preview.webp`, alt: "Предпросмотр синтетических данных посещаемости перед формированием отчета", label: "01 / PREVIEW", caption: "До записи в шаблон оператор видит период, строки и сводные значения.", presentation: "desktop" },
-      { src: `${caseAssetBase}/visitor-flow-validation.webp`, alt: "Экран проверки структуры и целостности входных данных посещаемости", label: "02 / VALIDATE", caption: "Отдельный этап показывает результат схемы, проверки дублей и контрольных правил.", presentation: "desktop" },
-      { src: `${caseAssetBase}/visitor-flow-result.webp`, alt: "Финальный статус формирования Excel-отчета по посетителям", label: "03 / RESULT", caption: "Интерфейс подтверждает создание результата и неизменность исходного шаблона.", presentation: "document" },
+      { src: `${caseAssetBase}/visitor-flow-preview.webp`, alt: "Предпросмотр отчёта по посетителям", label: "01 / ПРЕДПРОСМОТР, ПРОВЕРКА, РЕЗУЛЬТАТ", caption: "Сначала предпросмотр, потом валидация, и только затем результат: спорные строки видны до выгрузки.", width: 1440, height: 900, presentation: "strip", frames: [`${caseAssetBase}/visitor-flow-preview.webp`, `${caseAssetBase}/visitor-flow-validation.webp`, `${caseAssetBase}/visitor-flow-result.webp`] },
     ],
     results: ["20 тестов и 3 UI-сценария", "Семь контрольных строк сверяются с эталоном", "Шаблон остается неизменным после обработки", "UI проверен при масштабе Windows 100/125/150%"],
     evidence: [
@@ -314,9 +307,8 @@ const projectCatalog: Project[] = [
       },
     ],
     media: [
-      { src: `${caseAssetBase}/chessrise-desktop.webp`, alt: "Коммерческий сайт ChessRise в широком браузерном представлении", label: "01 / ПЕРВЫЙ ЭКРАН", caption: "Актуальный снимок публичного сайта: навигация, интерактивная шахматная задача и путь к диагностической заявке. Без cookie-плашки и обрезанного заголовка.", presentation: "browser" },
-      { src: `${caseAssetBase}/chessrise-learning.webp`, alt: "Раздел ChessRise с четырьмя этапами обучения от диагностики до практики", label: "02 / МАРШРУТ УЧЕНИКА", caption: "Отдельный кадр целого раздела: четыре этапа обучения, строгая сетка и контрастная типографика. Снят с рабочего сайта, а не собран из обложки.", presentation: "browser" },
-      { src: `${caseAssetBase}/chessrise-mobile.webp`, alt: "Мобильная главная страница ChessRise с записью на диагностику и преимуществами обучения", label: "03 / ТЕЛЕФОН", caption: "Мобильный вариант сохраняет главное действие и читаемость текста; декоративная шахматная сцена уступает место содержимому.", presentation: "phone" },
+      { src: `${caseAssetBase}/chessrise-desktop.webp`, alt: "Десктопный экран ChessRise", label: "01 / ДЕСКТОП И ТЕЛЕФОН", caption: "Один сценарий обучения на двух экранах: доска, маршрут ученика и подсказки переносятся без отдельной мобильной версии.", width: 1440, height: 900, presentation: "collage", frames: [`${caseAssetBase}/chessrise-desktop.webp`, `${caseAssetBase}/chessrise-mobile.webp`] },
+      { src: `${caseAssetBase}/chessrise-learning.webp`, alt: "Маршрут ученика ChessRise", label: "02 / МАРШРУТ УЧЕНИКА", caption: "Маршрут ученика: шаги с прогрессом, подсказками и понятной точкой входа в следующий этап.", width: 1440, height: 900 },
     ],
     results: ["Проект принят и оплачен заказчиком", "Заявка сохраняется в БД и уходит в Telegram с PDF", "SEO и Schema.org", "Versioned deployment и rollback"],
     evidence: [
@@ -631,9 +623,7 @@ const projectCatalog: Project[] = [
       },
     ],
     media: [
-      { src: `${caseAssetBase}/sysinvent.webp`, alt: "Обзорная панель системы учета инфраструктуры на синтетических данных", label: "INVENTORY", caption: "Обзор показывает состояние локального реестра без адресов, имен и сведений рабочей сети.", presentation: "desktop" },
-      { src: `${caseAssetBase}/sysinvent-device.webp`, alt: "Карточка синтетического устройства в системе учета ИТ-инфраструктуры", label: "DEVICE", caption: "Карточка объединяет технические характеристики, статус и связь с рабочим местом.", presentation: "desktop" },
-      { src: `${caseAssetBase}/sysinvent-workplaces.webp`, alt: "Реестр синтетических рабочих мест в desktop-системе инвентаризации", label: "WORKPLACES", caption: "Фильтруемый список предназначен для ежедневной сверки, а не для презентационной статистики.", presentation: "desktop" },
+      { src: `${caseAssetBase}/sysinvent.webp`, alt: "Список активов системы учёта", label: "01 / УЧЁТ, УСТРОЙСТВО, МЕСТА", caption: "Один реестр в трёх разрезах: список активов, карточка устройства и распределение по рабочим местам.", width: 1440, height: 900, presentation: "strip", frames: [`${caseAssetBase}/sysinvent.webp`, `${caseAssetBase}/sysinvent-device.webp`, `${caseAssetBase}/sysinvent-workplaces.webp`] },
     ],
     results: ["8 unit и 17 integration тестов", "4 Electron E2E", "Проверенный NSIS installer", "Safety scan публичной сборки"],
     evidence: [
@@ -686,8 +676,7 @@ const projectCatalog: Project[] = [
       },
     ],
     media: [
-      { src: `${caseAssetBase}/atlant-home.webp`, alt: "Главная страница многостраничного сайта ремонтной компании", label: "PUBLIC SITE", caption: "Публичная часть собирает услуги, выполненные работы и точки входа в расчет или заявку.", presentation: "browser" },
-      { src: `${caseAssetBase}/atlant-calculator.webp`, alt: "Многошаговый калькулятор услуг на сайте ремонтной компании", label: "CALCULATOR", caption: "Пользователь проходит расчет по шагам, а итог становится частью структурированной заявки.", presentation: "browser" },
+      { src: `${caseAssetBase}/atlant-home.webp`, alt: "Главная страница сайта ремонтной компании", label: "01 / САЙТ И КАЛЬКУЛЯТОР", caption: "Публичная витрина и калькулятор стоимости ремонта: расчёт считается из тех же данных, что показывает страница.", width: 1440, height: 900, presentation: "collage", frames: [`${caseAssetBase}/atlant-home.webp`, `${caseAssetBase}/atlant-calculator.webp`] },
     ],
     results: ["8 тестов, TypeScript и production build", "Публичные страницы и многошаговый калькулятор", "Админка для контента и заявок", "Подготовлены PostgreSQL, Nginx и systemd"],
     evidence: [

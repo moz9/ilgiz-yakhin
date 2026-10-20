@@ -10,8 +10,8 @@ import { GlassLayer } from "@/components/glass-layer";
 
 const scenes = [
   { slug: "worktime-reporting", label: "Отчётность", icon: FileSpreadsheet, title: "От выгрузки до Excel", note: "Импорт, проверка расчёта и готовый документ.", labels: ["Импорт", "Проверка", "Экспорт"], indices: [0, 1, 2], tone: "mint" },
-  { slug: "revalib", label: "База знаний", icon: LibraryBig, title: "Библиотека и связанные материалы", note: "От общего каталога к подробному гайду, на компьютере и телефоне.", labels: ["Библиотека", "Гайд", "Телефон"], indices: [0, 2, 3], tone: "ice" },
-  { slug: "streaming-web-platform", label: "Стриминг", icon: MonitorPlay, title: "Расписание, списки и AI-контур", note: "Пользовательские сценарии стриминговой платформы. Обезличенное демо.", labels: ["Расписание", "Списки", "AI-контур"], indices: [1, 3, 4], tone: "lilac" },
+  { slug: "revalib", label: "База знаний", icon: LibraryBig, title: "Библиотека и связанные материалы", note: "От общего каталога к подробному гайду, на компьютере и телефоне.", labels: ["Библиотека", "Гайд", "Телефон"], indices: [0, 1, 3], tone: "ice" },
+  { slug: "streaming-web-platform", label: "Стриминг", icon: MonitorPlay, title: "Расписание, списки и AI-контур", note: "Пользовательские сценарии стриминговой платформы. Обезличенное демо.", labels: ["Расписание", "Списки", "AI-контур"], indices: [2, 6, 8], tone: "lilac" },
 ];
 
 export function Workbench() {
@@ -22,7 +22,9 @@ export function Workbench() {
   const reduced = useReducedMotion();
   const scene = scenes[sceneIndex];
   const project = getProject(scene.slug)!;
-  const item = project.media![scene.indices[step]];
+  // The gallery composes screens into collages; the workbench steps through the screens themselves.
+  const frames = project.media!.flatMap((media) => (media.frames ?? [media.src]).map((src) => ({ src, alt: media.alt, caption: media.caption, presentation: media.presentation })));
+  const item = frames[scene.indices[step]];
 
   return <section className="workbench" aria-labelledby="workbench-title" data-tone={scene.tone}>
     <div className="workbench-heading"><span className="redesign-mono">Пользовательские сценарии / 03</span><h2 id="workbench-title">От действия<br /><span>к результату.</span></h2></div>
@@ -32,8 +34,8 @@ export function Workbench() {
         <Link href={`/projects/${project.slug}`}>Весь кейс <ArrowUpRight aria-hidden="true" /></Link>
       </div>
       <div className="workbench-viewer scenario-deck">
-        {scene.indices.map((mediaIndex, index) => {
-          const media = project.media![mediaIndex];
+        {scene.indices.map((frameIndex, index) => {
+          const media = frames[frameIndex];
           const phone = media.presentation === "phone";
           const depth = (index - step + 3) % 3;
           return <motion.div key={media.src} aria-hidden={depth !== 0} aria-busy={!loaded[media.src] && !failed[media.src]} data-loaded={Boolean(loaded[media.src])} className={`scenario-screen ${depth === 0 ? "workbench-frame" : "scenario-peek"}${phone ? " is-phone" : ""}`} style={{ zIndex: 3 - depth, pointerEvents: depth ? "none" : "auto" }}

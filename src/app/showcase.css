@@ -137,14 +137,24 @@
 .gallery-shot.is-collage .gallery-shot-bar { position: relative; z-index: 3; flex: none; }
 .gallery-collage { position: absolute; left: 0; right: 0; top: 28px; bottom: 0; overflow: hidden; }
 .gallery-collage-piece { border: 1px solid #ffffff2e; border-radius: 9px; box-shadow: 0 20px 46px #000a; display: block; overflow: hidden; position: absolute; transition: transform .5s cubic-bezier(.22, 1, .36, 1); }
-.gallery-collage-piece img { display: block; height: 100%; object-fit: cover; object-position: top center; width: 100%; }
-.gallery-collage-piece:nth-child(1) { left: 2.5%; top: 5%; width: 72%; }
-.gallery-collage-piece:nth-child(2) { bottom: 2.5%; right: 2.5%; width: 56%; transform: rotate(-2.4deg); }
-.gallery-collage.is-portrait .gallery-collage-piece:nth-child(1) { bottom: 4%; height: 92%; left: 11%; top: auto; width: auto; }
-.gallery-collage.is-portrait .gallery-collage-piece:nth-child(2) { bottom: 8%; height: 74%; right: 15%; top: auto; width: auto; }
-.gallery-collage.is-portrait .gallery-collage-piece img { object-fit: contain; }
+.gallery-collage-piece img { display: block; height: 100%; object-fit: cover; object-position: top left; width: 100%; }
+.gallery-collage-piece:nth-child(1) { left: 2.5%; top: 5%; }
+.gallery-collage-piece:nth-child(2) { bottom: 3%; right: 2.5%; }
+.gallery-collage-piece:nth-child(3) { bottom: 3%; left: 2.5%; }
+.gallery-collage-piece[data-shape="land"]:nth-child(1) { width: 70%; }
+.gallery-collage-piece[data-shape="port"]:nth-child(1) { height: 90%; }
+.gallery-collage-piece[data-shape="land"]:nth-child(2) { width: 50%; }
+.gallery-collage-piece[data-shape="port"]:nth-child(2) { height: 70%; }
+.gallery-collage-piece[data-shape="land"]:nth-child(3) { width: 42%; }
+.gallery-collage-piece[data-shape="port"]:nth-child(3) { height: 58%; }
 .gallery-shot.is-collage:hover .gallery-collage-piece:nth-child(1) { transform: translateY(-4px); }
 .gallery-shot.is-collage:hover .gallery-collage-piece:nth-child(2) { transform: rotate(-1.2deg) translate(6px, -6px); }
+.gallery-shot.is-collage:hover .gallery-collage-piece:nth-child(3) { transform: translateY(-6px); }
+
+/* A strip lays several screens side by side: the process reads left to right. */
+.gallery-collage.is-strip { align-items: stretch; display: grid; gap: 10px; grid-auto-columns: 1fr; grid-auto-flow: column; padding: 12px; }
+.gallery-collage.is-strip .gallery-collage-piece { bottom: auto; left: auto; position: relative; right: auto; top: auto; width: auto; }
+.gallery-collage.is-strip .gallery-collage-piece img { object-fit: cover; }
 .gallery-collage.is-portrait:hover .gallery-collage-piece:nth-child(1) { transform: translateY(-4px); }
 
 /* Live preview: a tall capture drifts through the frame, paused on hover. */

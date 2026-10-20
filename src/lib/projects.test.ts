@@ -72,6 +72,9 @@ describe("project catalog", () => {
         expect(existsSync(path.resolve("public/cases", path.basename(new URL(media.src).pathname)))).toBe(true);
         expect(media.alt.length).toBeGreaterThan(20);
         expect(media.caption.length).toBeGreaterThan(30);
+        for (const frame of media.frames ?? []) {
+          expect(existsSync(path.resolve("public/cases", path.basename(new URL(frame).pathname)))).toBe(true);
+        }
       }
     }
   });
@@ -96,7 +99,7 @@ describe("project catalog", () => {
   it("anonymizes the content platform and removes the unsafe public images", () => {
     const project = getProject("content-platform")!;
     expect(project.title).toBe("Контентная платформа");
-    expect(project.media).toHaveLength(3);
+    expect(project.media).toHaveLength(2);
     expect(JSON.stringify(projects)).not.toMatch(/luna.?fantasy/i);
     expect(existsSync("public/cases/lunafantasy.webp")).toBe(false);
     expect(existsSync("public/og.jpg")).toBe(false);

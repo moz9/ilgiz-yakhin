@@ -32,7 +32,7 @@ function GalleryFigure({ item, index, onOpen, reduceMotion }: { item: ProjectMed
   const springY = useSpring(tiltY, { stiffness: 160, damping: 20, mass: 0.6 });
   const live = item.presentation === "live";
   const tour = item.frames?.length ?? 0;
-  const collage = item.presentation === "collage" && tour > 1;
+  const collage = (item.presentation === "collage" || item.presentation === "strip") && tour > 1;
 
   function handleMove(event: ReactPointerEvent<HTMLElement>) {
     if (reduceMotion) return;
@@ -62,7 +62,7 @@ function GalleryFigure({ item, index, onOpen, reduceMotion }: { item: ProjectMed
   >
     <button
       type="button"
-      className={`gallery-shot shot-${item.presentation ?? "browser"}${live ? " is-live" : ""}${tour && !collage ? " is-tour" : ""}${collage ? " is-collage" : ""}`}
+      className={`gallery-shot shot-${item.presentation === "strip" ? "desktop" : item.presentation ?? "browser"}${live ? " is-live" : ""}${tour && !collage ? " is-tour" : ""}${collage ? " is-collage" : ""}`}
       style={{
         ...(live ? { "--gallery-travel": `${liveTravel(item)}%` } : null),
         ...(tour ? { "--tour-frames": tour } : null),
@@ -71,11 +71,16 @@ function GalleryFigure({ item, index, onOpen, reduceMotion }: { item: ProjectMed
       onClick={(event) => onOpen(index, event.currentTarget)}
     >
       <span className="gallery-shot-bar" aria-hidden="true"><i /><i /><i /><span>{item.label}</span>{(live || tour) && <b className="gallery-live-dot" />}</span>
-      {collage ? <span className={`gallery-collage${(item.height ?? 900) > (item.width ?? 1440) ? " is-portrait" : ""}`} aria-hidden="true">
+      {collage ? <span className={`gallery-collage${item.presentation === "strip" ? " is-strip" : ""}`} aria-hidden="true">
         {item.frames!.map((frame, position) =>
           <motion.span
             key={frame}
             className="gallery-collage-piece"
+            data-shape="land"
+            onLoad={(event) => {
+              const image = event.currentTarget.querySelector("img");
+              if (image && image.naturalHeight > image.naturalWidth) event.currentTarget.dataset.shape = "port";
+            }}
             initial={reduceMotion ? false : { opacity: 0, y: 34, scale: 0.97 }}
             whileInView={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true, amount: 0.3 }}

@@ -19,6 +19,7 @@ export type ProjectMedia = {
   label: string;
   caption: string;
   presentation?: "browser" | "desktop" | "phone" | "document" | "diagram" | "live";
+  frames?: string[];
   width?: number;
   height?: number;
 };
@@ -577,7 +578,7 @@ const projectCatalog: Project[] = [
       },
     ],
     media: [
-      { src: `${caseAssetBase}/launcher-overview.webp`, alt: "Главный экран лаунчера в демонстрационной реконструкции: статус готовности и быстрый запуск", label: "01 / ОБЗОР", caption: "Интерактивная web-реконструкция оболочки, собранная для портфолио. Разделы, статус готовности и быстрый запуск показаны на синтетических данных.", presentation: "desktop" },
+      { src: `${caseAssetBase}/launcher-overview.webp`, frames: [`${caseAssetBase}/launcher-screen-overview.webp`, `${caseAssetBase}/launcher-screen-profiles.webp`, `${caseAssetBase}/launcher-screen-performance.webp`, `${caseAssetBase}/launcher-screen-diagnostics.webp`, `${caseAssetBase}/launcher-screen-updates.webp`, `${caseAssetBase}/launcher-screen-license.webp`], width: 1440, height: 900, alt: "Главный экран лаунчера в демонстрационной реконструкции: статус готовности и быстрый запуск", label: "01 / ПРОДУКТ ЦЕЛИКОМ", caption: "Шесть экранов лаунчера в одном кадре: обзор, профили, производительность, диагностика, обновления и лицензия. Интерактивная web-реконструкция оболочки, собранная для портфолио.", presentation: "desktop" },
       { src: `${caseAssetBase}/launcher-profiles-detail.webp`, alt: "Экран профилей запуска: пять сценариев, автосохранение и восстановление состояния", label: "02 / ПРОФИЛИ", caption: "Пять сценариев запуска с понятным состоянием до и после применения, восстановление предыдущей конфигурации и журнал изменений.", presentation: "desktop" },
       { src: `${caseAssetBase}/launcher-performance-detail.webp`, alt: "Экран производительности: частота кадров, профиль CPU и график frame pacing", label: "03 / ПРОИЗВОДИТЕЛЬНОСТЬ", caption: "Дисплей, целевой FPS, профиль CPU и состояние сессии собираются в один runtime-контур, а график показывает ровный кадр.", presentation: "desktop" },
       { src: `${caseAssetBase}/launcher-diagnostics-detail.webp`, alt: "Экран диагностики: средний FPS, 1% low, P95 кадра и журнал проверок", label: "04 / ДИАГНОСТИКА", caption: "Метрики кадра и структурированный журнал проверок стоят рядом: видно, что именно проверено и что требует внимания.", presentation: "desktop" },

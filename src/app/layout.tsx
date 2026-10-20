@@ -8,6 +8,7 @@ import "./showcase.css";
 import "./motion-glass.css";
 import "./project-controls.css";
 import "./home-work.css";
+import "./inner-motion.css";
 import "./resume-glass.css";
 
 export const metadata: Metadata = {

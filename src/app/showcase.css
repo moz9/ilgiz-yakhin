@@ -104,8 +104,11 @@
 @keyframes pipeline-arrive { from { opacity: .35; transform: translateY(22px); } }
 
 .editorial-gallery { gap: 56px 36px; }
-.editorial-gallery > figure { display: flex; flex-direction: column; min-width: 0; justify-content: flex-end; }
+.editorial-gallery > figure { display: flex; flex-direction: column; min-width: 0; justify-content: flex-end; position: relative; }
 .editorial-gallery > figure:first-child { grid-column: 1 / -1; }
+/* A soft specular response follows the pointer across the frame. */
+.editorial-gallery > figure::before { content: ""; position: absolute; inset: -1px; border-radius: 7px; background: radial-gradient(420px circle at var(--rg-pointer-x, 50%) var(--rg-pointer-y, 50%), #ffffff12, transparent 62%); opacity: 0; pointer-events: none; transition: opacity .4s ease; z-index: 1; }
+.editorial-gallery > figure:hover::before { opacity: 1; }
 .gallery-shot { position: relative; display: block; width: 100%; padding: 0; border: 1px solid #59616c; border-radius: 7px; overflow: hidden; background: #171c23; color: #d7dde2; cursor: zoom-in; text-align: left; box-shadow: 0 15px 35px #0003; transition: transform .35s, box-shadow .35s, border-color .35s; }
 .gallery-shot:hover { transform: translateY(-5px); border-color: #7f8b98; box-shadow: 0 25px 45px #0005, 0 0 0 1px #b8e4cf33; }
 .gallery-shot img { display: block; width: 100%; height: auto; max-height: 840px; object-fit: contain; }
@@ -117,8 +120,17 @@
 .gallery-shot:hover .gallery-expand { transform: rotate(90deg); }
 
 /* A slow camera move keeps a still capture alive without touching the pixels. */
-.gallery-shot:not(.is-live):not(.shot-phone) img { animation: gallery-kenburns 38s ease-in-out infinite alternate; }
+.gallery-shot:not(.is-live):not(.is-tour):not(.shot-phone) img { animation: gallery-kenburns 38s ease-in-out infinite alternate; }
 @keyframes gallery-kenburns { from { transform: scale(1); } to { transform: scale(1.055) translate(-1.1%, -.7%); } }
+
+/* A tour slides through the screens of a product as one continuous strip. */
+.gallery-shot.is-tour { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; aspect-ratio: 16 / 10; }
+.gallery-shot.is-tour .gallery-shot-bar { position: relative; z-index: 2; flex: none; }
+.gallery-tour { position: absolute; left: 0; right: 0; top: 28px; bottom: 0; overflow: hidden; container-type: inline-size; }
+.gallery-tour-track { display: flex; height: 100%; width: max-content; animation: tour-slide calc(var(--tour-frames, 6) * 3.4s) linear infinite; }
+.gallery-tour-track img { flex: none; width: 100cqw; height: 62.5cqw; object-fit: cover; object-position: center; }
+@keyframes tour-slide { to { transform: translateX(calc(var(--tour-frames, 6) / (var(--tour-frames, 6) + 1) * -100%)); } }
+.gallery-shot.is-tour:hover .gallery-tour-track { animation-play-state: paused; }
 
 /* Live preview: a tall capture drifts through the frame, paused on hover. */
 .gallery-shot.is-live { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; aspect-ratio: 16 / 10; }

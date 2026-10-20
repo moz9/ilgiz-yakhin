@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, Expand, X, ZoomIn, ZoomOut } from "lucide-react";
-import { motion } from "motion/react";
-import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
+import { motion, useMotionValue, useSpring } from "motion/react";
+import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
 import type { ProjectMedia } from "@/lib/projects";
 
 function subscribeReducedMotion(callback: () => void) {
@@ -25,12 +25,69 @@ function liveTravel(item: ProjectMedia) {
   return Math.max(0, 100 - (item.width / item.height) * 62.5);
 }
 
+function GalleryFigure({ item, index, onOpen, reduceMotion }: { item: ProjectMedia; index: number; onOpen: (index: number, trigger: HTMLButtonElement) => void; reduceMotion: boolean }) {
+  const tiltX = useMotionValue(0);
+  const tiltY = useMotionValue(0);
+  const springX = useSpring(tiltX, { stiffness: 160, damping: 20, mass: 0.6 });
+  const springY = useSpring(tiltY, { stiffness: 160, damping: 20, mass: 0.6 });
+  const live = item.presentation === "live";
+  const tour = item.frames?.length ?? 0;
+
+  function handleMove(event: ReactPointerEvent<HTMLElement>) {
+    if (reduceMotion) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+    tiltY.set((x - 0.5) * 6);
+    tiltX.set((0.5 - y) * 6);
+    event.currentTarget.style.setProperty("--rg-pointer-x", `${x * 100}%`);
+    event.currentTarget.style.setProperty("--rg-pointer-y", `${y * 100}%`);
+  }
+
+  function handleLeave() {
+    tiltX.set(0);
+    tiltY.set(0);
+  }
+
+  return <motion.figure
+    data-presentation={item.presentation ?? "browser"}
+    style={reduceMotion ? undefined : { rotateX: springX, rotateY: springY, transformPerspective: 1400 }}
+    onPointerMove={handleMove}
+    onPointerLeave={handleLeave}
+    initial={false}
+    whileInView={reduceMotion ? undefined : { opacity: [0.3, 1], y: [38, 0] }}
+    viewport={{ once: true, amount: 0.15 }}
+    transition={{ duration: 0.7, delay: reduceMotion ? 0 : Math.min(index, 4) * 0.06, ease: [0.22, 1, 0.36, 1] }}
+  >
+    <button
+      type="button"
+      className={`gallery-shot shot-${item.presentation ?? "browser"}${live ? " is-live" : ""}${tour ? " is-tour" : ""}`}
+      style={{
+        ...(live ? { "--gallery-travel": `${liveTravel(item)}%` } : null),
+        ...(tour ? { "--tour-frames": tour } : null),
+      } as CSSProperties}
+      aria-label={`Рассмотреть: ${item.label}`}
+      onClick={(event) => onOpen(index, event.currentTarget)}
+    >
+      <span className="gallery-shot-bar" aria-hidden="true"><i /><i /><i /><span>{item.label}</span>{(live || tour) && <b className="gallery-live-dot" />}</span>
+      {tour ? <span className="gallery-tour" aria-hidden="true">
+        <span className="gallery-tour-track">
+          {[...item.frames!, ...item.frames!.slice(0, 1)].map((frame, position) =>
+            <Image key={`${frame}-${position}`} src={frame} alt="" width={item.width ?? 1440} height={item.height ?? 900} sizes="(max-width: 900px) 90vw, 1300px" />)}
+        </span>
+      </span> : <Image src={item.src} alt={item.alt} width={item.width ?? 1440} height={item.height ?? 900} sizes={index === 0 ? "(max-width: 900px) 90vw, 1300px" : "(max-width: 900px) 90vw, 700px"} />}
+      <span className="gallery-expand" aria-hidden="true"><Expand /></span>
+    </button>
+    <figcaption><strong>{item.label}</strong><span>{item.caption}</span></figcaption>
+  </motion.figure>;
+}
+
 export function ProjectGallery({ media }: { media: ProjectMedia[] }) {
   const reduceMotion = useHydratedReducedMotion();
   const dialog = useRef<HTMLDialogElement>(null);
+  const trigger = useRef<HTMLButtonElement | null>(null);
   const [active, setActive] = useState<number | null>(null);
   const [zoom, setZoom] = useState(false);
-  const trigger = useRef<HTMLButtonElement | null>(null);
   const current = media[active ?? 0];
   const isOpen = active !== null;
 
@@ -55,37 +112,15 @@ export function ProjectGallery({ media }: { media: ProjectMedia[] }) {
     });
   }
 
-  function open(index: number) {
+  function open(index: number, element: HTMLButtonElement) {
+    trigger.current = element;
     setZoom(media[index]?.presentation === "live");
     setActive(index);
   }
 
   return <>
     <section className="redesign-case-gallery editorial-gallery" aria-label="Интерфейс проекта">
-      {media.map((item, index) => {
-        const live = item.presentation === "live";
-        return <motion.figure
-          key={item.src}
-          data-presentation={item.presentation ?? "browser"}
-          initial={false}
-          whileInView={reduceMotion ? undefined : { opacity: [0.3, 1], y: [38, 0] }}
-          viewport={{ once: true, amount: 0.15 }}
-          transition={{ duration: 0.7, delay: reduceMotion ? 0 : Math.min(index, 4) * 0.06, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <button
-            type="button"
-            className={`gallery-shot shot-${item.presentation ?? "browser"}${live ? " is-live" : ""}`}
-            style={live ? { "--gallery-travel": `${liveTravel(item)}%` } as CSSProperties : undefined}
-            aria-label={`Рассмотреть: ${item.label}`}
-            onClick={(event) => { trigger.current = event.currentTarget; open(index); }}
-          >
-            <span className="gallery-shot-bar" aria-hidden="true"><i /><i /><i /><span>{item.label}</span>{live && <b className="gallery-live-dot" />}</span>
-            <Image src={item.src} alt={item.alt} width={item.width ?? 1440} height={item.height ?? 900} sizes={index === 0 ? "(max-width: 900px) 90vw, 1300px" : "(max-width: 900px) 90vw, 700px"} />
-            <span className="gallery-expand" aria-hidden="true"><Expand /></span>
-          </button>
-          <figcaption><strong>{item.label}</strong><span>{item.caption}</span></figcaption>
-        </motion.figure>;
-      })}
+      {media.map((item, index) => <GalleryFigure key={item.src} item={item} index={index} onOpen={open} reduceMotion={reduceMotion} />)}
     </section>
     <dialog className="media-lightbox" ref={dialog} aria-label="Просмотр интерфейса" onClose={() => setActive(null)} onClick={(event) => { if (event.target === event.currentTarget) setActive(null); }} onKeyDown={(event) => {
       if (event.key === "ArrowRight") { event.preventDefault(); move(1); }

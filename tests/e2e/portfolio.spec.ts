@@ -69,19 +69,23 @@ test("launcher case exposes the reconstructed interface and a safe interactive d
   await expect(page.getByRole("heading", { name: "Launcher", exact: true })).toBeVisible();
   await expect(page.locator(".redesign-case-stack")).toContainText("WinUI 3");
   await expect(page.getByRole("heading", { name: "Функциональные контуры" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Запуск и готовность" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Диагностика" }).first()).toBeVisible();
-  await expect(page.locator(".redesign-case-gallery figure")).toHaveCount(6);
-  await expect(page.getByRole("link", { name: "Открыть интерактивное демо" })).toHaveAttribute("href", "/demos/launcher/index.html");
+  await expect(page.getByRole("heading", { name: "Старт и поведение" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Журналы и диагностика" })).toBeVisible();
+  await expect(page.locator(".redesign-case-gallery figure")).toHaveCount(3);
+  await expect(page.locator(".redesign-case-gallery .gallery-collage-piece").first()).toBeVisible();
+  await expect(page.getByRole("link", { name: "Открыть интерактивное демо" })).toHaveAttribute("href", "/demos/launcher");
   const visibleText = await page.locator("body").innerText();
   expect(visibleText).not.toMatch(/revelation|tianyu|tower.?spirits|vk.?play|192\.168\./i);
   expect(visibleText).toMatch(/реконструкц/i);
 
-  await page.goto("/demos/launcher/index.html");
-  await expect(page).toHaveTitle(/Launcher/);
-  await expect(page.locator("body")).toContainText("Безопасное демо");
-  await expect(page.locator("body")).toContainText("Только синтетические");
-  await expect(page.locator("body")).toContainText("Обзор");
+  await page.goto("/demos/launcher");
+  await expect(page).toHaveTitle(/Лаунчера/);
+  await expect(page.locator("body")).toContainText("ANONYMIZED PRODUCT RECONSTRUCTION");
+  await expect(page.locator("body")).toContainText("Стенд-реконструкция");
+  await expect(page.getByRole("button", { name: "Настройки игры", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Журналы", exact: true })).toBeVisible();
+  const demoText = await page.locator("body").innerText();
+  expect(demoText).not.toMatch(/revelation|tianyu|tower.?spirits|vk.?play|192\.168\./i);
 });
 
 test("streaming web case exposes product functions and a safe interactive demo", async ({ page }) => {
@@ -145,7 +149,7 @@ test("remaining cases include substantial product stories and purposeful media f
 });
 
 test("pages do not overflow horizontally", async ({ page }) => {
-  for (const route of ["/", "/projects", "/projects/revalib", "/projects/launcher", "/projects/streaming-web-platform", "/projects/streaming-android-tv", "/demos/launcher/index.html", "/demos/content-platform", "/demos/mobile-tv", "/about", "/resume", "/how-built"]) {
+  for (const route of ["/", "/projects", "/projects/revalib", "/projects/launcher", "/projects/streaming-web-platform", "/projects/streaming-android-tv", "/demos/launcher", "/demos/content-platform", "/demos/mobile-tv", "/about", "/resume", "/how-built"]) {
     await page.goto(route);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     const offenders = overflow > 1 ? await page.evaluate(() => Array.from(document.querySelectorAll("body *"))

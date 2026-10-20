@@ -32,6 +32,7 @@ function GalleryFigure({ item, index, onOpen, reduceMotion }: { item: ProjectMed
   const springY = useSpring(tiltY, { stiffness: 160, damping: 20, mass: 0.6 });
   const live = item.presentation === "live";
   const tour = item.frames?.length ?? 0;
+  const collage = item.presentation === "collage" && tour > 1;
 
   function handleMove(event: ReactPointerEvent<HTMLElement>) {
     if (reduceMotion) return;
@@ -61,7 +62,7 @@ function GalleryFigure({ item, index, onOpen, reduceMotion }: { item: ProjectMed
   >
     <button
       type="button"
-      className={`gallery-shot shot-${item.presentation ?? "browser"}${live ? " is-live" : ""}${tour ? " is-tour" : ""}`}
+      className={`gallery-shot shot-${item.presentation ?? "browser"}${live ? " is-live" : ""}${tour && !collage ? " is-tour" : ""}${collage ? " is-collage" : ""}`}
       style={{
         ...(live ? { "--gallery-travel": `${liveTravel(item)}%` } : null),
         ...(tour ? { "--tour-frames": tour } : null),
@@ -70,7 +71,19 @@ function GalleryFigure({ item, index, onOpen, reduceMotion }: { item: ProjectMed
       onClick={(event) => onOpen(index, event.currentTarget)}
     >
       <span className="gallery-shot-bar" aria-hidden="true"><i /><i /><i /><span>{item.label}</span>{(live || tour) && <b className="gallery-live-dot" />}</span>
-      {tour ? <span className="gallery-tour" aria-hidden="true">
+      {collage ? <span className="gallery-collage" aria-hidden="true">
+        {item.frames!.map((frame, position) =>
+          <motion.span
+            key={frame}
+            className="gallery-collage-piece"
+            initial={reduceMotion ? false : { opacity: 0, y: 34, scale: 0.97 }}
+            whileInView={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.8, delay: reduceMotion ? 0 : position * 0.12, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Image src={frame} alt="" width={item.width ?? 1440} height={item.height ?? 900} sizes="(max-width: 900px) 90vw, 1300px" />
+          </motion.span>)}
+      </span> : tour ? <span className="gallery-tour" aria-hidden="true">
         <span className="gallery-tour-track">
           {[...item.frames!, ...item.frames!.slice(0, 1)].map((frame, position) =>
             <Image key={`${frame}-${position}`} src={frame} alt="" width={item.width ?? 1440} height={item.height ?? 900} sizes="(max-width: 900px) 90vw, 1300px" />)}

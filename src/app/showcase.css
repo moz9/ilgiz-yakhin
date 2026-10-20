@@ -120,7 +120,7 @@
 .gallery-shot:hover .gallery-expand { transform: rotate(90deg); }
 
 /* A slow camera move keeps a still capture alive without touching the pixels. */
-.gallery-shot:not(.is-live):not(.is-tour):not(.shot-phone) img { animation: gallery-kenburns 38s ease-in-out infinite alternate; }
+.gallery-shot:not(.is-live):not(.is-tour):not(.is-collage):not(.shot-phone) img { animation: gallery-kenburns 38s ease-in-out infinite alternate; }
 @keyframes gallery-kenburns { from { transform: scale(1); } to { transform: scale(1.055) translate(-1.1%, -.7%); } }
 
 /* A tour slides through the screens of a product as one continuous strip. */
@@ -131,6 +131,17 @@
 .gallery-tour-track img { flex: none; width: 100cqw; height: 62.5cqw; object-fit: cover; object-position: center; }
 @keyframes tour-slide { to { transform: translateX(calc(var(--tour-frames, 6) / (var(--tour-frames, 6) + 1) * -100%)); } }
 .gallery-shot.is-tour:hover .gallery-tour-track { animation-play-state: paused; }
+
+/* A collage composes several screens into one designed frame. */
+.gallery-shot.is-collage { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; aspect-ratio: 16 / 10; }
+.gallery-shot.is-collage .gallery-shot-bar { position: relative; z-index: 3; flex: none; }
+.gallery-collage { position: absolute; left: 0; right: 0; top: 28px; bottom: 0; overflow: hidden; }
+.gallery-collage-piece { border: 1px solid #ffffff2e; border-radius: 9px; box-shadow: 0 20px 46px #000a; display: block; overflow: hidden; position: absolute; transition: transform .5s cubic-bezier(.22, 1, .36, 1); }
+.gallery-collage-piece img { display: block; height: 100%; object-fit: cover; object-position: top center; width: 100%; }
+.gallery-collage-piece:nth-child(1) { left: 2.5%; top: 5%; width: 72%; }
+.gallery-collage-piece:nth-child(2) { bottom: 2.5%; right: 2.5%; width: 56%; transform: rotate(-2.4deg); }
+.gallery-shot.is-collage:hover .gallery-collage-piece:nth-child(1) { transform: translateY(-4px); }
+.gallery-shot.is-collage:hover .gallery-collage-piece:nth-child(2) { transform: rotate(-1.2deg) translate(6px, -6px); }
 
 /* Live preview: a tall capture drifts through the frame, paused on hover. */
 .gallery-shot.is-live { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; aspect-ratio: 16 / 10; }

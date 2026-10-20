@@ -54,14 +54,15 @@ describe("project catalog", () => {
       expect(project.capabilities?.length).toBeGreaterThanOrEqual(4);
       expect(project.capabilities?.every(({ items }) => items.length >= 3)).toBe(true);
       if (project.slug === "launcher") {
-        expect(project.media?.length).toBeGreaterThanOrEqual(4);
-        expect(project.links?.[0]?.href).toBe("/demos/launcher/index.html");
+        expect(project.media?.length).toBeGreaterThanOrEqual(3);
+        expect(project.links?.[0]?.href).toBe("/demos/launcher");
         expect(project.stack).toContain("WinUI 3");
         expect(project.stack.join(" ")).not.toMatch(/Tauri|Rust|Vite/i);
         // The published demo is a web reconstruction: the native stack must not leak into it.
         expect(JSON.stringify(project.media)).not.toMatch(/Tauri|Rust|Vite/i);
-        expect(project.cover).toMatch(/launcher-overview\.webp$/);
+        expect(project.cover).toMatch(/launcher-ui-collage\.webp$/);
         expect(project.limitations.join(" ")).toMatch(/реконструкц/i);
+        expect(JSON.stringify(project.media)).toMatch(/launcher-ui-/);
       } else {
         expect(project.media?.length).toBeGreaterThanOrEqual(1);
       }

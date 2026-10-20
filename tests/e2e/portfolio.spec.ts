@@ -10,7 +10,7 @@ test("home follows the approved visual direction and keeps all cases reachable",
   expect(socialPreview.headers()["content-type"]).toContain("image/jpeg");
   await expect(page.locator(".redesign-wall-tile")).toHaveCount(36);
   await expect(page.locator(".redesign-project-card")).toHaveCount(6);
-  await expect(page.locator(".redesign-other a")).toHaveCount(7);
+  await expect(page.locator(".redesign-other a")).toHaveCount(8);
   await expect(page.locator(".redesign-project-card").first()).toHaveAttribute("href", "/projects/chessrise");
   await expect(page.locator(".redesign-project-card").nth(1)).toHaveAttribute("href", "/projects/pioner");
   await expect(page.getByRole("navigation", { name: "Быстрая навигация" })).toBeVisible();
@@ -31,7 +31,7 @@ test("featured projects remain accessible without motion", async ({ page }) => {
 test("catalog filters cases and opens a technical breakdown", async ({ page }) => {
   await page.goto("/projects");
   await expect(page.getByRole("heading", { name: "Проекты", exact: true })).toBeVisible();
-  await expect(page.locator(".project-row")).toHaveCount(13);
+  await expect(page.locator(".project-row")).toHaveCount(14);
   await page.getByRole("button", { name: /Desktop/ }).click();
   await expect(page.getByRole("heading", { name: "Система подготовки отчетности рабочего времени" })).toBeVisible();
   await page.getByRole("link", { name: "Система подготовки отчетности рабочего времени", exact: true }).click();

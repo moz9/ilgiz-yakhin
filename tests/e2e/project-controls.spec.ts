@@ -24,7 +24,7 @@ test("project panels show real media and compact glass case actions", async ({ p
   await first.scrollIntoViewIfNeeded();
   await expect(first.locator(".project-caption-open")).toContainText("Кейс");
   await expect.poll(() => first.locator(".stage-main-device img").evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
-  await expect(page.locator(".other-project-thumb")).toHaveCount(7);
+  await expect(page.locator(".other-project-thumb")).toHaveCount(8);
   await expect(page.locator(".delivery-step")).toHaveCount(6);
   await expect(page.locator(".delivery-step[data-complete=true]")).toHaveCount(6);
 });

@@ -122,7 +122,10 @@ test("Android case demonstrates phone and D-pad TV flows", async ({ page }) => {
   await page.getByRole("button", { name: "Смотреть", exact: true }).click();
   await expect(page.getByRole("button", { name: "Пропустить заставку" })).toBeVisible();
   await page.getByRole("button", { name: "Android TV" }).click();
-  await page.locator('[class*="tvRail"]').getByRole("button", { name: "Плеер" }).click();
+  // The television rail carries five primary destinations; the player is a secondary route.
+  await expect(page.locator('[class*="tvRail"] button')).toHaveCount(6);
+  await page.locator('[class*="tvPosterGrid"]').getByRole("button").first().click();
+  await page.getByRole("button", { name: "Продолжить" }).click();
   await expect(page.getByRole("button", { name: "Пропустить заставку" })).toBeVisible();
   await expect(page.getByText("1080p")).toBeVisible();
   const text = await page.locator("body").innerText();

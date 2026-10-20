@@ -43,8 +43,9 @@ export function RedesignDock() {
   useEffect(() => {
     if (!ready) return;
     // One setting drives the whole material: the fill and the dispersion follow it.
-    document.documentElement.style.setProperty("--glass-tint", String(.12 + density / 100 * .73));
-    document.documentElement.style.setProperty("--glass-blur", `${(2 + density / 100 * 12).toFixed(1)}px`);
+    // The transparent end keeps a real material — a glass that vanishes is not glass.
+    document.documentElement.style.setProperty("--glass-tint", String(.18 + density / 100 * .67));
+    document.documentElement.style.setProperty("--glass-blur", `${(3 + density / 100 * 12).toFixed(1)}px`);
     document.documentElement.dataset.opaqueGlass = String(opaque || systemOpaque);
     const timer = setTimeout(() => {
       try { localStorage.setItem("portfolio-appearance", JSON.stringify({ density, opaque })); } catch { /* Optional preference storage. */ }

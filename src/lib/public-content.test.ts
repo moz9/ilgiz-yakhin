@@ -18,7 +18,7 @@ describe("public content boundary", () => {
   });
 
   it("contains no forbidden private project terms", () => {
-    const forbidden = ["animego", "podkop", "ax3000t", "xray/3x-ui", "service_user"];
+    const forbidden = ["animego", "podkop", "ax3000t", "xray/3x-ui", "service_user", "byedpi", "cloudflare", "zerotier", "zeroblock", "zapret2", "proton 2025", "sing-box", "rodkor"];
     for (const term of forbidden) expect(content.toLowerCase()).not.toContain(term);
   });
 

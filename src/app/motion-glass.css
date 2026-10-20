@@ -1,4 +1,4 @@
-:root { --glass-tint: .2076; --glass-blur: 3px; }
+:root { --glass-tint: .26; --glass-blur: 4.4px; }
 .liquid-surface { position: relative; background: transparent; backdrop-filter: none; }
 .glass-layer { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: rgb(18 23 30 / var(--glass-tint)); -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.15); backdrop-filter: var(--glass-refraction,) blur(var(--glass-blur)) saturate(1.15); box-shadow: inset 0 1px 0 #fff7, inset 1px 0 0 #ffffff1f, inset -1px -1px 0 #0008; }
 .glass-layer > .glass-defs { position: absolute; width: 0; height: 0; overflow: hidden; pointer-events: none; }
@@ -20,10 +20,10 @@
 .appearance-settings button { cursor: pointer; color: inherit; }
 .appearance-settings header button { display: grid; place-items: center; border: 0; background: transparent; width: 36px; height: 36px; }
 .appearance-settings svg { width: 18px; height: 18px; }
-.glass-preview { height: 126px; position: relative; overflow: hidden; background: #cfded6; margin-bottom: 24px; border-radius: 5px; }
-.glass-preview-lines { position: absolute; inset: -40%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; color: #213c39; background: repeating-linear-gradient(125deg, transparent 0 28px, #315d57 29px 32px, transparent 33px 59px); transform: rotate(-12deg); animation: glass-underlay 9s ease-in-out infinite alternate; }
-.glass-preview-lines span { font: 700 36px var(--font-display); background: #cfded6; }
-.glass-preview-control { position: absolute; top: 34px; left: 15%; width: 70%; height: 58px; border-radius: 29px; display: flex; gap: 14px; align-items: center; justify-content: center; border: 1px solid #ffffff66; color: white; font-size: 14px; text-shadow: 0 1px 3px #000, 0 0 5px #000; }
+.glass-preview { height: 126px; position: relative; overflow: hidden; background: radial-gradient(130% 110% at 18% 0%, #23323c, #0c1217 72%); margin-bottom: 24px; border-radius: 5px; border: 1px solid #ffffff1f; }
+.glass-preview-lines { position: absolute; inset: -40%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; color: #8fd0bd; background: repeating-linear-gradient(125deg, transparent 0 28px, #2f6b5d 29px 32px, transparent 33px 59px); transform: rotate(-12deg); animation: glass-underlay 9s ease-in-out infinite alternate; }
+.glass-preview-lines span { font: 700 36px var(--font-display); background: #131d24; color: #a7e0cd; padding: 0 6px; }
+.glass-preview-control { position: absolute; top: 34px; left: 15%; width: 70%; height: 58px; border-radius: 29px; display: flex; gap: 14px; align-items: center; justify-content: center; border: 1px solid #ffffff66; color: white; font-size: 14px; text-shadow: 0 1px 2px #000, 0 0 8px #000e; }
 .density-label { display: flex; justify-content: space-between; font-size: 14px; }
 .density-label output { color: #bcc5ce; font: 12px var(--font-mono); }
 #glass-density { width: 100%; height: 36px; accent-color: var(--teal); margin: 4px 0; }
@@ -98,6 +98,12 @@ html[data-opaque-glass="true"] .glass-layer { background: #202833; backdrop-filt
   .glass-layer, html[data-opaque-glass="true"] .glass-layer { background: Canvas !important; backdrop-filter: none !important; border: 1px solid CanvasText; box-shadow: none; }
   .redesign-dock a, .redesign-dock a:hover, .redesign-dock a[aria-current], .dock-settings, .glass-preview-control { color: CanvasText; text-shadow: none; }
   .dock-selection { background: Canvas; border: 2px solid Highlight; }
+}
+/* Higher contrast sharpens the rim and the local scrim instead of flooding the backdrop. */
+@media (prefers-contrast: more) {
+  .glass-layer { box-shadow: inset 0 1px 0 #ffffff9e, inset 0 0 0 1px #ffffff45, 0 0 0 1px #00000059; }
+  .redesign-dock, .case-navigation.liquid-surface, .project-jump-controls { border-color: #ffffff8f; }
+  .redesign-dock a, .dock-settings, .case-nav-links a, .glass-preview-control { text-shadow: 0 1px 2px #000, 0 0 7px #000; }
 }
 @media (max-width: 700px) {
   .redesign-dock a { padding: 10px 12px; min-width: 44px; }

@@ -8,7 +8,8 @@ test("appearance controls update every glass, persist and respect accessibility"
   const dialog = page.getByRole("dialog", { name: "Внешний вид", exact: true });
   const slider = dialog.getByRole("slider", { name: "Liquid Glass" });
   await slider.fill("85");
-  await expect.poll(() => page.locator(".redesign-dock .glass-layer").evaluate(el => getComputedStyle(el).backgroundColor)).toContain("0.74");
+  // Calibrated density curve: tint = .18 + density/100 * .67, blur = 3px + density/100 * 12px.
+  await expect.poll(() => page.locator(".redesign-dock .glass-layer").evaluate(el => getComputedStyle(el).backgroundColor)).toContain("0.75");
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("portfolio-appearance") || "{}").density)).toBe(85);
   await page.reload();
   await settings.click();

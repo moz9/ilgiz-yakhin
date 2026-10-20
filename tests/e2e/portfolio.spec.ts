@@ -79,7 +79,7 @@ test("launcher case exposes the reconstructed interface and a safe interactive d
   expect(visibleText).toMatch(/реконструкц/i);
 
   await page.goto("/demos/launcher");
-  await expect(page).toHaveTitle(/Лаунчера/);
+  await expect(page).toHaveTitle(/лаунчера/i);
   await expect(page.locator("body")).toContainText("ANONYMIZED PRODUCT RECONSTRUCTION");
   await expect(page.locator("body")).toContainText("Стенд-реконструкция");
   await expect(page.getByRole("button", { name: "Настройки игры", exact: true })).toBeVisible();

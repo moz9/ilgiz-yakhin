@@ -17,10 +17,10 @@ describe("project catalog", () => {
     }
   });
 
-  it("publishes thirteen unique cases", () => {
-    expect(projects).toHaveLength(13);
-    expect(new Set(projects.map(({ slug }) => slug)).size).toBe(13);
-    expect(new Set(projects.map(({ index }) => index)).size).toBe(13);
+  it("publishes fourteen unique cases", () => {
+    expect(projects).toHaveLength(14);
+    expect(new Set(projects.map(({ slug }) => slug)).size).toBe(14);
+    expect(new Set(projects.map(({ index }) => index)).size).toBe(14);
   });
 
   it("puts neutral commercial cases first and sensitive content last", () => {
@@ -38,6 +38,7 @@ describe("project catalog", () => {
       "backup-lifecycle-automation",
       "ilgiz-portfolio",
       "content-platform",
+      "routerdesk",
     ]);
   });
 

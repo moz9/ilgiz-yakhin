@@ -124,7 +124,7 @@ const headline = ["Full-stack /", "AI-разработчик"];
 
 const stats = [
   { value: "3+", label: "года коммерческой практики" },
-  { value: "13", label: "кейсов в портфолио" },
+  { value: "14", label: "кейсов в портфолио" },
   { value: "6", label: "направлений: web, desktop, mobile, automation, infra, AI" },
 ];
 

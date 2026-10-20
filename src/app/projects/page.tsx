@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ProjectExplorer } from "@/components/project-explorer";
 
-export const metadata: Metadata = { title: "Проекты", description: "Тринадцать кейсов web-, mobile-, desktop-, automation- и infrastructure-разработки." };
+export const metadata: Metadata = { title: "Проекты", description: "Четырнадцать кейсов web-, mobile-, desktop-, automation- и infrastructure-разработки." };
 
 export default function ProjectsPage() {
   return (

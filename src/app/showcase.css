@@ -121,8 +121,9 @@
 @keyframes gallery-kenburns { from { transform: scale(1); } to { transform: scale(1.055) translate(-1.1%, -.7%); } }
 
 /* Live preview: a tall capture drifts through the frame, paused on hover. */
-.gallery-shot.is-live { aspect-ratio: 16 / 10; }
-.gallery-shot.is-live img { position: absolute; left: 0; top: 0; width: 100%; height: auto; max-height: none; object-fit: cover; object-position: top left; animation: gallery-drift 30s cubic-bezier(.42, 0, .28, 1) infinite alternate; }
+.gallery-shot.is-live { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; aspect-ratio: 16 / 10; }
+.gallery-shot.is-live .gallery-shot-bar { position: relative; z-index: 2; flex: none; }
+.gallery-shot.is-live img { position: absolute; left: 0; top: 28px; width: 100%; height: auto; max-height: none; object-fit: cover; object-position: top left; animation: gallery-drift 30s cubic-bezier(.42, 0, .28, 1) infinite alternate; }
 @keyframes gallery-drift { from { transform: translateY(0); } to { transform: translateY(calc(var(--gallery-travel, 0%) * -1)); } }
 .gallery-shot.is-live:hover img { animation-play-state: paused; }
 .gallery-shot.is-live::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(104deg, transparent 38%, #ffffff1c 50%, transparent 62%); transform: translateX(-115%); transition: transform 1.1s ease; }

@@ -64,18 +64,24 @@ test("resume remains complete with reduced motion", async ({ page }) => {
   await expect(page.locator(".resume-scroll-progress")).toBeHidden();
 });
 
-test("launcher case describes the current WinUI build without obsolete screens", async ({ page }) => {
+test("launcher case exposes the reconstructed interface and a safe interactive demo", async ({ page }) => {
   await page.goto("/projects/launcher");
   await expect(page.getByRole("heading", { name: "Launcher", exact: true })).toBeVisible();
   await expect(page.locator(".redesign-case-stack")).toContainText("WinUI 3");
   await expect(page.getByRole("heading", { name: "Функциональные контуры" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Запуск и готовность" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Диагностика" }).first()).toBeVisible();
-  await expect(page.locator(".redesign-case-winui")).toBeVisible();
-  await expect(page.locator(".redesign-case-gallery figure")).toHaveCount(0);
-  await expect(page.getByRole("link", { name: "Открыть интерактивное демо" })).toHaveCount(0);
+  await expect(page.locator(".redesign-case-gallery figure")).toHaveCount(6);
+  await expect(page.getByRole("link", { name: "Открыть интерактивное демо" })).toHaveAttribute("href", "/demos/launcher/index.html");
   const visibleText = await page.locator("body").innerText();
   expect(visibleText).not.toMatch(/revelation|tianyu|tower.?spirits|vk.?play|192\.168\./i);
+  expect(visibleText).toMatch(/реконструкц/i);
+
+  await page.goto("/demos/launcher/index.html");
+  await expect(page).toHaveTitle(/Launcher/);
+  await expect(page.locator("body")).toContainText("Безопасное демо");
+  await expect(page.locator("body")).toContainText("Только синтетические");
+  await expect(page.locator("body")).toContainText("Обзор");
 });
 
 test("streaming web case exposes product functions and a safe interactive demo", async ({ page }) => {

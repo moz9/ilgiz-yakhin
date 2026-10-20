@@ -42,15 +42,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         </div>
       </header>
       <RevealSection className="case-presentation">
-        {project.slug === "launcher" ?
-          <div className="redesign-case-winui">
-            <div className="redesign-case-chrome"><i /><i /><i /><span>Схема текущей WinUI 3 оболочки · не скриншот</span></div>
-            <div><aside>{["Старт", "Статус", "Конфиги", "Бинды", "Видео", "Настройки", "Обновления", "Логи"].map((item) => <span key={item}>{item}</span>)}</aside>
-              <section><small>Launcher / WinUI 3</small><h2>Управление запуском</h2><p>Настройки, диагностика и обновления в нативной Windows-оболочке.</p>
-                <div><span>Конфигурация</span><span>Видео</span><span>Статус</span></div>
-              </section></div>
-          </div> :
-          <ProjectStage project={project} priority />}
+        <ProjectStage project={project} priority />
       </RevealSection>
       <CaseNavigation sections={[
         { id: "overview", label: "Коротко" },
@@ -95,8 +87,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       </section>
       <Link className="redesign-case-next" href={`/projects/${next.slug}`}>
         <span><small>Следующий кейс</small><strong>{next.title}</strong><em>Открыть кейс <ArrowUpRight aria-hidden="true" /></em></span>
-        {next.slug === "launcher" ? <span className="redesign-next-placeholder">WinUI 3<br />Launcher</span> :
-          <Image src={next.cover} alt="" width={640} height={420} loading="lazy" />}
+        <Image src={next.cover} alt="" width={640} height={420} loading="lazy" />
       </Link>
     </div>
   </main>;

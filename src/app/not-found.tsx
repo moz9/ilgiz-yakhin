@@ -1,5 +1,23 @@
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+
+const routes = [
+  ["/projects", "Проекты"],
+  ["/resume", "Резюме"],
+  ["/about", "Обо мне"],
+  ["/how-built", "Как создан сайт"],
+];
 
 export default function NotFound() {
-  return <main className="not-found"><span>404</span><h1>Страница не найдена</h1><p>Проверьте адрес или вернитесь на главную.</p><Link className="button button-primary" href="/">На главную</Link></main>;
+  return <main className="inner-page not-found-page">
+    <section className="page-hero">
+      <div className="eyebrow"><span>404</span><span>Маршрут не найден</span></div>
+      <h1>Такой<br />страницы нет</h1>
+      <p>Адрес не совпал ни с одним разделом. Ниже — основные точки входа.</p>
+    </section>
+    <section className="not-found-links">
+      {routes.map(([href, label]) => <Link key={href} href={href}><span>{label}</span><ArrowUpRight aria-hidden="true" /></Link>)}
+      <Link className="button button-primary" href="/">На главную</Link>
+    </section>
+  </main>;
 }

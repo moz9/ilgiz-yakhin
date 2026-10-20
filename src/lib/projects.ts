@@ -18,7 +18,9 @@ export type ProjectMedia = {
   alt: string;
   label: string;
   caption: string;
-  presentation?: "browser" | "desktop" | "phone" | "document" | "diagram";
+  presentation?: "browser" | "desktop" | "phone" | "document" | "diagram" | "live";
+  width?: number;
+  height?: number;
 };
 
 export type Project = {
@@ -432,16 +434,16 @@ const projectCatalog: Project[] = [
       },
     ],
     media: [
-      { src: `${caseAssetBase}/streaming-platform-overview.webp`, alt: "Обезличенная реконструкция современной светлой DLE-витрины стриминговой платформы", label: "MODERN DLE THEME", caption: "Светлая тема сохраняет реальную информационную архитектуру: компактный хедер, сезонную полку, обновления, новости и каталожные маршруты.", presentation: "browser" },
-      { src: `${caseAssetBase}/streaming-platform-editorial.webp`, alt: "Обезличенная реконструкция плотной редакционной DLE-темы стриминговой платформы", label: "EDITORIAL DLE THEME", caption: "Вторая DLE-тема строится иначе: контрастная шапка, промо-блок, сезонный каталог, плотная лента обновлений и редакционные модули." },
-      { src: `${caseAssetBase}/streaming-platform-schedule.webp`, alt: "Расписание выпусков в обезличенной DLE-витрине", label: "SCHEDULE", caption: "Самостоятельная страница расписания показывает дни недели, статусы, ожидаемые выпуски и прямые переходы к карточкам." },
-      { src: `${caseAssetBase}/streaming-platform-detail.webp`, alt: "Расширенная карточка материала в обезличенной DLE-витрине", label: "CONTENT DETAIL", caption: "Верх карточки объединяет постер, альтернативные названия, рейтинги, метаданные, описание, подписку и таймер нового выпуска." },
+      { src: `${caseAssetBase}/streaming-platform-overview-live.webp`, presentation: "live", width: 1280, height: 2475, alt: "Обезличенная реконструкция современной светлой DLE-витрины стриминговой платформы", label: "MODERN DLE THEME", caption: "Светлая тема сохраняет реальную информационную архитектуру: компактный хедер, сезонную полку, обновления, новости и каталожные маршруты." },
+      { src: `${caseAssetBase}/streaming-platform-editorial-live.webp`, presentation: "live", width: 1280, height: 2685, alt: "Обезличенная реконструкция плотной редакционной DLE-темы стриминговой платформы", label: "EDITORIAL DLE THEME", caption: "Вторая DLE-тема строится иначе: контрастная шапка, промо-блок, сезонный каталог, плотная лента обновлений и редакционные модули." },
+      { src: `${caseAssetBase}/streaming-platform-schedule-live.webp`, presentation: "live", width: 1280, height: 1721, alt: "Расписание выпусков в обезличенной DLE-витрине", label: "SCHEDULE", caption: "Самостоятельная страница расписания показывает дни недели, статусы, ожидаемые выпуски и прямые переходы к карточкам." },
+      { src: `${caseAssetBase}/streaming-platform-detail-live.webp`, presentation: "live", width: 1280, height: 3582, alt: "Расширенная карточка материала в обезличенной DLE-витрине", label: "CONTENT DETAIL", caption: "Верх карточки объединяет постер, альтернативные названия, рейтинги, метаданные, описание, подписку и таймер нового выпуска." },
       { src: `${caseAssetBase}/streaming-platform-detail-flow.webp`, alt: "Описание и плеер в обезличенной DLE-витрине", label: "PLAYBACK FLOW", caption: "Продолжение страницы показывает развернутое описание, безопасную демонстрационную область плеера и переключение источников." },
-      { src: `${caseAssetBase}/streaming-platform-news.webp`, alt: "Редакционная новостная страница стриминговой DLE-платформы", label: "EDITORIAL NEWS", caption: "Новости являются полноценным контуром DLE: отдельные публикации, связи с каталогом, SEO-поля и управляемая редакционная выдача." },
-      { src: `${caseAssetBase}/streaming-platform-discover.webp`, alt: "Подборки и рейтинг в обезличенной DLE-витрине", label: "DISCOVERY", caption: "Тематические коллекции и Top 100 образуют отдельные способы исследования большого каталога." },
-      { src: `${caseAssetBase}/streaming-platform-profile.webp`, alt: "Личная библиотека и уведомления в обезличенной DLE-витрине", label: "PROFILE", caption: "Профиль объединяет пользовательские списки, историю, прогресс, оценки, подписки и уведомления о новых выпусках." },
-      { src: `${caseAssetBase}/streaming-platform-ai.webp`, alt: "Обезличенная реконструкция пользовательского AI-подбора стриминговой платформы", label: "SMART SEARCH", caption: "Чат, пресеты и мини-анкета учитывают списки, оценки и историю просмотра; это отдельный контур от серверной AI-автоматизации." },
-      { src: `${caseAssetBase}/streaming-platform-operations.webp`, alt: "Панель подтвержденных контуров парсинга, редакционной подготовки и выпуска", label: "CONTENT OPS", caption: "Парсер каталога, AI Contentmaker, human review, Telegram outbox и guarded production release." },
+      { src: `${caseAssetBase}/streaming-platform-news-live.webp`, presentation: "live", width: 1280, height: 1989, alt: "Редакционная новостная страница стриминговой DLE-платформы", label: "EDITORIAL NEWS", caption: "Новости являются полноценным контуром DLE: отдельные публикации, связи с каталогом, SEO-поля и управляемая редакционная выдача." },
+      { src: `${caseAssetBase}/streaming-platform-discover-live.webp`, presentation: "live", width: 1280, height: 2676, alt: "Подборки и рейтинг в обезличенной DLE-витрине", label: "DISCOVERY", caption: "Тематические коллекции и Top 100 образуют отдельные способы исследования большого каталога." },
+      { src: `${caseAssetBase}/streaming-platform-profile-live.webp`, presentation: "live", width: 1280, height: 1165, alt: "Личная библиотека и уведомления в обезличенной DLE-витрине", label: "PROFILE", caption: "Профиль объединяет пользовательские списки, историю, прогресс, оценки, подписки и уведомления о новых выпусках." },
+      { src: `${caseAssetBase}/streaming-platform-ai-live.webp`, presentation: "live", width: 1280, height: 1147, alt: "Обезличенная реконструкция пользовательского AI-подбора стриминговой платформы", label: "SMART SEARCH", caption: "Чат, пресеты и мини-анкета учитывают списки, оценки и историю просмотра; это отдельный контур от серверной AI-автоматизации." },
+      { src: `${caseAssetBase}/streaming-platform-operations-live.webp`, presentation: "live", width: 1280, height: 1034, alt: "Панель подтвержденных контуров парсинга, редакционной подготовки и выпуска", label: "CONTENT OPS", caption: "Парсер каталога, AI Contentmaker, human review, Telegram outbox и guarded production release." },
     ],
     results: ["Две независимо оформленные публичные витрины работают на общем каталожном и операционном контуре", "Основной шаблон современной темы структурно сокращён примерно на 40% с выносом runtime и route-specific CSS", "Контуры обновления каталога и Telegram outbox восстановлены и проверены на production", "На staging обновления CMS проверены 155 правил, 153 применимых сценария и 36 файлов без compile/PHP-ошибок"],
     evidence: [

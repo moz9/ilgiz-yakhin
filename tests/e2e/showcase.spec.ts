@@ -62,7 +62,7 @@ test("real scenario showcase switches projects and steps", async ({ page }) => {
   await expect(showcase.getByRole("link", { name: "Весь кейс" })).toHaveAttribute("href", "/projects/revalib");
   await showcase.getByRole("button", { name: "Стриминг", exact: true }).click();
   await showcase.getByRole("button", { name: /03.*AI-контур/ }).click();
-  await expect(showcase.locator(".workbench-frame img")).toHaveAttribute("alt", /КОНТЕНТ И РЕЛИЗ/);
+  await expect(showcase.locator(".workbench-frame img")).toHaveAttribute("alt", /Контур каталога и редакции/);
 });
 
 test("secondary case previews follow keyboard focus without following the cursor", async ({ page, isMobile }) => {

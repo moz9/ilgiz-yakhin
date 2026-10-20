@@ -23,7 +23,9 @@ export function Workbench() {
   const scene = scenes[sceneIndex];
   const project = getProject(scene.slug)!;
   // The gallery composes screens into collages; the workbench steps through the screens themselves.
-  const frames = project.media!.flatMap((media) => (media.frames ?? [media.src]).map((src) => ({ src, alt: media.alt, caption: media.caption, presentation: media.presentation })));
+  const frames = project.media!.flatMap((media) => (media.frames ?? [media.src]).map((frame) => typeof frame === "string"
+    ? { src: frame, alt: media.alt, caption: media.caption, presentation: media.presentation }
+    : { ...frame, caption: media.caption, presentation: frame.presentation ?? media.presentation }));
   const item = frames[scene.indices[step]];
 
   return <section className="workbench" aria-labelledby="workbench-title" data-tone={scene.tone}>

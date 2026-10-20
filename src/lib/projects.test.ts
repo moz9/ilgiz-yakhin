@@ -73,7 +73,8 @@ describe("project catalog", () => {
         expect(media.alt.length).toBeGreaterThan(20);
         expect(media.caption.length).toBeGreaterThan(30);
         for (const frame of media.frames ?? []) {
-          expect(existsSync(path.resolve("public/cases", path.basename(new URL(frame).pathname)))).toBe(true);
+          const src = typeof frame === "string" ? frame : frame.src;
+          expect(existsSync(path.resolve("public/cases", path.basename(new URL(src).pathname)))).toBe(true);
         }
       }
     }

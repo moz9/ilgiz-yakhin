@@ -140,11 +140,11 @@ test("Android case demonstrates phone and D-pad TV flows", async ({ page }) => {
 
 test("remaining cases include substantial product stories and purposeful media frames", async ({ page }) => {
   const cases = [
-    { route: "/projects/chessrise", groups: 4, media: 3, presentation: "browser" },
-    { route: "/projects/pioner", groups: 4, media: 2, presentation: "phone" },
-    { route: "/projects/worktime-reporting", groups: 4, media: 3, presentation: "document" },
-    { route: "/projects/visitor-flow-reporting", groups: 4, media: 3, presentation: "desktop" },
-    { route: "/projects/infrastructure-inventory", groups: 4, media: 3, presentation: "desktop" },
+    { route: "/projects/chessrise", groups: 4, media: 2, presentation: "collage" },
+    { route: "/projects/pioner", groups: 4, media: 1, presentation: "collage" },
+    { route: "/projects/worktime-reporting", groups: 4, media: 1, presentation: "strip" },
+    { route: "/projects/visitor-flow-reporting", groups: 4, media: 1, presentation: "strip" },
+    { route: "/projects/infrastructure-inventory", groups: 4, media: 1, presentation: "strip" },
     { route: "/projects/backup-lifecycle-automation", groups: 4, media: 1, presentation: "diagram" },
   ];
 

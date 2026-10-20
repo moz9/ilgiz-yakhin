@@ -25,6 +25,10 @@ function liveTravel(item: ProjectMedia) {
   return Math.max(0, 100 - (item.width / item.height) * 62.5);
 }
 
+function frameSrc(frame: string | { src: string; alt: string }) {
+  return typeof frame === "string" ? frame : frame.src;
+}
+
 function GalleryFigure({ item, index, onOpen, reduceMotion }: { item: ProjectMedia; index: number; onOpen: (index: number, trigger: HTMLButtonElement) => void; reduceMotion: boolean }) {
   const tiltX = useMotionValue(0);
   const tiltY = useMotionValue(0);
@@ -74,7 +78,7 @@ function GalleryFigure({ item, index, onOpen, reduceMotion }: { item: ProjectMed
       {collage ? <span className={`gallery-collage${item.presentation === "strip" ? " is-strip" : ""}`} aria-hidden="true">
         {item.frames!.map((frame, position) =>
           <motion.span
-            key={frame}
+            key={typeof frame === "string" ? frame : frame.src}
             className="gallery-collage-piece"
             data-shape="land"
             onLoad={(event) => {
@@ -86,12 +90,12 @@ function GalleryFigure({ item, index, onOpen, reduceMotion }: { item: ProjectMed
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8, delay: reduceMotion ? 0 : position * 0.12, ease: [0.22, 1, 0.36, 1] }}
           >
-            <Image src={frame} alt="" width={item.width ?? 1440} height={item.height ?? 900} sizes="(max-width: 900px) 90vw, 1300px" />
+            <Image src={typeof frame === "string" ? frame : frame.src} alt="" width={item.width ?? 1440} height={item.height ?? 900} sizes="(max-width: 900px) 90vw, 1300px" />
           </motion.span>)}
       </span> : tour ? <span className="gallery-tour" aria-hidden="true">
         <span className="gallery-tour-track">
           {[...item.frames!, ...item.frames!.slice(0, 1)].map((frame, position) =>
-            <Image key={`${frame}-${position}`} src={frame} alt="" width={item.width ?? 1440} height={item.height ?? 900} sizes="(max-width: 900px) 90vw, 1300px" />)}
+            <Image key={`${frameSrc(frame)}-${position}`} src={frameSrc(frame)} alt="" width={item.width ?? 1440} height={item.height ?? 900} sizes="(max-width: 900px) 90vw, 1300px" />)}
         </span>
       </span> : <Image src={item.src} alt={item.alt} width={item.width ?? 1440} height={item.height ?? 900} sizes={index === 0 ? "(max-width: 900px) 90vw, 1300px" : "(max-width: 900px) 90vw, 700px"} />}
       <span className="gallery-expand" aria-hidden="true"><Expand /></span>

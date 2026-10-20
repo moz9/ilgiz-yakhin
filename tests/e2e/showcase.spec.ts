@@ -75,13 +75,13 @@ test("secondary case previews follow keyboard focus without following the cursor
 });
 
 test("gallery supports full-size viewing, keyboard navigation and focus restoration", async ({ page }) => {
-  await page.goto("/projects/worktime-reporting");
-  const first = page.getByRole("button", { name: "Рассмотреть: 01 / IMPORT" });
+  await page.goto("/projects/revalib");
+  const first = page.getByRole("button", { name: "Рассмотреть: 01 / БИБЛИОТЕКА И ГАЙД" });
   await first.click();
   const dialog = page.getByRole("dialog", { name: "Просмотр интерфейса" });
   await expect(dialog).toBeVisible();
   await page.keyboard.press("ArrowRight");
-  await expect(dialog.locator("img")).toHaveAttribute("src", "https://raw.githubusercontent.com/moz9/ilgiz-yakhin/main/public/cases/worktime.webp");
+  await expect(dialog.locator("img")).toHaveAttribute("src", "https://raw.githubusercontent.com/moz9/ilgiz-yakhin/main/public/cases/revalib-update.webp");
   await dialog.getByRole("button", { name: "Увеличить изображение" }).click();
   await expect(dialog.locator(".lightbox-image")).toHaveClass(/is-zoomed/);
   await page.keyboard.press("Escape");
@@ -95,7 +95,7 @@ test("anonymous case and historical links do not expose the original brand", asy
   await expect(page).toHaveURL(/\/projects\/content-platform$/);
   await expect(page.getByRole("heading", { name: "Контентная платформа", exact: true })).toBeVisible();
   await expect(page.locator("main")).not.toContainText(/luna.?fantasy/i);
-  await expect(page.locator(".redesign-case-gallery figure")).toHaveCount(3);
+  await expect(page.locator(".redesign-case-gallery figure")).toHaveCount(2);
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /\/projects\/content-platform$/);
   expect((await request.get("/cases/lunafantasy.webp")).status()).toBe(404);
   expect((await request.get("/og.jpg")).url()).toMatch(/\/og-v2\.jpg$/);

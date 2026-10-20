@@ -6,6 +6,7 @@
 .project-stage[data-project="content-platform"] { --stage-paper: #dddce9; --stage-ink: #47445f; }
 .project-stage[data-project="streaming-web-platform"] { --stage-paper: #e5ddec; --stage-ink: #54436b; }
 .project-stage[data-project="streaming-android-tv"] { --stage-paper: #dbe1df; --stage-ink: #374944; }
+.project-stage[data-project="launcher"] { --stage-paper: #10161b; --stage-ink: #cfe8dc; }
 .project-stage[data-project="atlant-business-site"] { --stage-paper: #dededa; --stage-ink: #393b39; }
 .stage-grid { position: absolute; z-index: -1; inset: 0; opacity: .2; background-image: linear-gradient(var(--stage-ink) 1px, transparent 1px), linear-gradient(90deg, var(--stage-ink) 1px, transparent 1px); background-size: 20% 25%; mask-image: linear-gradient(0deg, #000, transparent 65%); }
 .stage-heading, .stage-caption { position: absolute; display: flex; justify-content: space-between; gap: 12px; left: 5%; right: 5%; font: 10px/1.5 var(--font-mono); text-transform: uppercase; }

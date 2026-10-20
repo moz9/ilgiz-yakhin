@@ -63,6 +63,9 @@ export function RedesignDock() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   const active = (href: string) => href === "/" ? pathname === "/" : pathname.startsWith(href);
+  // Demos are standalone product surfaces: the floating site navigation would
+  // cover their own controls and leak into the published case captures.
+  if (pathname.startsWith("/demos/")) return null;
   return <>
     <nav className={`redesign-dock liquid-surface${hidden && !settingsOpen ? " is-hidden" : ""}`} aria-label="Быстрая навигация">
       <GlassLayer />

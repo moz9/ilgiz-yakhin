@@ -140,8 +140,12 @@
 .gallery-collage-piece img { display: block; height: 100%; object-fit: cover; object-position: top center; width: 100%; }
 .gallery-collage-piece:nth-child(1) { left: 2.5%; top: 5%; width: 72%; }
 .gallery-collage-piece:nth-child(2) { bottom: 2.5%; right: 2.5%; width: 56%; transform: rotate(-2.4deg); }
+.gallery-collage.is-portrait .gallery-collage-piece:nth-child(1) { bottom: 4%; height: 92%; left: 11%; top: auto; width: auto; }
+.gallery-collage.is-portrait .gallery-collage-piece:nth-child(2) { bottom: 8%; height: 74%; right: 15%; top: auto; width: auto; }
+.gallery-collage.is-portrait .gallery-collage-piece img { object-fit: contain; }
 .gallery-shot.is-collage:hover .gallery-collage-piece:nth-child(1) { transform: translateY(-4px); }
 .gallery-shot.is-collage:hover .gallery-collage-piece:nth-child(2) { transform: rotate(-1.2deg) translate(6px, -6px); }
+.gallery-collage.is-portrait:hover .gallery-collage-piece:nth-child(1) { transform: translateY(-4px); }
 
 /* Live preview: a tall capture drifts through the frame, paused on hover. */
 .gallery-shot.is-live { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; aspect-ratio: 16 / 10; }

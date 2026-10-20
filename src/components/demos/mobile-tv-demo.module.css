@@ -51,13 +51,62 @@
 
 .tvStage { padding-top: 74px; padding-bottom: 74px; }.tvStage .context { align-self: start; margin-top: 80px; }.tvStage .technical { display: none; }
 .tvFrame { background: #07100e; border: 8px solid #070b0a; box-shadow: 0 30px 100px rgba(0,0,0,.5); display: grid; grid-template-columns: 76px minmax(0, 1fr); height: 590px; max-width: 1100px; overflow: hidden; width: 100%; }.tvRail { align-items: center; background: #0c1614; border-right: 1px solid #26332f; display: flex; flex-direction: column; gap: 8px; padding: 18px 10px; }.tvRail .appMark { flex: 0 0 34px; height: 34px; margin-bottom: 30px; width: 34px; }.tvRail button { align-items: center; background: transparent; border: 0; color: #6f817c; display: flex; flex: 0 0 46px; justify-content: center; position: relative; width: 100%; }.tvRail button.active { background: #e8efec; color: #10201c; outline: 3px solid #70d3c1; }.tvRail button span { display: none; }.tvRail svg { height: 18px; width: 18px; }.tvRail button:last-child { margin-top: auto; }
-.tvScreen { min-width: 0; overflow: hidden; position: relative; }.tvHome { height: 100%; position: relative; }.tvHome > img { object-fit: cover; }.tvShade { background: linear-gradient(90deg, rgba(5,14,11,.97) 0%, rgba(5,14,11,.72) 42%, rgba(5,14,11,.08) 100%); inset: 0; position: absolute; }.tvHeroCopy { left: clamp(32px, 6vw, 84px); max-width: 560px; position: absolute; top: 110px; }.tvHeroCopy > span { color: var(--app-mint); font-size: 8px; font-weight: 900; }.tvHeroCopy h2 { font-size: clamp(42px, 5vw, 72px); line-height: .9; margin: 16px 0 20px; }.tvHeroCopy p { color: #b5c5c1; font-size: 12px; line-height: 1.55; max-width: 480px; }.tvHeroCopy div { display: flex; gap: 10px; margin-top: 30px; }.tvHeroCopy button { align-items: center; background: rgba(255,255,255,.12); border: 1px solid #53605d; color: #fff; display: flex; font: inherit; font-size: 9px; font-weight: 800; gap: 8px; min-height: 40px; padding: 0 18px; }.tvHeroCopy button:first-child { background: #fff; border-color: #fff; color: #101817; outline: 3px solid var(--app-mint); }.tvHeroCopy button svg { height: 13px; width: 13px; }.tvProgress { bottom: 34px; left: clamp(32px, 6vw, 84px); position: absolute; width: min(460px, 52%); }.tvProgress > span { background: rgba(255,255,255,.25); display: block; height: 4px; }.tvProgress i { background: var(--app-red); display: block; height: 100%; width: 68%; }.tvProgress small { color: #aab9b5; font-size: 8px; }
+.tvScreen { min-width: 0; overflow: hidden; position: relative; }.tvHome { height: 100%; overflow: hidden; padding: 44px 48px; position: relative; }.tvHome > img { object-fit: cover; }.tvShade { background: linear-gradient(90deg, rgba(5,14,11,.97) 0%, rgba(5,14,11,.72) 42%, rgba(5,14,11,.08) 100%); inset: 0; position: absolute; }.tvHeroCopy { left: clamp(32px, 6vw, 84px); max-width: 560px; position: absolute; top: 110px; }.tvHeroCopy > span { color: var(--app-mint); font-size: 8px; font-weight: 900; }.tvHeroCopy h2 { font-size: clamp(42px, 5vw, 72px); line-height: .9; margin: 16px 0 20px; }.tvHeroCopy p { color: #b5c5c1; font-size: 12px; line-height: 1.55; max-width: 480px; }.tvHeroCopy div { display: flex; gap: 10px; margin-top: 30px; }.tvHeroCopy button { align-items: center; background: rgba(255,255,255,.12); border: 1px solid #53605d; color: #fff; display: flex; font: inherit; font-size: 9px; font-weight: 800; gap: 8px; min-height: 40px; padding: 0 18px; }.tvHeroCopy button:first-child { background: #fff; border-color: #fff; color: #101817; outline: 3px solid var(--app-mint); }.tvHeroCopy button svg { height: 13px; width: 13px; }.tvProgress { bottom: 34px; left: clamp(32px, 6vw, 84px); position: absolute; width: min(460px, 52%); }.tvProgress > span { background: rgba(255,255,255,.25); display: block; height: 4px; }.tvProgress i { background: var(--app-red); display: block; height: 100%; width: 68%; }.tvProgress small { color: #aab9b5; font-size: 8px; }
 .tvPage { height: 100%; overflow: hidden; padding: 44px 48px; }.tvPageHead { align-items: start; display: flex; justify-content: space-between; }.tvPageHead span { color: var(--app-mint); font-size: 8px; font-weight: 900; }.tvPageHead h2 { font-size: 34px; margin: 8px 0 28px; }.tvPageHead > svg { color: var(--app-mint); height: 28px; width: 28px; }.tvQuery { align-items: center; background: #15231f; border: 1px solid #374841; display: grid; gap: 12px; grid-template-columns: 20px 1fr auto; min-height: 54px; padding: 0 18px; }.tvQuery svg { height: 17px; width: 17px; }.tvQuery strong { font-size: 11px; }.tvQuery span { color: #83948f; font-size: 8px; }.tvResultGrid { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); margin-top: 22px; }.tvResultGrid button { background: transparent; border: 0; color: #fff; padding: 6px; text-align: left; }.tvResultGrid button.focused { outline: 3px solid var(--app-mint); }.tvResultGrid button > div { aspect-ratio: 1.6; position: relative; }.tvResultGrid img { object-fit: cover; }.tvResultGrid button > div span { background: #f4f6f3; bottom: 0; color: #111817; font-size: 8px; padding: 6px; position: absolute; right: 0; }.tvResultGrid strong { display: block; font-size: 12px; margin: 12px 0 4px; }.tvResultGrid small { color: #84958f; font-size: 8px; }
 .tvWideList { display: grid; gap: 18px; grid-template-columns: repeat(3, 1fr); }.tvWideList article { padding: 7px; }.tvWideList article.focused { background: #13201d; outline: 3px solid var(--app-mint); }.tvWideList article > div { aspect-ratio: 1.55; overflow: hidden; position: relative; }.tvWideList img { object-fit: cover; }.tvWideList article > div span { background: rgba(255,255,255,.3); bottom: 0; height: 4px; left: 0; position: absolute; right: 0; }.tvWideList article > div i { background: var(--app-red); display: block; height: 100%; }.tvWideList small { color: var(--app-mint); display: block; font-size: 7px; margin-top: 12px; }.tvWideList h3 { font-size: 16px; margin: 7px 0; }.tvWideList p { color: #81918d; font-size: 8px; }
 .tvOffline { display: grid; gap: 15px; grid-template-columns: 1fr 1fr; }.tvStorage { background: #13201d; grid-row: 1 / 3; padding: 30px; }.tvStorage > span { color: var(--app-mint); font-size: 8px; }.tvStorage > strong { display: block; font-size: 48px; margin: 70px 0 20px; }.tvStorage > i { background: #354641; display: block; height: 6px; }.tvStorage > i b { background: var(--app-mint); display: block; height: 100%; width: 18%; }.tvStorage > small { color: #899a95; display: block; font-size: 8px; margin-top: 12px; }.tvOffline article { align-items: center; background: #101a18; display: grid; gap: 14px; grid-template-columns: 150px 1fr 18px; padding: 8px; }.tvOffline article.focused { outline: 3px solid var(--app-mint); }.tvOffline article img { height: 90px; object-fit: cover; width: 150px; }.tvOffline article small { color: var(--app-mint); display: block; font-size: 7px; }.tvOffline article strong { display: block; font-size: 11px; margin: 6px 0; }.tvOffline article span { color: #82928e; font-size: 8px; }.tvOffline article > svg { color: var(--app-mint); height: 15px; width: 15px; }
 .tvUpdate { align-items: center; display: grid; gap: 70px; grid-template-columns: 1fr 300px; height: 100%; }.tvUpdate > div:first-child > span { color: var(--app-mint); font-size: 8px; }.tvUpdate h2 { font-size: 48px; line-height: .95; margin: 14px 0; }.tvUpdate p { color: #9aacA7; font-size: 11px; line-height: 1.6; }.tvUpdate ul { list-style: none; padding: 0; }.tvUpdate li { align-items: center; color: #a8b7b3; display: flex; font-size: 9px; gap: 8px; padding: 5px 0; }.tvUpdate li svg { color: var(--app-mint); height: 13px; width: 13px; }.tvUpdate button { align-items: center; background: #fff; border: 0; color: #111817; display: flex; font: inherit; font-size: 9px; font-weight: 900; gap: 8px; margin-top: 24px; min-height: 42px; padding: 0 18px; }.tvUpdate button.focused { outline: 3px solid var(--app-mint); }.tvUpdate button svg { height: 14px; width: 14px; }.tvUpdateArt { align-items: center; background: #14221f; display: flex; flex-direction: column; height: 300px; justify-content: center; position: relative; }.tvUpdateArt > svg { color: var(--app-mint); height: 58px; width: 58px; }.tvUpdateArt span { font-size: 34px; font-weight: 900; margin-top: 24px; }.tvUpdateArt small { color: #83938f; font-size: 8px; }
 
 .footer { align-items: center; background: #0a100f; color: #7d8b88; display: flex; font-size: 8px; justify-content: space-between; min-height: 50px; padding: 0 clamp(24px, 5vw, 82px); text-transform: uppercase; }.footer strong { color: #d7dfdc; }
+
+/* Schedule, news, rooms, profile and menu follow the native route structure. */
+.scheduleDays { display: flex; gap: 6px; padding: 0 14px 12px; }
+.scheduleDays button { background: #e4e7e1; border: 0; border-radius: 6px; color: #6d7874; font-size: 8px; font-weight: 800; min-height: 28px; padding: 0 10px; }
+.scheduleDays button.active { background: var(--app-green); color: #fff; }
+.scheduleList { padding: 0 14px 20px; }
+.scheduleList article { align-items: center; border-bottom: 1px solid #dde1dc; display: grid; gap: 10px; grid-template-columns: 62px 1fr auto; min-height: 52px; }
+.scheduleList time { color: var(--app-muted); font: 7px var(--font-mono); }
+.scheduleList strong { font-size: 10px; }
+.scheduleList span { border-radius: 4px; font-size: 7px; padding: 4px 7px; }
+.scheduleList .done { background: #e2ece2; color: #4c6b52; }
+.scheduleList .soon { background: var(--app-green); color: #fff; }
+.scheduleList .later { background: #eceee9; color: #8a938f; }
+.newsList { padding: 0 14px 20px; }
+.newsList button { align-items: center; background: transparent; border: 0; border-bottom: 1px solid #dde1dc; color: inherit; display: grid; font: inherit; gap: 11px; grid-template-columns: 62px 1fr 12px; min-height: 74px; padding: 10px 0; text-align: left; width: 100%; }
+.newsList button > div { aspect-ratio: 1.1; overflow: hidden; position: relative; }
+.newsList img { object-fit: cover; }
+.newsList small { color: var(--app-muted); display: block; font: 7px var(--font-mono); }
+.newsList strong { display: block; font-size: 10px; line-height: 1.35; margin-top: 5px; }
+.roomCreate { align-items: center; background: var(--app-green); border: 0; color: #fff; display: flex; font: inherit; font-size: 9px; font-weight: 800; gap: 7px; justify-content: center; margin: 0 14px 14px; min-height: 38px; width: calc(100% - 28px); }
+.roomList { padding: 0 14px 20px; }
+.roomList article { align-items: center; border-bottom: 1px solid #dde1dc; display: flex; justify-content: space-between; min-height: 56px; }
+.roomList article.active { background: #eef1ea; }
+.roomList strong { display: block; font-size: 10px; }
+.roomList small { color: var(--app-muted); font-size: 8px; }
+.roomList span { color: var(--app-green); font-size: 8px; font-weight: 700; }
+.profileCard { background: #10231f; color: #fff; margin: 0 14px 16px; padding: 18px; }
+.profileCard span { color: #8ce0d0; font-size: 7px; }
+.profileCard strong { display: block; font-size: 11px; margin: 8px 0 14px; }
+.profileCard button { background: #fff; border: 0; color: #111817; font: inherit; font-size: 9px; font-weight: 800; min-height: 32px; padding: 0 16px; }
+.profileLinks { padding: 0 14px 20px; }
+.profileLinks button { align-items: center; background: transparent; border: 0; border-bottom: 1px solid #dde1dc; color: inherit; display: flex; font: inherit; font-size: 11px; justify-content: space-between; min-height: 46px; padding: 0; width: 100%; }
+.profileLinks svg { color: var(--app-muted); height: 13px; width: 13px; }
+.menuGrid { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; padding: 0 14px 18px; }
+.menuGrid button { background: #e9ece5; border: 0; border-radius: 8px; color: #1b2320; font: inherit; font-size: 10px; min-height: 52px; }
+.themeRow { align-items: center; border-top: 1px solid #dde1dc; display: flex; gap: 6px; padding: 14px; }
+.themeRow span { color: var(--app-muted); font-size: 8px; margin-right: auto; }
+.themeRow button { background: #e4e7e1; border: 0; border-radius: 6px; color: #6d7874; font: inherit; font-size: 8px; min-height: 28px; padding: 0 10px; }
+.themeRow button.active { background: var(--app-green); color: #fff; }
+.tvScheduleGrid { display: grid; gap: 14px; grid-template-columns: repeat(5, 1fr); margin-top: 22px; }
+.tvScheduleGrid article { background: #14221f; border: 2px solid transparent; padding: 18px; }
+.tvScheduleGrid article.focused { border-color: var(--app-mint); outline: 3px solid var(--app-mint); }
+.tvScheduleGrid small { color: var(--app-mint); font-size: 8px; }
+.tvScheduleGrid strong { display: block; font-size: 14px; margin: 10px 0; }
+.tvScheduleGrid span { color: #8d9d99; font-size: 9px; }
+.tvMenu { height: 100%; overflow: hidden; padding: 44px 48px; }
+.tvMenuGrid { display: grid; gap: 12px; grid-template-columns: repeat(4, 1fr); margin-top: 26px; }
+.tvMenuGrid button { background: #14221f; border: 2px solid transparent; color: #dbe4e1; font: inherit; font-size: 12px; min-height: 62px; text-align: left; padding: 0 16px; }
+.tvMenuGrid button.focused { border-color: var(--app-mint); outline: 3px solid var(--app-mint); }
 
 @media (max-width: 1100px) {
   .phoneStage { grid-template-columns: 190px minmax(350px, 1fr); }.phoneStage .technical { display: none; }
@@ -118,42 +167,3 @@
 .phoneDetailHero > img { object-position: center 24%; }
 .phoneDetailHero > div { background: linear-gradient(0deg,rgba(8,14,13,.94),transparent 68%); }
 
-.tvFrame { background: #f4f5f3; border-color: #090d0c; color: #18201f; grid-template-columns: 1fr; grid-template-rows: 72px minmax(0,1fr); }
-.tvRail { align-items: center; background: rgba(255,255,255,.94); border-bottom: 1px solid #dfe4df; border-right: 0; display: grid; gap: 10px; grid-template-columns: minmax(130px,1fr) repeat(6,auto) auto; overflow: hidden; padding: 0 28px; }
-.tvRail .mediaMark { font-size: 20px; }
-.tvRail button,.tvRail button:last-child { border-radius: 5px; display: flex; flex: initial; gap: 6px; margin: 0; min-height: 38px; min-width: 40px; padding: 0 8px; width: auto; }
-.tvRail button span { display: inline; font-size: 7px; }
-.tvRail button.active { background: #17201f; color: #fff; outline: 3px solid #71a8ff; outline-offset: 2px; }
-.tvRail svg { height: 14px; width: 14px; }
-.tvScreen,.tvPage,.tvHome { background: #f4f5f3; color: #18201f; }
-.tvHome { padding: 38px 46px; }
-.tvHome .tvPageHead h2,.tvPageHead h2 { color: #18201f; }
-.tvHome .tvPageHead span,.tvPageHead span { color: var(--app-red); }
-.tvHome .tvPageHead > svg,.tvPageHead > svg { color: #17201f; }
-.tvHome .tvQuery,.tvPage .tvQuery { background: #fff; border-color: #dce2dd; border-radius: 8px; color: #18201f; }
-.tvHome .tvQuery span,.tvPage .tvQuery span { color: #75807d; }
-.tvHome .tvPosterGrid { margin-top: 20px; }
-.tvPosterGrid > button { background: transparent; border-radius: 4px; color: #18201f; }
-.tvPosterGrid > button.focused,.tvResultGrid button.focused,.tvWideList article.focused,.tvOffline article.focused,.tvCategoryRow button.focused { background: #fff; color: #18201f; outline-color: #4f8fff; outline-offset: 2px; outline-width: 4px; }
-.tvPosterGrid small,.tvResultGrid small,.tvWideList p,.tvWideList small { color: #77827f; }
-.tvPosterGrid > button > div { border-radius: 6px; }
-.tvPosterGrid > button > div > i { background: rgba(255,255,255,.48); bottom: 0; height: 4px; left: 0; position: absolute; right: 0; }
-.tvPosterGrid > button > div > i b { background: var(--app-red); display: block; height: 100%; }
-.tvProgress { margin-top: 18px; position: static; width: 100%; }
-.tvProgress > span { background: #dbe0dc; }
-.tvProgress small { color: #75807d; }
-.tvPage { padding: 38px 46px; }
-.tvCategoryRow button { background: #e5e9e5; border-radius: 5px; color: #63706c; }
-.tvQuery strong,.tvResultGrid button,.tvWideList article,.tvOffline article { color: #18201f; }
-.tvResultGrid button,.tvWideList article,.tvOffline article,.tvStorage { background: #fff; }
-.tvStorage > strong { color: #18201f; }
-.tvUpdate { color: #18201f; }
-.tvUpdate p,.tvUpdate li { color: #6f7a77; }
-.tvUpdateArt { color: #fff; }
-.tvStage .context { margin-top: 20px; }
-
-@media (max-width:760px) {
-  .tvFrame { grid-template-columns: 1fr; grid-template-rows: 58px minmax(0,1fr); width: 960px; }
-  .tvRail { grid-template-columns: minmax(120px,1fr) repeat(6,auto) auto; padding: 0 18px; }
-  .tvStage .deviceArea { height: 190px; }
-}

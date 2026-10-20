@@ -71,7 +71,7 @@ function GalleryFigure({ item, index, onOpen, reduceMotion }: { item: ProjectMed
       onClick={(event) => onOpen(index, event.currentTarget)}
     >
       <span className="gallery-shot-bar" aria-hidden="true"><i /><i /><i /><span>{item.label}</span>{(live || tour) && <b className="gallery-live-dot" />}</span>
-      {collage ? <span className="gallery-collage" aria-hidden="true">
+      {collage ? <span className={`gallery-collage${(item.height ?? 900) > (item.width ?? 1440) ? " is-portrait" : ""}`} aria-hidden="true">
         {item.frames!.map((frame, position) =>
           <motion.span
             key={frame}

@@ -42,13 +42,15 @@ export function RedesignDock() {
   }, []);
   useEffect(() => {
     if (!ready) return;
+    // One setting drives the whole material: the fill and the dispersion follow it.
     document.documentElement.style.setProperty("--glass-tint", String(.12 + density / 100 * .73));
-    document.documentElement.dataset.opaqueGlass = String(opaque);
+    document.documentElement.style.setProperty("--glass-blur", `${(2 + density / 100 * 12).toFixed(1)}px`);
+    document.documentElement.dataset.opaqueGlass = String(opaque || systemOpaque);
     const timer = setTimeout(() => {
       try { localStorage.setItem("portfolio-appearance", JSON.stringify({ density, opaque })); } catch { /* Optional preference storage. */ }
     }, 180);
     return () => clearTimeout(timer);
-  }, [density, opaque, ready]);
+  }, [density, opaque, systemOpaque, ready]);
   useEffect(() => {
     let last = window.scrollY;
     const onScroll = () => {

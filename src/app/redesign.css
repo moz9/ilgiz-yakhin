@@ -129,10 +129,8 @@ body { background: var(--paper); color: var(--ink); font-family: var(--font-sans
 .filter-bar button.is-active { color: var(--teal); }
 .tag-list li { border-color: var(--line); }
 .resume-page { color: var(--ink); }
-.resume-cover { background: var(--paper); color: var(--ink); }
-.resume-cover h1, .resume-section-heading h2, .resume-contact-copy h2 { font-family: var(--font-display); letter-spacing: 0; }
-.resume-overline, .resume-cover h1 span, .resume-scroll-cue svg, .resume-section-heading-light > span { color: var(--teal); }
-.resume-band { background: var(--surface); color: var(--ink); }
+.rg-hero { color: #f4f3ef; }
+.rg-band { background: var(--surface); color: var(--ink); }
 .swatch-paper { background: #eef1f4; color: #0d1015; border-color: #eef1f4; }
 .swatch-ink { background: #0d1015; color: #eef1f4; border: 1px solid var(--line-strong); }
 .swatch-teal { background: var(--teal); color: #0d1015; }

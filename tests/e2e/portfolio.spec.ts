@@ -43,10 +43,13 @@ test("resume files and email are reachable", async ({ page, request }) => {
   await page.goto("/resume");
   await expect(page.getByRole("heading", { name: "Full-stack / AI-разработчик" })).toBeVisible();
   await expect(page.getByRole("main").getByRole("img", { name: "Ильгиз Яхин" })).toHaveCount(0);
+  await expect(page.getByRole("main").getByRole("img")).toHaveCount(0);
+  await expect(page.locator(".rg-card-monogram")).toHaveText("IY");
   await expect(page.getByRole("heading", { name: "Коммерческая практика" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "PDF-версии" })).toBeVisible();
   await expect(page.getByRole("main").getByRole("link", { name: /im@angelius.ru/ }).first()).toHaveAttribute("href", "mailto:im@angelius.ru");
-  await expect(page.getByRole("link", { name: "Скачать PDF" })).toHaveCount(2);
+  await expect(page.locator(".rg-documents").getByRole("link", { name: "Скачать PDF" })).toHaveCount(2);
+  await expect(page.locator(".rg-hero").getByRole("link", { name: "Скачать PDF" })).toHaveCount(1);
   for (const file of ["/resume/ilgiz-yakhin-compact.pdf", "/resume/ilgiz-yakhin-extended.pdf"]) {
     const response = await request.get(file);
     expect(response.ok()).toBeTruthy();

@@ -5,7 +5,7 @@ import { motion, useReducedMotion, useScroll } from "motion/react";
 import { GlassLayer } from "@/components/glass-layer";
 
 type Section = { id: string; label: string };
-export function CaseNavigation({ sections }: { sections: Section[] }) {
+export function CaseNavigation({ sections, label = "Разделы кейса" }: { sections: Section[]; label?: string }) {
   const [active, setActive] = useState(sections[0].id);
   const { scrollYProgress } = useScroll();
   const reduced = useReducedMotion();
@@ -30,7 +30,7 @@ export function CaseNavigation({ sections }: { sections: Section[] }) {
     onScroll();
     return () => { cancelAnimationFrame(frame); window.removeEventListener("scroll", onScroll); };
   }, [sections]);
-  return <nav className="case-navigation liquid-surface" aria-label="Разделы кейса">
+  return <nav className="case-navigation liquid-surface" aria-label={label}>
     <GlassLayer />
     <div className="case-nav-links" ref={linksRef}>{sections.map(({ id, label }) => <a key={id} href={`#${id}`} aria-current={active === id ? "location" : undefined}>
       {active === id && <motion.i layoutId="case-nav-selection" transition={reduced ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 36 }} />}

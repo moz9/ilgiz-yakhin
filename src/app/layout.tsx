@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/site-header";
 import { RedesignDock } from "@/components/redesign-dock";
 import { AtmosphereLayer } from "@/components/atmosphere-layer";
 import { ScrollProgress } from "@/components/scroll-progress";
+import "./fonts.css";
 import "./globals.css";
 import "./redesign.css";
 import "./showcase.css";
@@ -30,7 +31,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" suppressHydrationWarning data-scroll-behavior="smooth">
-      <body><SiteHeader />{children}<SiteFooter /><RedesignDock /><AtmosphereLayer /><ScrollProgress /></body>
+      <body>
+        {/* The display face carries the headline, so it is fetched first and early. */}
+        <link rel="preload" as="font" type="font/woff2" href="/fonts/unbounded-800-cyrillic.woff2" crossOrigin="anonymous" />
+        <link rel="preload" as="font" type="font/woff2" href="/fonts/unbounded-800-latin.woff2" crossOrigin="anonymous" />
+        <SiteHeader />{children}<SiteFooter /><RedesignDock /><AtmosphereLayer /><ScrollProgress />
+      </body>
     </html>
   );
 }

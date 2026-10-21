@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Geologica:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Unbounded:wght@500;700;800&display=swap");
+/* The typefaces are self-hosted in public/fonts and declared in fonts.css: a third-party
+   @import blocks the first render and makes the page depend on Google being reachable. */
 
 :root, [data-theme="dark"] {
   color-scheme: dark;

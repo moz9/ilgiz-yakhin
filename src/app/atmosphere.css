@@ -261,6 +261,9 @@
   .quality-section { grid-template-columns: 1fr; gap: 34px; }
   .skill-bands { grid-template-columns: 1fr; }
   .field-aurora { filter: blur(70px); }
+  /* The year column would not fit next to the role on a narrow screen. */
+  .redesign-home .redesign-experience p { grid-template-columns: 1fr; gap: 8px; }
+  .redesign-home .redesign-experience p em { grid-column: auto; }
 }
 @media (max-width: 700px) {
   .term-lines em { display: block; margin-left: 2ch; }

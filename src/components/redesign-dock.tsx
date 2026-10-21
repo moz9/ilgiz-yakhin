@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { Home, Grid2X2, UserRound, FileText, Mail, SlidersHorizontal, X, RotateCcw } from "lucide-react";
 import { GlassLayer } from "@/components/glass-layer";
@@ -20,11 +20,18 @@ export function RedesignDock() {
   const pathname = usePathname();
   const [hidden, setHidden] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const settingsRef = useRef<HTMLDivElement>(null);
   const [density, setDensity] = useState(DEFAULT_GLASS_DENSITY);
   const [opaque, setOpaque] = useState(false);
   const [systemOpaque, setSystemOpaque] = useState(false);
   const [ready, setReady] = useState(false);
   const reduced = useReducedMotion();
+  useEffect(() => {
+    if (!settingsOpen) return;
+    const panel = settingsRef.current;
+    if (!panel) return;
+    panel.querySelector<HTMLElement>('button:not([disabled]), input:not([disabled])')?.focus();
+  }, [settingsOpen]);
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
       try {
@@ -78,7 +85,20 @@ export function RedesignDock() {
           </Link>)}
       <button className="dock-settings" type="button" popoverTarget="appearance-settings" aria-label="Внешний вид" title="Внешний вид" aria-expanded={settingsOpen}><SlidersHorizontal aria-hidden="true" /></button>
     </nav>
-    <div id="appearance-settings" className="appearance-settings" popover="auto" role="dialog" aria-labelledby="appearance-title" onToggle={(event) => setSettingsOpen(event.newState === "open")}>
+    <div id="appearance-settings" ref={settingsRef} className="appearance-settings" popover="auto" role="dialog" aria-modal="true" aria-labelledby="appearance-title" onToggle={(event) => setSettingsOpen(event.newState === "open")} onKeyDown={(event) => {
+      // A popover does not trap the focus by itself, so the dialog keeps it inside.
+      if (event.key !== "Tab") return;
+      const panel = settingsRef.current;
+      if (!panel) return;
+      const focusable = Array.from(panel.querySelectorAll<HTMLElement>('button:not([disabled]), input:not([disabled]), [href], select, textarea, [tabindex]:not([tabindex="-1"])')).filter(node => node.offsetParent !== null);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+      if (!panel.contains(active)) { event.preventDefault(); first.focus(); return; }
+      if (event.shiftKey && active === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && active === last) { event.preventDefault(); first.focus(); }
+    }}>
       <header><h2 id="appearance-title">Внешний вид</h2><button type="button" popoverTarget="appearance-settings" popoverTargetAction="hide" aria-label="Закрыть настройки" title="Закрыть настройки"><X /></button></header>
       <div className="glass-preview"><div className="glass-preview-lines" aria-hidden="true"><span>ILGIZ</span><span>YAKHIN</span></div><div className="glass-preview-control liquid-surface"><GlassLayer /><span>Liquid Glass</span><SlidersHorizontal aria-hidden="true" /></div></div>
       <label className="density-label" htmlFor="glass-density">Liquid Glass <output>{Math.round(density)}%</output></label>

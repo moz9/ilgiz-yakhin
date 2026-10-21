@@ -24,15 +24,26 @@ export function HeroReel() {
     const hero = heroRef.current;
     if (!hero || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let frame = 0;
+    // The lens keeps its box and moves by transform only: changing left and top on every
+    // frame is a layout change, and the hero is the largest element on the page.
+    const baseX = 64;
+    const baseY = 44 + 18 * Math.sin(1);
+    let box = hero.getBoundingClientRect();
+    const onResize = () => { box = hero.getBoundingClientRect(); };
+    window.addEventListener("resize", onResize, { passive: true });
     const start = performance.now();
     const animate = (now: number) => {
       const time = (now - start) / 1000;
-      hero.style.setProperty("--lens-x", `${(64 + 20 * Math.sin(time * 0.32)).toFixed(2)}%`);
-      hero.style.setProperty("--lens-y", `${(44 + 18 * Math.sin(time * 0.51 + 1)).toFixed(2)}%`);
+      const x = baseX + 20 * Math.sin(time * 0.32);
+      const y = 44 + 18 * Math.sin(time * 0.51 + 1);
+      hero.style.setProperty("--lens-x", `${x.toFixed(2)}%`);
+      hero.style.setProperty("--lens-y", `${y.toFixed(2)}%`);
+      hero.style.setProperty("--lens-dx", `${(((x - baseX) / 100) * box.width).toFixed(2)}px`);
+      hero.style.setProperty("--lens-dy", `${(((y - baseY) / 100) * box.height).toFixed(2)}px`);
       frame = requestAnimationFrame(animate);
     };
     frame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(frame);
+    return () => { cancelAnimationFrame(frame); window.removeEventListener("resize", onResize); };
   }, []);
 
   return <section className="redesign-hero" id="top" ref={heroRef} aria-labelledby="hero-title">

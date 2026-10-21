@@ -174,3 +174,52 @@ test("the material samples live content and survives a system accessibility swit
   const restored = await page.locator(".redesign-dock .glass-layer").evaluate(el => getComputedStyle(el).backgroundColor);
   expect(restored).toContain("0.75");
 });
+
+test("the opaque mode reaches every glass surface, not only the dock", async ({ page }) => {
+  await page.goto("/projects/launcher");
+  await page.getByRole("button", { name: "Внешний вид", exact: true }).click();
+  await page.locator('.transparency-setting input[type="checkbox"]').check();
+  await page.waitForTimeout(400);
+  const layers = await page.evaluate(() => Array.from(document.querySelectorAll(".glass-layer")).map(layer => {
+    const style = getComputedStyle(layer);
+    const parts = style.backgroundColor.match(/rgba?\(([^)]+)\)/)?.[1].split(/[,\s/]+/).filter(Boolean).map(Number);
+    return { alpha: parts?.[3] ?? 1, backdrop: style.backdropFilter || (style as unknown as { webkitBackdropFilter?: string }).webkitBackdropFilter || "none" };
+  }));
+  expect(layers.length).toBeGreaterThan(1);
+  for (const layer of layers) {
+    expect(layer.alpha).toBe(1);
+    expect(layer.backdrop).toBe("none");
+  }
+});
+
+test("the settings dialog keeps the focus inside", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Внешний вид", exact: true }).click();
+  await page.waitForTimeout(400);
+  for (let step = 0; step < 8; step += 1) {
+    await page.keyboard.press("Tab");
+    const inside = await page.evaluate(() => {
+      const panel = document.querySelector("#appearance-settings");
+      return panel?.contains(document.activeElement) ?? false;
+    });
+    expect(inside).toBe(true);
+  }
+});
+
+test("the hero lens moves without shifting the layout", async ({ page }) => {
+  await page.addInitScript(() => {
+    const store = window as unknown as { __shifts: number[] };
+    store.__shifts = [];
+    new PerformanceObserver(list => {
+      for (const entry of list.getEntries() as Array<PerformanceEntry & { hadRecentInput: boolean; value: number }>) {
+        if (!entry.hadRecentInput) store.__shifts.push(entry.value);
+      }
+    }).observe({ type: "layout-shift", buffered: true });
+  });
+  await page.goto("/");
+  await page.waitForTimeout(2500);
+  const shifts = await page.evaluate(() => (window as unknown as { __shifts: number[] }).__shifts);
+  const total = shifts.reduce((sum, value) => sum + value, 0);
+  // The lens glides over the wall: it must move by transform, not by left and top.
+  expect(total).toBeLessThan(0.02);
+});

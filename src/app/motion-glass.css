@@ -87,9 +87,11 @@
   .scenario-deck .scenario-screen.is-phone { border-width: 3px; border-radius: 10px; }
   .scenario-deck .scenario-screen.is-phone img { border-radius: 7px; }
 }
-html[data-opaque-glass="true"] .glass-layer { background: #202833; backdrop-filter: none; }
+/* The opaque mode is a system-level override: it has to beat every surface rule,
+   including the ones that give a particular element its own tint. */
+html[data-opaque-glass="true"] .glass-layer { background: #202833 !important; backdrop-filter: none !important; }
 @supports not (backdrop-filter: blur(1px)) {
-  .glass-layer { background: #202833; }
+  .glass-layer { background: #202833 !important; backdrop-filter: none !important; }
 }
 @media (prefers-reduced-transparency: reduce) {
   .glass-layer { background: #202833 !important; backdrop-filter: none !important; }

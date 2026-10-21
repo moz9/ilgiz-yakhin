@@ -27,7 +27,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--font-sans
 :focus-visible { outline-color: var(--teal); }
 .redesign-mono { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; }
 
-.redesign-hero { --lens-x: 66%; --lens-y: 42%; min-height: min(900px, 100svh); position: relative; isolation: isolate; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; padding: 120px clamp(24px, 5%, 80px) 100px; }
+.redesign-hero { --lens-x: 64%; --lens-y: 59.14%; min-height: min(900px, 100svh); position: relative; isolation: isolate; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; padding: 120px clamp(24px, 5%, 80px) 100px; }
 .redesign-wall-layer { position: absolute; inset: 0; perspective: 1600px; pointer-events: none; }
 .redesign-wall-base { z-index: 1; filter: grayscale(1) brightness(.32) contrast(1.1); }
 .redesign-wall-color { z-index: 2; mask-image: radial-gradient(circle 190px at var(--lens-x) var(--lens-y), #000 55%, transparent 100%); }
@@ -43,7 +43,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--font-sans
 .redesign-hero { --teal: #ffb23f; --teal-dark: #ffd087; --teal-soft: #302516; }
 @keyframes redesign-rise { to { transform: translateY(-50%); } }
 .redesign-hero-shade { position: absolute; inset: 0; z-index: 3; background: linear-gradient(90deg, #0d1015 18%, #0d1015c7 42%, #0d10151a 72%), linear-gradient(0deg, #0d1015 4%, transparent 40%); pointer-events: none; }
-.redesign-lens { position: absolute; z-index: 4; left: var(--lens-x); top: var(--lens-y); width: 380px; aspect-ratio: 1; border: 1px solid #fff4; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: inset 0 0 0 1px #fff1, inset 0 30px 60px #fff1, 0 0 80px #ffb23f1f; pointer-events: none; }
+.redesign-lens { position: absolute; z-index: 4; left: 64%; top: 59.14%; width: 380px; aspect-ratio: 1; border: 1px solid #fff4; border-radius: 50%; transform: translate(-50%, -50%) translate(var(--lens-dx, 0px), var(--lens-dy, 0px)); box-shadow: inset 0 0 0 1px #fff1, inset 0 30px 60px #fff1, 0 0 80px #ffb23f1f; pointer-events: none; }
 .redesign-lens::after { content: ""; position: absolute; right: 18%; top: 10%; width: 26%; height: 12%; border-radius: 50%; background: radial-gradient(closest-side, #fff5, transparent); transform: rotate(-30deg); }
 .redesign-hero-top { position: absolute; z-index: 5; top: 28px; left: clamp(24px, 5%, 80px); right: clamp(24px, 5%, 80px); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; color: var(--muted); }
 .redesign-availability { color: var(--ink); display: flex; align-items: center; gap: 10px; }

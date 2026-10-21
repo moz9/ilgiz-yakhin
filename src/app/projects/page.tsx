@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { ProjectExplorer } from "@/components/project-explorer";
+import { FieldBackdrop } from "@/components/field-backdrop";
 
 export const metadata: Metadata = { title: "Проекты", description: "Четырнадцать кейсов web-, mobile-, desktop-, automation- и infrastructure-разработки." };
 
 export default function ProjectsPage() {
   return (
-    <main className="inner-page">
+    <main className="inner-page projects-page">
+      <FieldBackdrop tone="ink" />
       <section className="page-hero">
         <div className="eyebrow"><span>PROJECT INDEX</span><span>2023—2026</span></div>
         <h1>Проекты</h1>

@@ -223,3 +223,23 @@ test("the hero lens moves without shifting the layout", async ({ page }) => {
   // The lens glides over the wall: it must move by transform, not by left and top.
   expect(total).toBeLessThan(0.02);
 });
+
+test("the webfont landing does not shift the headline", async ({ page }) => {
+  // With reduced motion the page transition does not run, so a font swap cannot hide behind it.
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.addInitScript(() => {
+    const store = window as unknown as { __shifts: number[] };
+    store.__shifts = [];
+    new PerformanceObserver(list => {
+      for (const entry of list.getEntries() as Array<PerformanceEntry & { hadRecentInput: boolean; value: number }>) {
+        if (!entry.hadRecentInput) store.__shifts.push(entry.value);
+      }
+    }).observe({ type: "layout-shift", buffered: true });
+  });
+  await page.goto("/");
+  await page.waitForTimeout(3000);
+  const shifts = await page.evaluate(() => (window as unknown as { __shifts: number[] }).__shifts);
+  const total = shifts.reduce((sum, value) => sum + value, 0);
+  // The metric compatible fallbacks keep the headline in place while the webfont arrives.
+  expect(total).toBeLessThan(0.01);
+});

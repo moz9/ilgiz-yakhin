@@ -1,6 +1,6 @@
 :root {
   --font-sans: "Segoe UI", Arial, sans-serif;
-  --font-mono: "Cascadia Mono", Consolas, monospace;
+  --font-mono: "JetBrains Mono", "JetBrains Mono Fallback", "Cascadia Mono", Consolas, monospace;
   --paper: #f2f3f1;
   --surface: #ffffff;
   --ink: #0a0b0c;

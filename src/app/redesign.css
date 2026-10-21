@@ -15,9 +15,9 @@
   --red: #5bd68a;
   --red-soft: #193628;
   --header: rgba(13, 16, 21, .9);
-  --font-sans: "Geologica", "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", Consolas, monospace;
-  --font-display: "Unbounded", "Arial Black", sans-serif;
+  --font-sans: "Geologica", "Geologica Fallback", "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "JetBrains Mono Fallback", Consolas, monospace;
+  --font-display: "Unbounded", "Unbounded Fallback", "Arial Black", sans-serif;
   --page: min(1440px, calc(100% - 48px));
 }
 html { scroll-padding-top: 32px; }

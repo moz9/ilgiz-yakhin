@@ -138,6 +138,8 @@
 /* The marker belongs to the caption bar: over a tight crop it covered the content. */
 .gallery-detail-mark { font: 9px/1 var(--font-mono), monospace; letter-spacing: .12em; color: #9aa5b2; background: #0d1218cc; border: 1px solid #ffffff1f; padding: 5px 8px; border-radius: 4px; }
 .gallery-shot.shot-detail .gallery-expand { width: 34px; height: 34px; right: 22px; top: 22px; bottom: auto; opacity: 0; }
+/* The expand button lives in the same row as the label, so the label keeps clear of it. */
+.gallery-shot.shot-detail .gallery-shot-bar > span { padding-right: 48px; }
 .gallery-shot.shot-detail:hover .gallery-expand { opacity: 1; }
 
 /* Grid items default to an auto minimum, so a long word can push the whole page sideways. */

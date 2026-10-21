@@ -42,8 +42,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
 button { color: inherit; font: inherit; }
 ::selection { background: var(--teal); color: white; }
 :focus-visible { outline: 2px solid var(--teal); outline-offset: 4px; }
-/* Display type carries long Russian compounds: let a word break instead of pushing the page sideways. */
-h1, h2, h3 { overflow-wrap: break-word; }
+/* Display type carries long Russian compounds: hyphenate properly before breaking mid-word. */
+h1, h2, h3 { hyphens: auto; overflow-wrap: break-word; }
 
 .site-header { align-items: center; backdrop-filter: blur(16px); background: var(--header); border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 1fr auto 1fr; height: 72px; left: 0; padding: 0 max(32px, calc((100vw - 1440px) / 2)); position: sticky; top: 0; width: 100%; z-index: 100; }
 .wordmark { align-items: center; display: flex; gap: 12px; justify-self: start; }

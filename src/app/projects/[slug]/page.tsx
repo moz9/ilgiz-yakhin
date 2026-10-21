@@ -8,6 +8,7 @@ import { ProjectStage } from "@/components/project-stage";
 import { ProjectGallery } from "@/components/project-gallery";
 import { RevealSection } from "@/components/reveal-section";
 import { CaseNavigation } from "@/components/case-navigation";
+import { FieldBackdrop } from "@/components/field-backdrop";
 
 export function generateStaticParams() {
   return projects.map(({ slug }) => ({ slug }));
@@ -25,6 +26,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const next = projects[(index + 1) % projects.length];
 
   return <main className="redesign-case">
+    <FieldBackdrop tone="ink" />
     <div className="redesign-case-wrap">
       <div className="redesign-case-top redesign-mono">
         <Link href="/projects"><ArrowLeft aria-hidden="true" /> Все проекты</Link>
@@ -52,14 +54,18 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         { id: "results", label: "Результаты" },
       ]} />
       <section id="overview" className="redesign-case-tldr" aria-label="Коротко о проекте">
-        <div><span>Задача</span><p>{project.task}</p></div>
-        <div><span>Моя работа</span><p>{project.decisions.map((item) => item.title).join("; ")}.</p></div>
-        <div><span>Результат</span><p>{project.results[0]}</p></div>
+        {[["Задача", project.task], ["Моя работа", `${project.decisions.map((item) => item.title).join("; ")}.`], ["Результат", project.results[0]]].map(([label, text], index) => (
+          <div key={label} data-spotlight>
+            <span className="redesign-mono">0{index + 1}</span>
+            <em>{label}</em>
+            <p>{text}</p>
+          </div>
+        ))}
       </section>
       {project.capabilities && <section id="capabilities" className="redesign-case-flow" aria-labelledby="capabilities-title">
         <div className="redesign-case-section-head"><h2 id="capabilities-title">Функциональные контуры</h2><p>Как устроены основные пользовательские и операционные сценарии.</p></div>
         <div className="redesign-case-flow-grid">
-          {project.capabilities.map((group, step) => <article key={group.title}>
+          {project.capabilities.map((group, step) => <article key={group.title} data-spotlight>
             <span className="redesign-mono">0{step + 1}</span>
             <h3>{group.title}</h3>
             <p>{group.summary}</p>
@@ -70,14 +76,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       {Boolean(project.media?.length) && <div id="interfaces"><ProjectGallery media={project.media!} /></div>}
       <section id="decisions" className="redesign-case-decisions" aria-labelledby="decisions-title">
         <h2 id="decisions-title">Ключевые решения</h2>
-        <div>{project.decisions.map((decision, decisionIndex) => <article key={decision.title}>
+        <div>{project.decisions.map((decision, decisionIndex) => <article key={decision.title} data-spotlight>
           <span className="redesign-mono">0{decisionIndex + 1}</span><h3>{decision.title}</h3><p>{decision.text}</p>
         </article>)}</div>
       </section>
       <section id="results" className="redesign-case-proof" aria-labelledby="results-title">
         <h2 id="results-title">Результаты и проверки</h2>
         <div className="redesign-case-evidence">
-          {project.evidence.map((item) => <div key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>)}
+          {project.evidence.map((item) => <div key={item.label} data-spotlight><span>{item.label}</span><strong>{item.value}</strong></div>)}
         </div>
         <ul className="redesign-case-results">{project.results.map((result) => <li key={result}><Check aria-hidden="true" />{result}</li>)}</ul>
         <div className="redesign-case-stack" aria-label="Стек">{project.stack.map((item) => <span key={item}>{item}</span>)}</div>

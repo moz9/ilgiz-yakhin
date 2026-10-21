@@ -160,10 +160,17 @@ test("remaining cases include substantial product stories and purposeful media f
 test("pages do not overflow horizontally", async ({ page }) => {
   for (const route of ["/", "/projects", "/projects/revalib", "/projects/launcher", "/projects/streaming-web-platform", "/projects/streaming-android-tv", "/demos/launcher", "/demos/content-platform", "/demos/mobile-tv", "/about", "/resume", "/how-built"]) {
     await page.goto(route);
-    // The display font is wider than the fallback: measure only after the webfont settles.
-    await page.evaluate(() => document.fonts.ready);
-    await page.waitForTimeout(150);
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    // The dev server compiles a route on first request, so the layout can be caught
+    // mid-flight: read until two consecutive measurements agree and use the last one.
+    const measure = () => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    const readings: number[] = [];
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      await page.waitForTimeout(350);
+      readings.push(await measure());
+      const last = readings[readings.length - 1];
+      if (readings.length >= 2 && last === readings[readings.length - 2]) break;
+    }
+    const overflow = readings[readings.length - 1];
     const offenders = overflow > 1 ? await page.evaluate(() => Array.from(document.querySelectorAll("body *"))
       .map((element) => {
         const rect = element.getBoundingClientRect();

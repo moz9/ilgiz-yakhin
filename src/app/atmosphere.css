@@ -1,0 +1,198 @@
+/* Atmosphere: the page reads as a place, not a document — light, depth and texture behind the type. */
+
+/* ---------- The field behind a page ---------- */
+.field-backdrop { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.field-backdrop::before {
+  content: ""; position: absolute; inset: 0;
+  background:
+    radial-gradient(78vw 72vh at 10% -8%, #1c6a55b3 0%, #14504460 42%, transparent 68%),
+    radial-gradient(64vw 76vh at 104% 12%, #1b3f75b3 0%, #14294f60 44%, transparent 70%),
+    radial-gradient(86vw 68vh at 46% 112%, #4a2763b3 0%, #301a4360 46%, transparent 70%);
+}
+.field-tone-teal::before {
+  background:
+    radial-gradient(80vw 74vh at 8% -10%, #1d8468c2 0%, #14604c6b 42%, transparent 68%),
+    radial-gradient(66vw 74vh at 106% 10%, #1a4e79c2 0%, #14304c6b 44%, transparent 70%),
+    radial-gradient(84vw 66vh at 44% 114%, #3a2352b3 0%, #2a17405e 46%, transparent 70%);
+}
+.field-tone-violet::before {
+  background:
+    radial-gradient(80vw 74vh at 8% -10%, #1e6a8ec2 0%, #1640556b 42%, transparent 68%),
+    radial-gradient(66vw 74vh at 106% 10%, #2a4f8ac2 0%, #172e546b 44%, transparent 70%),
+    radial-gradient(84vw 66vh at 44% 114%, #6a3682c2 0%, #451f596b 46%, transparent 70%);
+}
+.field-aurora { position: absolute; border-radius: 50%; filter: blur(60px); opacity: .34; will-change: transform; }
+.field-aurora-a { width: 62vw; height: 62vw; left: -14vw; top: -18vh; background: radial-gradient(circle, #48e0b0 0%, #1c7a60 38%, transparent 66%); animation: field-drift-a 36s ease-in-out infinite alternate; }
+.field-aurora-b { width: 54vw; height: 54vw; right: -16vw; top: 6vh; background: radial-gradient(circle, #4a8ede 0%, #1c3f70 40%, transparent 68%); animation: field-drift-b 44s ease-in-out infinite alternate; }
+.field-aurora-c { width: 50vw; height: 50vw; left: 20vw; bottom: -24vh; background: radial-gradient(circle, #9a58c4 0%, #46265c 42%, transparent 68%); animation: field-drift-c 40s ease-in-out infinite alternate; }
+
+@keyframes field-drift-a { to { transform: translate3d(7vw, 6vh, 0) scale(1.16); } }
+@keyframes field-drift-b { to { transform: translate3d(-8vw, 9vh, 0) scale(1.2); } }
+@keyframes field-drift-c { to { transform: translate3d(5vw, -8vh, 0) scale(1.12); } }
+
+.field-lattice {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(#ffffff0a 1px, transparent 1px), linear-gradient(90deg, #ffffff0a 1px, transparent 1px);
+  background-size: 76px 76px;
+  mask-image: linear-gradient(180deg, #000 0%, #000 26%, transparent 78%);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 26%, transparent 78%);
+}
+.field-beam {
+  position: absolute; inset: -30% -10%;
+  background: linear-gradient(104deg, transparent 36%, #b8e4cf12 47%, transparent 59%);
+  animation: field-sweep 19s ease-in-out infinite alternate;
+}
+@keyframes field-sweep { from { transform: translate3d(-6%, 0, 0); } to { transform: translate3d(6%, 0, 0); } }
+
+/* ---------- Scroll progress ---------- */
+.scroll-progress { position: fixed; inset: 0 0 auto; z-index: 90; height: 2px; transform-origin: 0 50%; background: linear-gradient(90deg, #b8e4cf, #7fd3a8 55%, #ff9a4d); box-shadow: 0 0 18px #b8e4cf66; }
+
+/* ---------- Film grain over everything ---------- */
+.grain-overlay {
+  position: fixed; inset: 0; z-index: 60; pointer-events: none; opacity: .05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+/* ---------- Cursor spotlight ---------- */
+[data-spotlight] { position: relative; }
+[data-spotlight]::after {
+  content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: inherit;
+  background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), #b8e4cf1f, transparent 64%);
+  opacity: 0; transition: opacity .4s ease;
+}
+[data-spotlight][data-spotlight-active]::after { opacity: 1; }
+
+/* ---------- Experience: career as a set of lit cards ---------- */
+.experience-page, .how-built-page, .about-page, .not-found-page { position: relative; isolation: isolate; }
+.experience-page > :not(.field-backdrop), .how-built-page > :not(.field-backdrop), .about-page > :not(.field-backdrop), .not-found-page > :not(.field-backdrop) { position: relative; z-index: 1; }
+
+.experience-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding-top: 0; }
+.exp-stat { position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; padding: 30px 28px 34px; background: linear-gradient(160deg, #ffffff0a, #ffffff03); }
+.exp-stat > span { color: var(--teal); font: 11px var(--font-mono); letter-spacing: .12em; }
+.exp-stat strong { display: block; margin: 16px 0 8px; font: 800 3.4rem/1 var(--font-display); letter-spacing: -.02em; }
+.exp-stat p { color: var(--muted); font-size: 15px; max-width: 26ch; }
+.exp-stat::after { content: ""; position: absolute; inset: auto -30% -60% auto; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, #b8e4cf1f, transparent 68%); }
+
+.exp-timeline { display: grid; gap: 26px; padding-top: 0; }
+.exp-card {
+  position: relative; display: grid; grid-template-columns: 190px 1fr; gap: 46px;
+  border: 1px solid var(--line); border-radius: 16px; padding: 40px 44px;
+  background: linear-gradient(150deg, #ffffff09, #ffffff03 55%, #b8e4cf08);
+  transition: transform .5s cubic-bezier(.22, 1, .36, 1), border-color .4s, box-shadow .5s;
+}
+.exp-card:hover { transform: translateY(-4px); border-color: #b8e4cf4d; box-shadow: 0 30px 60px #0006; }
+.exp-card::before {
+  content: ""; position: absolute; left: 0; top: 40px; bottom: 40px; width: 2px;
+  background: linear-gradient(180deg, var(--teal), transparent);
+}
+.exp-period { color: var(--teal); font: 12px var(--font-mono); letter-spacing: .08em; padding-top: 6px; }
+.exp-body .kicker { color: var(--muted); }
+.exp-body h2 { font: 700 2.4rem/1.12 var(--font-display); margin: 12px 0 18px; }
+.exp-body > p { color: #c4ccd5; font-size: 17px; line-height: 1.6; max-width: 62ch; }
+.exp-points { display: flex; flex-wrap: wrap; gap: 10px; margin: 26px 0 0; padding: 0; list-style: none; }
+.exp-points li { border: 1px solid var(--line-strong); border-radius: 999px; padding: 9px 15px; color: #cbd3db; font-size: 13px; background: #ffffff08; }
+.exp-points li::before { content: ""; display: inline-block; width: 5px; height: 5px; margin-right: 10px; border-radius: 50%; background: var(--teal); vertical-align: middle; }
+
+/* ---------- How it is built: cards, terminal and gates ---------- */
+.architecture-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; padding-top: 0; }
+.architecture-grid article {
+  position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; padding: 30px 26px 34px;
+  background: linear-gradient(165deg, #ffffff0a, #ffffff03);
+  transition: transform .5s cubic-bezier(.22, 1, .36, 1), border-color .4s;
+}
+.architecture-grid article:hover { transform: translateY(-5px); border-color: #b8e4cf4d; }
+.architecture-grid article > span { color: var(--teal); font: 11px var(--font-mono); letter-spacing: .14em; }
+.architecture-grid h2 { font: 700 1.55rem/1.2 var(--font-display); margin: 18px 0 14px; }
+.architecture-grid p { color: var(--muted); font-size: 15px; line-height: 1.6; }
+
+.pipeline-terminal { padding-top: 0; }
+.term-window { overflow: hidden; border: 1px solid var(--line-strong); border-radius: 14px; background: #090d12; box-shadow: 0 30px 70px #0007; }
+.term-bar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--line); background: #121820; color: var(--muted); font: 10px var(--font-mono); text-transform: uppercase; letter-spacing: .1em; }
+.term-bar i { width: 9px; height: 9px; border-radius: 50%; background: #3d4652; }
+.term-bar i:nth-child(1) { background: #ff5f57; } .term-bar i:nth-child(2) { background: #febc2e; } .term-bar i:nth-child(3) { background: #28c840; }
+.term-bar span { margin-left: 8px; }
+.term-lines { margin: 0; padding: 26px 28px 30px; list-style: none; font: 13px/2 var(--font-mono); color: #9fb0bd; overflow-wrap: anywhere; }
+.term-lines li { opacity: 0; animation: term-line .5s cubic-bezier(.16, 1, .3, 1) forwards; }
+.term-lines li:nth-child(1) { animation-delay: .1s; } .term-lines li:nth-child(2) { animation-delay: .3s; }
+.term-lines li:nth-child(3) { animation-delay: .5s; } .term-lines li:nth-child(4) { animation-delay: .7s; }
+.term-lines li:nth-child(5) { animation-delay: .9s; } .term-lines li:nth-child(6) { animation-delay: 1.1s; }
+.term-lines b { color: var(--teal); font-weight: 500; }
+.term-lines em { color: #7fd3a8; font-style: normal; }
+.term-lines s { color: #5d6875; text-decoration: none; }
+@keyframes term-line { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.term-lines li:last-child::after { content: "▋"; color: var(--teal); animation: term-cursor 1s steps(2) infinite; }
+@keyframes term-cursor { 50% { opacity: 0; } }
+
+.color-system { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.swatch { display: flex; flex-direction: column; justify-content: flex-end; gap: 4px; min-height: 168px; border-radius: 14px; padding: 20px; font: 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; transition: transform .45s cubic-bezier(.22, 1, .36, 1), box-shadow .45s; }
+.swatch:hover { transform: translateY(-5px) scale(1.015); box-shadow: 0 26px 50px #0006; }
+.swatch small { opacity: .62; font: 10px var(--font-mono); letter-spacing: .1em; }
+
+.quality-section { display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: start; }
+.quality-section ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.quality-section li {
+  display: flex; gap: 14px; align-items: flex-start; border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px;
+  background: #ffffff06; color: #ccd4dc; font-size: 16px; transition: border-color .35s, background .35s, transform .35s;
+}
+.quality-section li:hover { border-color: #b8e4cf4d; background: #ffffff0b; transform: translateX(5px); }
+.quality-section li svg { color: var(--teal); flex: none; width: 19px; height: 19px; margin-top: 2px; }
+
+/* ---------- About: the stack as chips ---------- */
+.skill-bands { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; padding-top: 0; }
+.skill-bands > div { display: block; border: 1px solid var(--line); border-radius: 14px; padding: 26px 26px 30px; background: linear-gradient(160deg, #ffffff09, #ffffff03); transition: border-color .4s, transform .45s cubic-bezier(.22, 1, .36, 1); }
+.skill-bands > div:hover { border-color: #b8e4cf4d; transform: translateY(-4px); }
+.skill-bands .kicker { color: var(--teal); font: 11px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
+.skill-chips { display: flex; flex-wrap: wrap; gap: 9px; margin: 18px 0 0; padding: 0; list-style: none; }
+.skill-chips li { border: 1px solid var(--line-strong); border-radius: 999px; padding: 8px 14px; color: #ccd4dc; font-size: 13px; background: #ffffff08; }
+
+/* ---------- 404: the links carry the light ---------- */
+.not-found-links { padding-bottom: 210px; }
+.not-found-links a:not(.button) { position: relative; border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; overflow: hidden; background: #ffffff06; }
+.not-found-links a:not(.button) span { font: 20px var(--font-display); }
+
+/* ---------- Cards arrive in sequence, not all at once ---------- */
+.reveal-arrived .exp-stat, .reveal-arrived .architecture-grid article, .reveal-arrived .skill-bands > div { animation: card-arrive .72s cubic-bezier(.16, 1, .3, 1) both; }
+.reveal-arrived .exp-stat:nth-child(2), .reveal-arrived .architecture-grid article:nth-child(2), .reveal-arrived .skill-bands > div:nth-child(2) { animation-delay: .08s; }
+.reveal-arrived .exp-stat:nth-child(3), .reveal-arrived .architecture-grid article:nth-child(3), .reveal-arrived .skill-bands > div:nth-child(3) { animation-delay: .16s; }
+.reveal-arrived .exp-stat:nth-child(4), .reveal-arrived .architecture-grid article:nth-child(4), .reveal-arrived .skill-bands > div:nth-child(4) { animation-delay: .24s; }
+@keyframes card-arrive { from { opacity: 0; transform: translateY(26px) scale(.985); } }
+.reveal-arrived .exp-card { animation: card-arrive .8s cubic-bezier(.16, 1, .3, 1) both; }
+.reveal-arrived .exp-card:nth-of-type(2) { animation-delay: .1s; }
+.reveal-arrived .exp-card:nth-of-type(3) { animation-delay: .2s; }
+.reveal-arrived .quality-section li { animation: card-arrive .6s cubic-bezier(.16, 1, .3, 1) both; }
+.reveal-arrived .quality-section li:nth-child(2) { animation-delay: .08s; }
+.reveal-arrived .quality-section li:nth-child(3) { animation-delay: .16s; }
+.reveal-arrived .quality-section li:nth-child(4) { animation-delay: .24s; }
+.reveal-arrived .quality-section li:nth-child(5) { animation-delay: .32s; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .experience-stats { grid-template-columns: 1fr; }
+  .exp-card { grid-template-columns: 1fr; gap: 18px; padding: 30px 26px; }
+  .architecture-grid { grid-template-columns: repeat(2, 1fr); }
+  .color-system { grid-template-columns: repeat(2, 1fr); }
+  .quality-section { grid-template-columns: 1fr; gap: 34px; }
+  .skill-bands { grid-template-columns: 1fr; }
+  .field-aurora { filter: blur(70px); }
+}
+@media (max-width: 700px) {
+  .term-lines em { display: block; margin-left: 2ch; }
+  .term-lines { line-height: 1.9; }
+}
+@media (max-width: 560px) {
+  .architecture-grid { grid-template-columns: 1fr; }
+  .term-lines { padding: 20px 18px 24px; font-size: 11px; }
+}
+
+/* ---------- Reduced motion and transparency ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .field-aurora, .field-beam { animation: none; }
+  .term-lines li { opacity: 1; animation: none; }
+  .term-lines li:last-child::after { animation: none; }
+  .exp-card:hover, .architecture-grid article:hover, .swatch:hover, .quality-section li:hover { transform: none; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .field-aurora { opacity: .22; }
+  .grain-overlay { opacity: .02; }
+}

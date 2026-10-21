@@ -30,6 +30,7 @@ export function ProjectExplorer() {
             <motion.article
               className={`project-row accent-${project.accent}`}
               key={project.slug}
+              data-spotlight
               layout={!reduced}
               initial={{ opacity: 0, y: 26 }}
               animate={{ opacity: 1, y: 0 }}

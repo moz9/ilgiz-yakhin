@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { RevealSection } from "@/components/reveal-section";
+import { FieldBackdrop } from "@/components/field-backdrop";
 
 export const metadata: Metadata = { title: "Обо мне" };
+
+const bands = [
+  { kicker: "Web / Backend", items: ["Next.js", "React", "TypeScript", "PHP", "Python", "FastAPI", "REST API"] },
+  { kicker: "Data / Desktop", items: ["PostgreSQL", "Supabase", "SQLite", "Electron", "Windows", "WinUI"] },
+  { kicker: "Delivery / Infrastructure", items: ["Git", "GitHub Actions", "Docker", "Vercel", "Linux", "Nginx", "Backup / Rollback"] },
+  { kicker: "AI workflow", items: ["Codex", "Codex CLI", "Cursor", "Gemini CLI", "VS Code", "review", "tests"] },
+];
 
 export default function AboutPage() {
   return (
     <main className="inner-page about-page">
+      <FieldBackdrop tone="teal" />
       <section className="page-hero">
         <div className="eyebrow"><span>ABOUT</span><span>Ильгиз Яхин</span></div>
         <h1>Обо мне</h1>
@@ -26,10 +35,12 @@ export default function AboutPage() {
       </RevealSection>
       <RevealSection>
         <section className="section skill-bands">
-          <div><p className="kicker">Web / Backend</p><p>Next.js · React · TypeScript · PHP · Python · FastAPI · REST API</p></div>
-          <div><p className="kicker">Data / Desktop</p><p>PostgreSQL · Supabase · SQLite · Electron · Windows applications</p></div>
-          <div><p className="kicker">Delivery / Infrastructure</p><p>Git · GitHub Actions · Docker · Vercel · Linux · Nginx · Backup / Rollback</p></div>
-          <div><p className="kicker">AI workflow</p><p>Codex · Codex CLI · Cursor · Gemini CLI · VS Code · review · tests · verification</p></div>
+          {bands.map((band) => (
+            <div key={band.kicker} data-spotlight>
+              <p className="kicker">{band.kicker}</p>
+              <ul className="skill-chips">{band.items.map((item) => <li key={item}>{item}</li>)}</ul>
+            </div>
+          ))}
         </section>
       </RevealSection>
       <RevealSection>

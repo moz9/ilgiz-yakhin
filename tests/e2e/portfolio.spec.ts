@@ -160,6 +160,9 @@ test("remaining cases include substantial product stories and purposeful media f
 test("pages do not overflow horizontally", async ({ page }) => {
   for (const route of ["/", "/projects", "/projects/revalib", "/projects/launcher", "/projects/streaming-web-platform", "/projects/streaming-android-tv", "/demos/launcher", "/demos/content-platform", "/demos/mobile-tv", "/about", "/resume", "/how-built"]) {
     await page.goto(route);
+    // The display font is wider than the fallback: measure only after the webfont settles.
+    await page.evaluate(() => document.fonts.ready);
+    await page.waitForTimeout(150);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     const offenders = overflow > 1 ? await page.evaluate(() => Array.from(document.querySelectorAll("body *"))
       .map((element) => {

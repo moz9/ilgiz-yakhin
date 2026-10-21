@@ -74,7 +74,7 @@ function GalleryFigure({ item, index, onOpen, reduceMotion }: { item: ProjectMed
       aria-label={`Рассмотреть: ${item.label}`}
       onClick={(event) => onOpen(index, event.currentTarget)}
     >
-      <span className="gallery-shot-bar" aria-hidden="true"><i /><i /><i /><span>{item.label}</span>{(live || tour) && <b className="gallery-live-dot" />}</span>
+      <span className="gallery-shot-bar" aria-hidden="true"><i /><i /><i />{item.presentation === "detail" && <b className="gallery-detail-mark">ДЕТАЛЬ</b>}<span>{item.label}</span>{(live || tour) && <b className="gallery-live-dot" />}</span>
       {collage ? <span className={`gallery-collage${item.presentation === "strip" ? " is-strip" : ""}`} aria-hidden="true">
         {item.frames!.map((frame, position) =>
           <motion.span

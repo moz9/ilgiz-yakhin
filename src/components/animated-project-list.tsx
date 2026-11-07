@@ -2,12 +2,12 @@
 
 import { ArrowUpRight, BookOpen, Building2, Clock3, Crown, Library, Monitor } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { projects, type Project } from "@/lib/projects";
 import { ProjectStage } from "@/components/project-stage";
 import { GlassLayer } from "@/components/glass-layer";
+import { ProjectArchive } from "@/components/project-archive";
 
 const featuredSlugs = ["chessrise", "pioner", "worktime-reporting", "infrastructure-inventory", "content-platform", "revalib"];
 const featured = featuredSlugs.map((slug) => projects.find((project) => project.slug === slug)).filter((project): project is Project => Boolean(project));
@@ -20,7 +20,6 @@ export function AnimatedProjectList() {
   const trackRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [preview, setPreview] = useState(other[0]);
   const reducedMotion = useReducedMotion();
 
   useEffect(() => {
@@ -67,14 +66,15 @@ export function AnimatedProjectList() {
     };
   }, []);
 
-  const selectProject = (index: number) => {
+  const selectProject = (index: number, behavior: ScrollBehavior = "smooth") => {
+    if (window.innerWidth <= 860 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const wrap = wrapRef.current;
     const track = trackRef.current;
     const card = track?.children[index] as HTMLElement | undefined;
     if (!wrap || !track || !card) return;
     const distance = Math.max(0, track.scrollWidth - innerWidth);
     const offset = Math.max(0, Math.min(distance, card.offsetLeft + card.offsetWidth / 2 - innerWidth / 2));
-    window.scrollTo({ top: scrollY + wrap.getBoundingClientRect().top + offset, behavior: "smooth" });
+    window.scrollTo({ top: scrollY + wrap.getBoundingClientRect().top + offset, behavior });
   };
 
   return <section className="redesign-work" id="work" aria-labelledby="work-title">
@@ -91,7 +91,9 @@ export function AnimatedProjectList() {
         </div>
         <div className="redesign-track" ref={trackRef}>
           {featured.map((project, index) =>
-            <Link className="redesign-project-card" href={`/projects/${project.slug}`} key={project.slug}>
+            <Link className="redesign-project-card" href={`/projects/${project.slug}`} key={project.slug} onFocus={(event) => {
+              if (event.currentTarget.matches(":focus-visible")) selectProject(index, "instant");
+            }}>
               <span className="project-media">
                 <ProjectStage project={project} compact />
                 <span className="project-caption liquid-surface"><GlassLayer /><span className="project-caption-status"><i />{featuredStatuses[index]}</span><span className="project-caption-open">Кейс <ArrowUpRight aria-hidden="true" /></span></span>
@@ -113,10 +115,6 @@ export function AnimatedProjectList() {
         })}</div>
       </div>
     </div>
-    <div className="redesign-other">
-      <div className="other-preview"><h3>Другие проекты</h3><div key={preview.slug} className="other-preview-stage"><ProjectStage project={preview} compact /></div><span className="redesign-mono">{preview.stack.slice(0, 3).join(" · ")}</span></div>
-      <div className="other-project-links">{other.map((project, index) =>
-        <Link href={`/projects/${project.slug}`} key={project.slug} data-preview={preview.slug === project.slug} onMouseEnter={() => setPreview(project)} onFocus={() => setPreview(project)}><small className="redesign-mono">{String(index + 1).padStart(2, "0")}</small><Image className="other-project-thumb" src={project.cover} alt="" width={160} height={100} sizes="80px" /><span>{project.title}<small>{project.category.join(" / ")}</small></span><ArrowUpRight aria-hidden="true" /></Link>)}</div>
-    </div>
+    <ProjectArchive projects={other} />
   </section>;
 }

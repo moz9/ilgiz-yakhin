@@ -66,7 +66,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--font-sans
 .redesign-section-head h2, .redesign-pipeline h2, .redesign-experience h2 { font: 700 5rem/.99 var(--font-display); text-transform: uppercase; }
 .redesign-section-head a, .redesign-experience a { color: var(--teal); display: inline-flex; align-items: center; gap: 8px; padding: 8px 0; }
 .redesign-section-head svg, .redesign-experience svg { width: 18px; height: 18px; }
-.redesign-pin { position: sticky; top: 0; height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; padding-bottom: 74px; }
+.redesign-pin { position: sticky; top: 0; height: 100svh; overflow: clip; display: flex; flex-direction: column; justify-content: center; padding-bottom: 74px; }
 .redesign-track { display: flex; gap: clamp(20px, 4vw, 64px); padding: 0 clamp(24px, 5%, 80px); width: max-content; }
 .redesign-project-card { position: relative; flex: none; width: min(84vw, 1240px); height: min(68svh, 640px); display: grid; grid-template-columns: 1.55fr 1fr; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
 .redesign-card-image { display: block; background-color: #090c10; background-size: cover; background-position: top center; transition: transform .6s; }

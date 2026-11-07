@@ -1,0 +1,50 @@
+import { expect, test } from "@playwright/test";
+
+test("project disclosures work with touch, keyboard and reduced motion", async ({ page, isMobile }, testInfo) => {
+  await page.goto("/");
+  const archive = page.locator(".redesign-other");
+  await archive.scrollIntoViewIfNeeded();
+  await archive.screenshot({ path: testInfo.outputPath("archive.png") });
+  const triggers = archive.locator(".archive-trigger");
+  await expect(triggers).toHaveCount(8);
+  await expect(archive.getByRole("link")).toHaveCount(8);
+  await expect(triggers.first()).toHaveAttribute("aria-expanded", "true");
+  if (isMobile) await triggers.nth(1).tap();
+  else await triggers.nth(1).click();
+  await expect(triggers.nth(1)).toHaveAttribute("aria-expanded", "true");
+  await expect(triggers.first()).toHaveAttribute("aria-expanded", "false");
+  await expect(archive.locator(".other-preview-stage .project-stage")).toHaveAttribute("data-project", "streaming-android-tv");
+  const secondPanel = archive.locator(`#${await triggers.nth(1).getAttribute("aria-controls")}`);
+  await expect(secondPanel).not.toHaveAttribute("inert");
+  await expect(secondPanel.locator("p")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(triggers.nth(1)).toBeFocused();
+  await expect(triggers.nth(1)).toHaveAttribute("aria-expanded", "false");
+  await expect(secondPanel).toHaveAttribute("inert", "");
+  await page.keyboard.press("Enter");
+  await expect(triggers.nth(1)).toHaveAttribute("aria-expanded", "true");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await triggers.nth(2).click();
+  await expect(triggers.nth(2)).toHaveAttribute("aria-expanded", "true");
+  await expect(triggers.nth(1)).toHaveAttribute("aria-expanded", "false");
+  await expect(archive.locator(".other-project-thumb")).toHaveCount(8);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+  await archive.screenshot({ path: testInfo.outputPath("archive-reduced-motion.png") });
+});
+
+test("footer exposes real contacts and working navigation", async ({ page }, testInfo) => {
+  await page.goto("/");
+  await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }));
+  await page.screenshot({ path: testInfo.outputPath("footer.png") });
+  const footer = page.getByRole("contentinfo");
+  await expect(footer).toBeVisible();
+  await expect(footer.getByRole("link", { name: /im@angelius.ru/ })).toHaveAttribute("href", "mailto:im@angelius.ru");
+  await footer.getByRole("link", { name: "Проекты", exact: true }).click();
+  await expect(page).toHaveURL(/\/projects$/);
+  await expect(page.getByRole("heading", { name: "Проекты", exact: true })).toBeVisible();
+  await page.getByRole("contentinfo").getByRole("link", { name: "Наверх", exact: true }).click();
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeLessThanOrEqual(1);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+  await page.goto("/demos/launcher");
+  await expect(page.getByRole("contentinfo")).toHaveCount(0);
+});

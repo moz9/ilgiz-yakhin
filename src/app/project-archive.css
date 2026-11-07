@@ -1,0 +1,102 @@
+.redesign-home .project-archive { position: relative; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 32px 6%; padding-block: 88px 112px; }
+.project-archive > .archive-heading { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; border: 0; padding-bottom: 20px; }
+.project-archive .archive-heading h3 { font: 600 36px/1.25 var(--font-display); margin: 0; }
+.archive-heading > span { color: #b8bdc4; font-size: 16px; font-variant-numeric: tabular-nums; }
+.project-archive > .archive-preview { position: sticky; top: 64px; align-self: start; min-width: 0; border: 0; }
+.archive-preview .other-preview-stage { overflow: hidden; border-radius: 6px; }
+.archive-preview .archive-shot { aspect-ratio: 1.6; height: auto; padding: 0; align-content: stretch; background: #171c22; }
+.archive-shot img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.archive-preview-caption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-top: 24px; font-size: 12px; line-height: 1.7; }
+.archive-preview-caption strong { color: #edf0f3; font-weight: 500; }
+.archive-preview-caption > span { color: #b8bdc4; }
+.project-archive > .project-archive-list { min-width: 0; border-top: 1px solid #40444a; }
+.archive-project { border-bottom: 1px solid #40444a; }
+.archive-project-header { display: grid; grid-template-columns: minmax(0, 1fr) 48px; gap: 12px; align-items: center; }
+.archive-trigger { display: flex; align-items: center; gap: 18px; width: 100%; min-width: 0; min-height: 100px; padding: 20px 0; color: #edf0f3; background: transparent; border: 0; font: inherit; text-align: left; cursor: pointer; }
+.archive-trigger .other-project-thumb { width: 72px; height: 48px; border-radius: 4px; object-fit: cover; }
+.archive-title { flex: 1; min-width: 0; }
+.archive-title strong { display: block; font-size: 16px; font-weight: 600; line-height: 1.5; overflow-wrap: break-word; }
+.archive-title > span { display: block; margin-top: 7px; font-size: 10px; line-height: 1.7; text-transform: uppercase; color: #b8bdc4; }
+.archive-chevron { flex: none; display: grid; place-items: center; width: 24px; height: 24px; color: #b8bdc4; }
+.archive-project[data-expanded="true"] .archive-title strong, .archive-project[data-expanded="true"] .archive-chevron { color: #ffb23f; }
+.project-archive .archive-case-link { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid #62676e; border-radius: 50%; color: #edf0f3; }
+.project-archive .archive-case-link svg { width: 18px; height: 18px; transition: transform .25s; }
+.archive-trigger:focus-visible, .project-archive .archive-case-link:focus-visible { outline: 2px solid #ffb23f; outline-offset: 5px; }
+.archive-panel { overflow: hidden; }
+.archive-panel-content { padding: 0 60px 28px 90px; font-size: 14px; line-height: 1.75; color: #c6cbd2; }
+.archive-panel-content p { margin: 0 0 18px; }
+.archive-panel-content ul { padding-left: 18px; margin: 0 0 18px; }
+.archive-panel-content li + li { margin-top: 7px; }
+.archive-stack { display: block; color: #ffcc7b; font-size: 11px; }
+.archive-inline-media { display: none; }
+
+.portfolio-footer { position: relative; background: #e2ecec; color: #19272c; padding: 40px max(24px, 5%) 110px; overflow: clip; }
+.portfolio-footer::after { content: ""; position: absolute; inset: auto 0 0; height: 100px; background: #13191e; pointer-events: none; }
+.footer-topline { display: flex; align-items: center; justify-content: space-between; gap: 20px; font-size: 12px; }
+.footer-topline > span { display: flex; align-items: center; gap: 10px; }
+.footer-topline i { width: 7px; height: 7px; border-radius: 50%; background: #23734e; }
+.footer-top { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; border: 1px solid #61777b; }
+.footer-top svg { width: 20px; height: 20px; }
+.footer-conversation { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 32px; padding: 54px 0 48px; }
+.footer-conversation h2 { font: 700 64px/1.15 var(--font-display); margin: 0; }
+.footer-conversation h2 > span { color: #a34618; }
+.footer-email { display: flex; gap: 24px; align-items: center; font-size: 26px; padding-bottom: 8px; border-bottom: 1px solid #789397; }
+.footer-email svg { width: 28px; height: 28px; flex: none; transition: transform .3s; }
+.footer-navigation { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px 40px; border-top: 1px solid #a6b9bc; padding: 26px 0; }
+.footer-navigation a { display: flex; align-items: center; gap: 16px; min-height: 44px; font-size: 14px; }
+.footer-navigation svg { width: 15px; height: 15px; transition: transform .3s; }
+.footer-signature { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr); gap: 40px; padding: 40px 0 30px; border-top: 1px solid #a6b9bc; font: 800 88px/1.1 var(--font-display); }
+.footer-signature > span { display: flex; justify-content: space-between; align-items: center; gap: 24px; min-width: 0; }
+.footer-signature > span:last-child { color: #345c66; }
+.footer-signature svg { width: 64px; height: 64px; flex: none; transition: transform .4s; }
+.footer-baseline { display: flex; flex-wrap: wrap; gap: 16px 32px; justify-content: space-between; padding-top: 30px; font-size: 12px; color: #415e66; border-top: 1px solid #a6b9bc; }
+.portfolio-footer :is(a, button):focus-visible { outline: 2px solid #a34618; outline-offset: 7px; }
+@media (hover: hover) and (pointer: fine) {
+  .archive-trigger:hover .archive-title strong { color: #ffcc7b; }
+  .project-archive .archive-case-link:hover { background: #ffb23f; color: #171b20; border-color: #ffb23f; }
+  .project-archive .archive-case-link:hover svg, .footer-email:hover svg, .footer-navigation a:hover svg, .footer-signature:hover svg { transform: translate(3px, -3px); }
+  .footer-signature:hover > span:last-child { color: #a34618; }
+}
+@media (max-width: 1100px) {
+  .archive-panel-content { padding-left: 0; padding-right: 12px; }
+  .archive-trigger { gap: 12px; }
+  .archive-trigger .other-project-thumb { width: 56px; height: 40px; }
+  .footer-signature { font-size: 64px; gap: 24px; }
+  .footer-signature svg { width: 44px; height: 44px; }
+}
+@media (max-width: 860px) {
+  .redesign-home .project-archive { grid-template-columns: minmax(0, 1fr); padding-block: 64px 80px; gap: 12px; }
+  .project-archive .archive-heading h3 { font-size: 28px; }
+  .project-archive > .archive-preview { display: none; }
+  .archive-inline-media { display: block; aspect-ratio: 1.6; overflow: hidden; border-radius: 5px; background: #20252c; margin-bottom: 22px; }
+  .archive-inline-media img { width: 100%; height: 100%; object-fit: contain; }
+  .archive-panel-content { padding: 0 0 26px; }
+  .archive-project-header { grid-template-columns: minmax(0, 1fr) 44px; gap: 10px; }
+  .archive-trigger { min-height: 108px; gap: 12px; }
+  .archive-title strong { font-size: 14px; }
+  .archive-title > span { font-size: 9px; }
+  .archive-chevron { width: 18px; height: 18px; }
+  .archive-chevron svg { width: 18px; height: 18px; }
+  .footer-conversation { align-items: start; flex-direction: column; padding-block: 36px; gap: 24px; }
+  .footer-conversation h2 { font-size: 44px; }
+  .footer-email { font-size: 22px; }
+  .footer-signature { grid-template-columns: minmax(0, 1fr); gap: 0; font-size: 48px; padding-block: 30px; }
+  .footer-navigation { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 20px; }
+  .footer-navigation a { justify-content: space-between; }
+}
+@media (max-width: 360px) {
+  .project-archive .archive-heading h3 { font-size: 23px; }
+  .archive-trigger .other-project-thumb { width: 42px; height: 34px; }
+  .archive-trigger { gap: 8px; }
+  .footer-conversation h2 { font-size: 36px; }
+  .footer-email { font-size: 19px; gap: 14px; }
+  .footer-signature { font-size: 40px; }
+  .footer-signature svg { width: 28px; height: 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .project-archive .archive-case-link svg, .footer-email svg, .footer-navigation svg, .footer-signature svg { transition: none; }
+}
+@media (forced-colors: active) {
+  .portfolio-footer { background: Canvas; color: CanvasText; }
+  .footer-signature > span:last-child, .footer-baseline, .archive-title strong, .archive-title > span, .archive-panel-content, .archive-stack { color: CanvasText; }
+}

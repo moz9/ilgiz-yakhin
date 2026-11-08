@@ -4,11 +4,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, Check } from "lucide-react";
 import { getProject, projects } from "@/lib/projects";
+import { caseHue, caseHueStyle } from "@/lib/case-hues";
 import { ProjectStage } from "@/components/project-stage";
 import { ProjectGallery } from "@/components/project-gallery";
-import { RevealSection } from "@/components/reveal-section";
 import { CaseNavigation } from "@/components/case-navigation";
-import { FieldBackdrop } from "@/components/field-backdrop";
+import { CaseHeroStage } from "@/components/case-hero-stage";
 
 export function generateStaticParams() {
   return projects.map(({ slug }) => ({ slug }));
@@ -19,82 +19,85 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return project ? { title: project.title, description: project.summary, alternates: { canonical: `/projects/${project.slug}` } } : {};
 }
 
+const access = { public: "Публичный", mixed: "Частично публичный", private: "Обезличенное демо" } as const;
+
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const project = getProject((await params).slug);
   if (!project) notFound();
   const index = projects.findIndex((item) => item.slug === project.slug);
   const next = projects[(index + 1) % projects.length];
 
-  return <main className="redesign-case">
-    <FieldBackdrop tone="ink" />
-    <div className="redesign-case-wrap">
-      <div className="redesign-case-top redesign-mono">
-        <Link href="/projects"><ArrowLeft aria-hidden="true" /> Все проекты</Link>
-        <span>Кейс {String(index + 1).padStart(2, "0")} из {projects.length}</span>
+  return <main className="case" style={caseHueStyle(project.slug)} data-field={`${caseHue(project.slug).join(" ")} 0.62`}>
+    <header className="case-hero">
+      <div className="page-lights case-lights" aria-hidden="true"><i /><i /></div>
+      <div className="case-top">
+        <Link className="text-link case-back" href="/projects"><ArrowLeft aria-hidden="true" />Все работы</Link>
+        <span>{index + 1} из {projects.length}</span>
       </div>
-      <header className="redesign-case-hero">
-        <span className="redesign-case-status redesign-mono"><i />{project.status}</span>
-        <h1 className={project.title.length > 24 ? "redesign-case-title long" : "redesign-case-title"}>{project.title}</h1>
-        <p className="redesign-case-lead">{project.summary}</p>
-        <div className="redesign-case-meta">
-          <div><span>Категория</span><strong>{project.category.join(" · ")}</strong></div>
-          <div><span>Роль</span><strong>{project.role}</strong></div>
-          <div><span>Основа</span><strong>{project.stack.slice(0, 3).join(" · ")}</strong></div>
-          <div><span>Доступ</span><strong>{project.access === "public" ? "Публичный" : project.access === "mixed" ? "Смешанный" : "Обезличенное демо"}</strong></div>
-        </div>
-      </header>
-      <RevealSection className="case-presentation">
-        <ProjectStage project={project} priority />
-      </RevealSection>
-      <CaseNavigation sections={[
-        { id: "overview", label: "Коротко" },
-        ...(project.capabilities ? [{ id: "capabilities", label: "Возможности" }] : []),
-        ...(project.media?.length ? [{ id: "interfaces", label: "Интерфейсы" }] : []),
-        { id: "decisions", label: "Решения" },
-        { id: "results", label: "Результаты" },
-      ]} />
-      <section id="overview" className="redesign-case-tldr" aria-label="Коротко о проекте">
-        {[["Задача", project.task], ["Моя работа", `${project.decisions.map((item) => item.title).join("; ")}.`], ["Результат", project.results[0]]].map(([label, text], index) => (
-          <div key={label} data-spotlight>
-            <span className="redesign-mono">0{index + 1}</span>
-            <em>{label}</em>
-            <p>{text}</p>
-          </div>
-        ))}
-      </section>
-      {project.capabilities && <section id="capabilities" className="redesign-case-flow" aria-labelledby="capabilities-title">
-        <div className="redesign-case-section-head"><h2 id="capabilities-title">Функциональные контуры</h2><p>Как устроены основные пользовательские и операционные сценарии.</p></div>
-        <div className="redesign-case-flow-grid">
-          {project.capabilities.map((group, step) => <article key={group.title} data-spotlight>
-            <span className="redesign-mono">0{step + 1}</span>
-            <h3>{group.title}</h3>
-            <p>{group.summary}</p>
-            <ul>{group.items.map((item) => <li key={item}>{item}</li>)}</ul>
-          </article>)}
-        </div>
-      </section>}
-      {Boolean(project.media?.length) && <div id="interfaces"><ProjectGallery media={project.media!} /></div>}
-      <section id="decisions" className="redesign-case-decisions" aria-labelledby="decisions-title">
-        <h2 id="decisions-title">Ключевые решения</h2>
-        <div>{project.decisions.map((decision, decisionIndex) => <article key={decision.title} data-spotlight>
-          <span className="redesign-mono">0{decisionIndex + 1}</span><h3>{decision.title}</h3><p>{decision.text}</p>
-        </article>)}</div>
-      </section>
-      <section id="results" className="redesign-case-proof" aria-labelledby="results-title">
-        <h2 id="results-title">Результаты и проверки</h2>
-        <div className="redesign-case-evidence">
-          {project.evidence.map((item) => <div key={item.label} data-spotlight><span>{item.label}</span><strong>{item.value}</strong></div>)}
-        </div>
-        <ul className="redesign-case-results">{project.results.map((result) => <li key={result}><Check aria-hidden="true" />{result}</li>)}</ul>
-        <div className="redesign-case-stack" aria-label="Стек">{project.stack.map((item) => <span key={item}>{item}</span>)}</div>
-        <div className="redesign-case-limits"><span>Честные границы</span><div>{project.limitations.map((item) => <p key={item}>{item}</p>)}</div></div>
-        {project.links && <div className="redesign-case-links">{project.links.map((link) =>
-          <a key={link.href} href={link.href} target={link.href.startsWith("http") ? "_blank" : undefined} rel={link.href.startsWith("http") ? "noreferrer" : undefined}>{link.label} <ArrowUpRight aria-hidden="true" /></a>)}</div>}
-      </section>
-      <Link className="redesign-case-next" href={`/projects/${next.slug}`}>
-        <span><small>Следующий кейс</small><strong>{next.title}</strong><em>Открыть кейс <ArrowUpRight aria-hidden="true" /></em></span>
-        <Image src={next.cover} alt="" width={640} height={420} loading="lazy" />
-      </Link>
-    </div>
+      <p className="case-status"><i aria-hidden="true" />{project.status}</p>
+      <h1>{project.title}</h1>
+      <p className="case-lead">{project.summary}</p>
+      <dl className="case-facts">
+        <div><dt>Роль</dt><dd>{project.role}</dd></div>
+        <div><dt>Направление</dt><dd>{project.category.join(", ")}</dd></div>
+        <div><dt>Основа</dt><dd>{project.stack.slice(0, 3).join(", ")}</dd></div>
+        <div><dt>Доступ</dt><dd>{access[project.access]}</dd></div>
+      </dl>
+    </header>
+    <CaseHeroStage><ProjectStage project={project} priority /></CaseHeroStage>
+
+    <CaseNavigation sections={[
+      { id: "overview", label: "Коротко" },
+      ...(project.capabilities ? [{ id: "capabilities", label: "Возможности" }] : []),
+      ...(project.media?.length ? [{ id: "interfaces", label: "Интерфейсы" }] : []),
+      { id: "decisions", label: "Решения" },
+      { id: "results", label: "Результаты" },
+    ]} />
+
+    <section id="overview" className="case-section case-overview" aria-label="Коротко о проекте">
+      <article><h2>Задача</h2><p>{project.task}</p></article>
+      <article><h2>Что я сделал</h2><ul>{project.decisions.map((item) => <li key={item.title}>{item.title}</li>)}</ul></article>
+      <article className="case-overview-result"><h2>Главный результат</h2><p>{project.results[0]}</p></article>
+    </section>
+
+    {project.capabilities && <section id="capabilities" className="case-section" aria-labelledby="capabilities-title">
+      <div className="case-section-head"><h2 id="capabilities-title">Что умеет продукт</h2><p>Основные пользовательские и операционные сценарии.</p></div>
+      <div className="case-capabilities">
+        {project.capabilities.map((group) => <article key={group.title}>
+          <h3>{group.title}</h3>
+          <p>{group.summary}</p>
+          <ul>{group.items.map((item) => <li key={item}>{item}</li>)}</ul>
+        </article>)}
+      </div>
+    </section>}
+
+    {Boolean(project.media?.length) && <section id="interfaces" className="case-section case-interfaces" aria-labelledby="interfaces-title">
+      <div className="case-section-head"><h2 id="interfaces-title">Интерфейсы</h2><p>Экраны сняты с работающего продукта. Нажмите на кадр, чтобы рассмотреть его ближе.</p></div>
+      <ProjectGallery media={project.media!} />
+    </section>}
+
+    <section id="decisions" className="case-section" aria-labelledby="decisions-title">
+      <div className="case-section-head"><h2 id="decisions-title">Ключевые решения</h2><p>Почему продукт устроен именно так.</p></div>
+      <ol className="case-decisions">
+        {project.decisions.map((decision, step) => <li key={decision.title}><span aria-hidden="true">{step + 1}</span><h3>{decision.title}</h3><p>{decision.text}</p></li>)}
+      </ol>
+    </section>
+
+    <section id="results" className="case-section" aria-labelledby="results-title">
+      <div className="case-section-head"><h2 id="results-title">Результаты и проверки</h2></div>
+      <div className="case-evidence">
+        {project.evidence.map((item) => <div key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>)}
+      </div>
+      <ul className="case-results">{project.results.map((result) => <li key={result}><Check aria-hidden="true" />{result}</li>)}</ul>
+      <div className="case-stack"><h3>Стек</h3><ul className="chips">{project.stack.map((item) => <li key={item}>{item}</li>)}</ul></div>
+      <aside className="case-limits"><h3>Честные границы</h3>{project.limitations.map((item) => <p key={item}>{item}</p>)}</aside>
+      {project.links && <div className="case-links">{project.links.map((link) =>
+        <a key={link.href} className="button" data-lg="button" href={link.href} target={link.href.startsWith("http") ? "_blank" : undefined} rel={link.href.startsWith("http") ? "noreferrer" : undefined}>{link.label}<ArrowUpRight aria-hidden="true" /></a>)}</div>}
+    </section>
+
+    <Link className="case-next" href={`/projects/${next.slug}`} style={caseHueStyle(next.slug)}>
+      <span className="case-next-copy"><small>Следующий кейс</small><strong>{next.title}</strong><em>Открыть <ArrowUpRight aria-hidden="true" /></em></span>
+      <span className="case-next-shot"><Image src={next.cover} alt="" width={960} height={600} sizes="(max-width: 860px) 90vw, 560px" /></span>
+    </Link>
   </main>;
 }

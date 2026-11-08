@@ -1,54 +1,55 @@
 "use client";
 
-import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { filterProjects, projectCategories, projects } from "@/lib/projects";
 import { ProjectStage } from "@/components/project-stage";
+import { useGlassTabs } from "@/components/glass/glass-runtime";
+
+const categoryLabels: Record<(typeof projectCategories)[number], string> = {
+  Все: "Все",
+  Web: "Web",
+  Mobile: "Android",
+  Desktop: "Desktop",
+  Automation: "Автоматизация",
+  Infrastructure: "Инфраструктура",
+};
 
 export function ProjectExplorer() {
   const [category, setCategory] = useState<(typeof projectCategories)[number]>("Все");
   const reduced = useReducedMotion();
+  const tabs = useRef<HTMLDivElement>(null);
   const visible = filterProjects(category);
+  useGlassTabs(tabs, projectCategories.indexOf(category), (index) => setCategory(projectCategories[index]));
 
-  return (
-    <>
-      <div className="filter-bar" role="group" aria-label="Фильтр проектов">
-        {projectCategories.map((item) => (
-          <button key={item} type="button" className={category === item ? "is-active" : ""} aria-pressed={category === item} onClick={() => setCategory(item)}>
-            {/* The indicator stays in the markup: the server and the client must render the same tree. */}
-            {category === item && <motion.span className="filter-active" layoutId="catalog-filter" transition={reduced ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 38, mass: .8 }} aria-hidden="true" />}
-            <span className="filter-label">{item}</span>
-            <motion.span className="filter-count" key={`${item}-${visible.length}`} initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduced ? 0 : .35, ease: [0.22, 1, 0.36, 1] }}>{item === "Все" ? projects.length : filterProjects(item).length}</motion.span>
-          </button>
-        ))}
+  return <>
+    <div className="filter" data-lg="surface">
+      <div className="filter-tabs" ref={tabs} role="tablist" aria-label="Фильтр проектов">
+        {projectCategories.map((item) =>
+          <button key={item} type="button" role="tab" aria-selected={category === item} aria-controls="project-grid" tabIndex={category === item ? 0 : -1}>
+            <span>{categoryLabels[item]}</span><small>{item === "Все" ? projects.length : filterProjects(item).length}</small>
+          </button>)}
       </div>
-      <div className="project-list" aria-live="polite">
-        <AnimatePresence mode="popLayout" initial={false}>
-          {visible.map((project, index) => (
-            <motion.article
-              className={`project-row accent-${project.accent}`}
-              key={project.slug}
-              data-spotlight
-              layout={!reduced}
-              initial={{ opacity: 0, y: 26 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduced ? undefined : { opacity: 0, y: -14 }}
-              transition={{ duration: reduced ? 0 : .55, delay: reduced ? 0 : Math.min(index, 8) * .045, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <Link className="catalog-stage-link" href={`/projects/${project.slug}`} aria-label={`Экраны проекта: ${project.title}`} tabIndex={-1}><ProjectStage project={project} compact /></Link>
-              <div className="project-main">
-                <div className="project-meta"><span>{project.shortTitle}</span><span>{project.status}</span></div>
-                <h2><Link href={`/projects/${project.slug}`}>{project.title}</Link></h2>
-                <p>{project.summary}</p>
-                <ul className="tag-list" aria-label="Технологии">{project.stack.slice(0, 6).map((item) => <li key={item}>{item}</li>)}</ul>
-              </div>
-              <Link className="project-arrow" href={`/projects/${project.slug}`} aria-label={`Открыть кейс ${project.title}`}><ArrowUpRight aria-hidden="true" /></Link>
-            </motion.article>
-          ))}
-        </AnimatePresence>
-      </div>
-    </>
-  );
+    </div>
+    <div className="project-grid" id="project-grid" role="tabpanel" aria-live="polite">
+      <AnimatePresence mode="popLayout" initial={false}>
+        {visible.map((project, index) =>
+          <motion.article className="project-card" key={project.slug} layout={!reduced}
+            initial={reduced ? false : { y: 40, scale: 0.96 }}
+            animate={{ y: 0, scale: 1 }}
+            exit={reduced ? undefined : { scale: 0.92, opacity: 0 }}
+            transition={{ duration: reduced ? 0 : 0.6, delay: reduced ? 0 : Math.min(index, 6) * 0.04, ease: [0.16, 1, 0.3, 1] }}>
+            <Link href={`/projects/${project.slug}`} className="project-card-link">
+              <ProjectStage project={project} compact sizes="(max-width: 860px) 92vw, 640px" />
+              <span className="project-card-meta">{project.category.map((item) => categoryLabels[item]).join(", ")}</span>
+              <h2>{project.title}</h2>
+              <p>{project.summary}</p>
+            </Link>
+            <ul className="chips" aria-label="Технологии">{project.stack.slice(0, 5).map((item) => <li key={item}>{item}</li>)}</ul>
+          </motion.article>)}
+      </AnimatePresence>
+    </div>
+  </>;
 }

@@ -1,0 +1,156 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { ArrowUpRight } from "lucide-react";
+import { projects, type Project } from "@/lib/projects";
+import { featured } from "@/lib/featured";
+import { caseHue, caseHueStyle } from "@/lib/case-hues";
+import { useGlassTabs } from "@/components/glass/glass-runtime";
+
+const labels: Record<string, string> = {
+  chessrise: "ChessRise",
+  pioner: "Пионер",
+  "worktime-reporting": "Отчётность",
+  "infrastructure-inventory": "Учёт ИТ",
+  "content-platform": "Платформа",
+  revalib: "RevaLib",
+};
+const statuses: Record<string, string> = {
+  chessrise: "Принят и оплачен",
+  pioner: "Публичный preview",
+  "worktime-reporting": "Windows, демо",
+  "infrastructure-inventory": "Windows, демо",
+  "content-platform": "Production, обезличен",
+  revalib: "Production",
+};
+
+type Shot = { src: string; phone: boolean };
+/** The layers of one case: its cover, a second real screen and a phone view when there is one. */
+function shotsOf(project: Project) {
+  const all: Shot[] = [];
+  for (const item of project.media ?? []) {
+    if (item.presentation === "phone") all.push({ src: item.src, phone: true });
+    else if (!item.presentation || ["browser", "desktop", "live", "detail"].includes(item.presentation)) all.push({ src: item.src, phone: false });
+    for (const frame of item.frames ?? []) {
+      if (typeof frame === "string") all.push({ src: frame, phone: false });
+      else all.push({ src: frame.src, phone: frame.presentation === "phone" });
+    }
+  }
+  const back = all.find((shot) => !shot.phone && shot.src !== project.cover);
+  const phone = all.find((shot) => shot.phone);
+  return { back: back?.src, phone: phone?.src };
+}
+
+const clamp = (value: number) => Math.max(0, Math.min(1, value));
+const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+/** Scroll position inside a chapter where it is fully built and opened up. */
+const SHOWN_AT = 0.74;
+
+/**
+ * Selected work as six full-screen chapters. Each one is pinned while the reader scrolls
+ * through it: the product flies in from depth, settles to face the reader, then opens into
+ * an exploded view of its layers. The light of the whole page takes the case's colours.
+ */
+export function FeaturedWork() {
+  const list = useRef<HTMLDivElement>(null);
+  const picker = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const root = list.current;
+    if (!root) return;
+    const chapters = Array.from(root.querySelectorAll<HTMLElement>(".chapter"));
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+    let frame = 0;
+    const update = () => {
+      let current = 0;
+      chapters.forEach((chapter, index) => {
+        const box = chapter.getBoundingClientRect();
+        if (box.top <= innerHeight * 0.5) current = index;
+        if (reduced.matches) {
+          chapter.style.setProperty("--in", "1");
+          chapter.style.setProperty("--split", "0.5");
+          chapter.style.setProperty("--out", "0");
+          chapter.style.setProperty("--p", "0.5");
+          return;
+        }
+        // 0 when the chapter's top meets the bottom of the screen, 1 when its end leaves.
+        const p = clamp((innerHeight - box.top) / Math.max(1, box.height));
+        const mobile = innerWidth <= 860;
+        chapter.style.setProperty("--p", p.toFixed(4));
+        chapter.style.setProperty("--in", easeOut(clamp(p / (mobile ? 0.6 : 0.46))).toFixed(4));
+        chapter.style.setProperty("--split", mobile ? "0" : easeInOut(clamp((p - 0.48) / 0.3)).toFixed(4));
+        chapter.style.setProperty("--out", mobile ? "0" : clamp((p - 0.9) / 0.1).toFixed(4));
+      });
+      setActive(current);
+    };
+    const schedule = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(update); };
+    update();
+    addEventListener("scroll", schedule, { passive: true });
+    addEventListener("resize", schedule);
+    reduced.addEventListener("change", schedule);
+    return () => {
+      cancelAnimationFrame(frame);
+      removeEventListener("scroll", schedule);
+      removeEventListener("resize", schedule);
+      reduced.removeEventListener("change", schedule);
+    };
+  }, []);
+
+  const jump = useCallback((index: number, behavior: ScrollBehavior = "smooth") => {
+    const chapter = list.current?.querySelectorAll<HTMLElement>(".chapter")[index];
+    if (!chapter) return;
+    const box = chapter.getBoundingClientRect();
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const offset = innerWidth <= 860 || reduced ? box.top - 96 : box.top - innerHeight + SHOWN_AT * box.height;
+    scrollTo({ top: scrollY + offset, behavior: reduced ? "instant" : behavior });
+  }, []);
+  useGlassTabs(picker, active, jump);
+
+  return <section className="work" id="work" aria-labelledby="work-title">
+    <div className="work-intro">
+      <h2 id="work-title">Избранные работы</h2>
+      <p>Шесть проектов, которые я спроектировал, написал и довёл до запуска. Ещё восемь — ниже и в каталоге.</p>
+      <Link className="text-link" href="/projects">Все {projects.length} проектов <ArrowUpRight aria-hidden="true" /></Link>
+    </div>
+    <div className="chapters" ref={list}>
+      {featured.map((project, index) => {
+        const { back, phone } = shotsOf(project);
+        const [a, b] = caseHue(project.slug);
+        return <article className="chapter" key={project.slug} style={caseHueStyle(project.slug)} data-field={`${a} ${b} 0.7`} aria-labelledby={`chapter-${project.slug}`}
+          onFocus={(event) => { if (event.target.matches(":focus-visible")) jump(index, "instant"); }}>
+          <div className="chapter-pin">
+            <p className="chapter-ghost" aria-hidden="true">{labels[project.slug]}</p>
+            <div className="chapter-copy">
+              <p className="chapter-count"><span>{String(index + 1).padStart(2, "0")}</span> из {String(featured.length).padStart(2, "0")}</p>
+              <p className="chapter-kind">{project.category.join(", ")}</p>
+              <h3 id={`chapter-${project.slug}`}><Link href={`/projects/${project.slug}`}>{project.title}</Link></h3>
+              <p className="chapter-summary">{project.summary}</p>
+              <ul className="chapter-results">{project.results.slice(0, 3).map((item) => <li key={item}>{item}</li>)}</ul>
+              <ul className="chips" aria-label="Технологии">{project.stack.slice(0, 4).map((item) => <li key={item}>{item}</li>)}</ul>
+              <Link className="button chapter-open" href={`/projects/${project.slug}`} data-lg="button">Открыть кейс <ArrowUpRight aria-hidden="true" /></Link>
+            </div>
+            <div className="chapter-scene">
+              <Link className="chapter-stack" href={`/projects/${project.slug}`} tabIndex={-1} aria-hidden="true">
+                <span className="chapter-plate" />
+                {back && <span className="chapter-layer chapter-layer-back"><span className="stage-chrome"><i /><i /><i /></span><Image src={back} alt="" width={1440} height={900} sizes="(max-width: 860px) 80vw, 700px" /></span>}
+                <span className="chapter-layer chapter-layer-main"><span className="stage-chrome"><i /><i /><i /></span><Image src={project.cover} alt="" width={1440} height={900} sizes="(max-width: 860px) 92vw, 900px" /></span>
+                {phone && <span className="chapter-layer chapter-layer-phone"><Image src={phone} alt="" width={390} height={844} sizes="220px" /></span>}
+                <span className="chapter-layer chapter-layer-note" style={{ "--n": 0 } as CSSProperties}><b>{project.results[0]}</b></span>
+              </Link>
+              <span className="chapter-chip" data-lg="surface"><i />{statuses[project.slug]}</span>
+            </div>
+          </div>
+        </article>;
+      })}
+    </div>
+    <div className="work-picker" data-lg="surface">
+      <div className="work-picker-tabs" ref={picker} role="tablist" aria-label="Быстрый переход к проекту">
+        {featured.map((project, index) => <button key={project.slug} type="button" role="tab" aria-selected={active === index} tabIndex={active === index ? 0 : -1}>{labels[project.slug]}</button>)}
+      </div>
+    </div>
+  </section>;
+}

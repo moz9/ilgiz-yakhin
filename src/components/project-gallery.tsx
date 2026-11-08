@@ -60,7 +60,7 @@ function GalleryFigure({ item, index, onOpen, reduceMotion }: { item: ProjectMed
     onPointerMove={handleMove}
     onPointerLeave={handleLeave}
     initial={false}
-    whileInView={reduceMotion ? undefined : { opacity: [0.3, 1], y: [38, 0] }}
+    whileInView={reduceMotion ? undefined : { y: [60, 0] }}
     viewport={{ once: true, amount: 0.15 }}
     transition={{ duration: 0.7, delay: reduceMotion ? 0 : Math.min(index, 4) * 0.06, ease: [0.22, 1, 0.36, 1] }}
   >
@@ -80,14 +80,10 @@ function GalleryFigure({ item, index, onOpen, reduceMotion }: { item: ProjectMed
           <motion.span
             key={typeof frame === "string" ? frame : frame.src}
             className="gallery-collage-piece"
-            data-shape="land"
-            onLoad={(event) => {
-              const image = event.currentTarget.querySelector("img");
-              if (image && image.naturalHeight > image.naturalWidth) event.currentTarget.dataset.shape = "port";
-            }}
-            initial={reduceMotion ? false : { opacity: 0, y: 34, scale: 0.97 }}
-            whileInView={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
+            data-shape={(typeof frame !== "string" && frame.presentation === "phone") || (item.height ?? 0) > (item.width ?? 1) ? "port" : "land"}
+            initial={reduceMotion ? false : { y: 40, scale: 0.97 }}
+            whileInView={reduceMotion ? undefined : { y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.8, delay: reduceMotion ? 0 : position * 0.12, ease: [0.22, 1, 0.36, 1] }}
           >
             <Image src={typeof frame === "string" ? frame : frame.src} alt="" width={item.width ?? 1440} height={item.height ?? 900} sizes="(max-width: 900px) 90vw, 1300px" />
@@ -141,9 +137,9 @@ export function ProjectGallery({ media }: { media: ProjectMedia[] }) {
   }
 
   return <>
-    <section className="redesign-case-gallery editorial-gallery" aria-label="Интерфейс проекта">
+    <div className="gallery">
       {media.map((item, index) => <GalleryFigure key={item.src} item={item} index={index} onOpen={open} reduceMotion={reduceMotion} />)}
-    </section>
+    </div>
     <dialog className="media-lightbox" ref={dialog} aria-label="Просмотр интерфейса" onClose={() => setActive(null)} onClick={(event) => { if (event.target === event.currentTarget) setActive(null); }} onKeyDown={(event) => {
       if (event.key === "ArrowRight") { event.preventDefault(); move(1); }
       if (event.key === "ArrowLeft") { event.preventDefault(); move(-1); }

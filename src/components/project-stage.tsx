@@ -1,24 +1,26 @@
 import Image from "next/image";
 import type { Project } from "@/lib/projects";
+import { caseHueStyle } from "@/lib/case-hues";
 
-type Props = { project: Project; priority?: boolean; compact?: boolean };
+type Props = { project: Project; priority?: boolean; compact?: boolean; sizes?: string };
 
-export function ProjectStage({ project, priority = false, compact = false }: Props) {
-  const phone = project.media?.find((item) => item.presentation === "phone");
-  const detail = project.coverDetail ? { src: project.coverDetail, alt: project.coverAlt, label: "ДЕТАЛЬ" } : null;
-  const kind = project.category.includes("Mobile") ? "tv" : project.category.includes("Desktop") ? "desktop" : "web";
-  const schematic = project.cover.endsWith(".svg") || project.media?.[0]?.presentation === "diagram";
+/**
+ * A lit stage for one case: the product's own colours glow behind a framed screen,
+ * and a phone joins it when the product has a mobile view.
+ */
+export function ProjectStage({ project, priority = false, compact = false, sizes }: Props) {
+  const phone = project.media?.flatMap((item) => [
+    ...(item.presentation === "phone" ? [{ src: item.src, alt: item.alt }] : []),
+    ...(item.frames ?? []).filter((frame) => typeof frame !== "string" && frame.presentation === "phone") as { src: string; alt: string }[],
+  ])[0];
+  const desktop = project.category.includes("Desktop") && !project.category.includes("Web");
 
-  return <div className={`project-stage stage-${kind}${compact ? " stage-compact" : ""}${schematic ? " stage-schematic" : ""}`} data-project={project.slug}>
-    <div className="stage-grid" aria-hidden="true" />
-    <div className="stage-heading" aria-hidden="true"><span>{project.shortTitle}</span><span>{schematic ? "ARCHITECTURE" : kind === "desktop" ? "DESKTOP APPLICATION" : kind === "tv" ? "ANDROID / TV" : "WEB EXPERIENCE"}</span></div>
-    <div className={`stage-main-device${phone ? " has-phone" : ""}`}>
-      <div className="stage-window-bar" aria-hidden="true"><i /><i /><i /><span>{project.title}</span></div>
-      <Image src={project.cover} alt={project.coverAlt} width={1440} height={900} priority={priority} sizes={compact ? "(max-width: 700px) 88vw, 720px" : "(max-width: 900px) 90vw, 1100px"} />
-      {kind === "tv" && <span className="stage-tv-foot" aria-hidden="true" />}
+  return <div className={`stage${compact ? " stage-compact" : ""}${phone ? " has-phone" : ""}`} style={caseHueStyle(project.slug)} data-project={project.slug}>
+    <span className="stage-light" aria-hidden="true" />
+    <div className={`stage-screen${desktop ? " is-app" : ""}`}>
+      <span className="stage-chrome" aria-hidden="true"><i /><i /><i /></span>
+      <Image src={project.cover} alt={project.coverAlt} width={1440} height={900} priority={priority} sizes={sizes ?? (compact ? "(max-width: 760px) 92vw, 760px" : "(max-width: 900px) 94vw, 1200px")} />
     </div>
-    {phone ? <div className="stage-phone"><Image src={phone.src} alt={phone.alt} width={390} height={844} sizes="(max-width: 700px) 20vw, 230px" /><span aria-hidden="true" /></div> : detail && !compact && !schematic ?
-      <div className="stage-detail"><div className="stage-window-bar" aria-hidden="true"><span>{detail.label}</span></div><Image src={detail.src} alt={detail.alt} width={1024} height={640} sizes="(max-width: 700px) 34vw, 450px" /></div> : null}
-    <div className="stage-caption" aria-hidden="true"><span>{project.stack.slice(0, 2).join(" / ")}</span><span>{project.index} / IY</span></div>
+    {phone && <div className="stage-phone"><Image src={phone.src} alt={phone.alt} width={390} height={844} sizes="(max-width: 760px) 26vw, 220px" /></div>}
   </div>;
 }

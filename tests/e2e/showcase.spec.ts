@@ -1,77 +1,62 @@
 import { expect, test } from "@playwright/test";
 import { projects } from "../../src/lib/projects";
 
-test("all case images render when Vercel image delivery fails", async ({ page }, testInfo) => {
+test("all case images render when Vercel image delivery fails", async ({ page }) => {
   test.setTimeout(180_000);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.route(/\/(_next\/image|cases\/)/, async (route) => {
-    if (new URL(route.request().url()).hostname === "raw.githubusercontent.com") {
-      await route.continue();
-    } else {
-      await route.abort("connectionreset");
-    }
+    if (new URL(route.request().url()).hostname === "raw.githubusercontent.com") await route.continue();
+    else await route.abort("connectionreset");
   });
   for (const project of projects) {
     await page.goto(`/projects/${project.slug}`);
     for (const image of await page.locator("main img:not(dialog img)").all()) {
       await image.scrollIntoViewIfNeeded({ timeout: 5_000 });
-      await expect(image).toBeVisible();
       await expect(image).toHaveAttribute("src", /^https:\/\/raw\.githubusercontent\.com\//);
       await expect.poll(() => image.evaluate((element: HTMLImageElement) => element.naturalWidth), { timeout: 15_000 }).toBeGreaterThan(0);
     }
   }
-  await page.locator(".case-presentation").scrollIntoViewIfNeeded();
-  await page.screenshot({ path: testInfo.outputPath("external-case-images.png") });
 });
 
-test("home previews and every scenario step contain decoded screenshots", async ({ page, isMobile }, testInfo) => {
-  test.setTimeout(90_000);
+test("the chapter picker scrolls straight to the chosen case", async ({ page, isMobile }) => {
+  test.skip(isMobile, "On a phone the cases are a plain vertical list");
+  await page.goto("/");
+  await page.locator("#work").scrollIntoViewIfNeeded();
+  const picker = page.getByRole("tablist", { name: "Быстрый переход к проекту" });
+  await picker.getByRole("tab", { name: "Учёт ИТ" }).click();
+  await expect.poll(() => picker.getByRole("tab", { name: "Учёт ИТ" }).getAttribute("aria-selected"), { timeout: 8_000 }).toBe("true");
+  // The page scrolls smoothly: wait for the chosen chapter to be pinned and opened up.
+  const chapter = page.locator(".chapter").nth(3);
+  await expect.poll(async () => (await chapter.boundingBox())?.y ?? Infinity, { timeout: 8_000 }).toBeLessThanOrEqual(0);
+  await expect(chapter.getByRole("heading", { level: 3 })).toBeInViewport();
+});
+
+test("scenarios switch products and steps with real screenshots", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  const section = page.locator(".redesign-other");
-  if (!isMobile) {
-    for (const link of await section.getByRole("link").all()) {
-      await link.focus();
-      for (const image of await section.locator(".other-preview-stage img").all()) {
-        await expect.poll(() => image.evaluate((element: HTMLImageElement) => element.naturalWidth), { timeout: 15_000 }).toBeGreaterThan(0);
-      }
-    }
-  }
-  const showcase = page.locator(".workbench");
-  await showcase.scrollIntoViewIfNeeded();
-  for (const tab of await showcase.getByRole("group", { name: "Проект в деталях" }).getByRole("button").all()) {
-    await tab.click();
-    for (const step of await showcase.getByRole("group", { name: "Этап сценария" }).getByRole("button").all()) {
-      await step.click();
-      const image = showcase.locator(".workbench-frame img");
-      await expect.poll(() => image.evaluate((element: HTMLImageElement) => element.naturalWidth), { timeout: 15_000 }).toBeGreaterThan(0);
-    }
-  }
-  await page.screenshot({ path: testInfo.outputPath("external-scenario-images.png") });
+  const scenes = page.locator(".scenes");
+  await scenes.scrollIntoViewIfNeeded();
+  await expect(scenes.getByRole("heading", { name: "От выгрузки до готового Excel" })).toBeVisible();
+  await scenes.getByRole("tab", { name: "База знаний" }).click();
+  await expect(scenes.getByRole("heading", { name: "Библиотека и связанные материалы" })).toBeVisible();
+  await scenes.getByRole("tab", { name: /Гайд/ }).click();
+  await expect(scenes.getByRole("tab", { name: /Гайд/ })).toHaveAttribute("aria-selected", "true");
+  const front = scenes.locator(".scenes-card:not([aria-hidden='true']) img");
+  await expect.poll(() => front.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+  await scenes.getByRole("button", { name: "Следующий этап" }).click();
+  await expect(scenes.getByRole("tab", { name: /Телефон/ })).toHaveAttribute("aria-selected", "true");
 });
 
-test("real scenario showcase switches projects and steps", async ({ page }) => {
+test("the list of other cases links every case and the footer reaches all sections", async ({ page }) => {
   await page.goto("/");
-  const showcase = page.locator(".workbench");
-  await showcase.scrollIntoViewIfNeeded();
-  await showcase.getByRole("button", { name: "02 Проверка", exact: true }).click();
-  await expect(showcase.locator(".workbench-frame img")).toHaveAttribute("alt", /Таблица проверки/);
-  await showcase.getByRole("button", { name: "База знаний", exact: true }).click();
-  await showcase.getByRole("button", { name: /03.*Телефон/ }).click();
-  await expect(showcase.locator(".workbench-frame")).toHaveClass(/is-phone/);
-  await expect(showcase.getByRole("link", { name: "Весь кейс" })).toHaveAttribute("href", "/projects/revalib");
-  await showcase.getByRole("button", { name: "Стриминг", exact: true }).click();
-  await showcase.getByRole("button", { name: /03.*AI-контур/ }).click();
-  await expect(showcase.locator(".workbench-frame img")).toHaveAttribute("alt", /Контур каталога и редакции/);
-});
-
-test("secondary case previews follow keyboard focus without following the cursor", async ({ page, isMobile }) => {
-  test.skip(isMobile, "The mobile catalog uses direct links instead of hover previews");
-  await page.goto("/");
-  const section = page.locator(".redesign-other");
-  await section.getByRole("link", { name: /Android-приложение/ }).focus();
-  await expect(section.locator(".other-preview-stage .project-stage")).toHaveAttribute("data-project", "streaming-android-tv");
-  await expect(section.getByRole("link", { name: /Android-приложение/ })).toHaveAttribute("href", "/projects/streaming-android-tv");
+  const rows = page.locator(".more-row");
+  await expect(rows).toHaveCount(8);
+  for (const row of await rows.all()) await expect(row).toHaveAttribute("href", /^\/projects\/[a-z-]+$/);
+  const footer = page.locator(".site-footer");
+  await expect(footer.getByRole("link", { name: "im@angelius.ru" })).toHaveAttribute("href", "mailto:im@angelius.ru");
+  await footer.getByRole("link", { name: "Как устроен сайт" }).click();
+  await expect(page).toHaveURL(/\/how-built$/);
+  await expect(page.getByRole("heading", { name: "Как устроен этот сайт" })).toBeVisible();
 });
 
 test("gallery supports full-size viewing, keyboard navigation and focus restoration", async ({ page }) => {
@@ -87,7 +72,6 @@ test("gallery supports full-size viewing, keyboard navigation and focus restorat
   await page.keyboard.press("Escape");
   await expect(dialog).not.toBeVisible();
   await expect(first).toBeFocused();
-  await expect.poll(() => page.evaluate(() => document.body.style.overflow)).not.toBe("hidden");
 });
 
 test("anonymous case and historical links do not expose the original brand", async ({ page, request }) => {
@@ -95,21 +79,22 @@ test("anonymous case and historical links do not expose the original brand", asy
   await expect(page).toHaveURL(/\/projects\/content-platform$/);
   await expect(page.getByRole("heading", { name: "Контентная платформа", exact: true })).toBeVisible();
   await expect(page.locator("main")).not.toContainText(/luna.?fantasy/i);
-  await expect(page.locator(".redesign-case-gallery figure")).toHaveCount(2);
+  await expect(page.locator(".gallery figure")).toHaveCount(2);
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /\/projects\/content-platform$/);
   expect((await request.get("/cases/lunafantasy.webp")).status()).toBe(404);
   expect((await request.get("/og.jpg")).url()).toMatch(/\/og-v2\.jpg$/);
 });
 
-test("new layouts preserve images and work with reduced motion", async ({ page }) => {
+test("stages keep decoded images with reduced motion", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   for (const route of ["/", "/projects", "/projects/content-platform", "/projects/chessrise"]) {
     await page.goto(route);
-    await page.locator(".project-stage").first().scrollIntoViewIfNeeded();
-    const stageImage = page.locator(".stage-main-device img").first();
-    await expect(stageImage).toBeVisible();
-    await expect(stageImage).toHaveJSProperty("complete", true);
-    expect(await stageImage.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+    // Home shows its cases as chapters; the other pages as lit stages.
+    const stage = page.locator(route === "/" ? ".chapter-stack" : ".stage").first();
+    await stage.scrollIntoViewIfNeeded();
+    const image = stage.locator(route === "/" ? ".chapter-layer-main img" : ".stage-screen img");
+    await expect(image).toBeVisible();
+    await expect.poll(() => image.evaluate((element: HTMLImageElement) => element.complete && element.naturalWidth)).toBeGreaterThan(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
   }
 });

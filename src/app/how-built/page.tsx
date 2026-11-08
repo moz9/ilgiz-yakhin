@@ -1,86 +1,68 @@
 import type { Metadata } from "next";
 import { CheckCircle2 } from "lucide-react";
 import { RevealSection } from "@/components/reveal-section";
-import { FieldBackdrop } from "@/components/field-backdrop";
 
-export const metadata: Metadata = { title: "Как создан сайт" };
+export const metadata: Metadata = { title: "Как устроен сайт", description: "Next.js, типизированный каталог, Liquid Glass и автоматические проверки." };
 
 const architecture = [
-  ["Content", "Типизированный каталог проектов отделяет подтвержденные данные от визуального представления."],
-  ["Interface", "Server Components отвечают за контент, клиентские — за фильтры, движение ленты и быструю навигацию."],
-  ["Motion", "Стена проектов движется слоями, линза — по автономной траектории; reduced motion показывает статичный вариант."],
-  ["Delivery", "Static generation, типизация, unit- и browser E2E; production проверяется отдельно после публикации."],
+  ["Контент", "Типизированный каталог проектов отделяет подтверждённые данные от того, как они показаны."],
+  ["Интерфейс", "Server Components отдают контент, клиентские компоненты отвечают за фильтры, ленту кейсов и навигацию."],
+  ["Liquid Glass", "Навигация, вкладки и настройки сделаны из живого стекла: в Chromium линза преломляет страницу через SVG-фильтр внутри backdrop-filter, в остальных браузерах остаётся размытие."],
+  ["Движение", "Лента кейсов привязана к скроллу, линза в первом экране следует за курсором. С системной настройкой «Уменьшить движение» всё стоит на месте."],
 ];
 
 const gates = [
   "TypeScript strict и статическая генерация",
-  "Клавиатурная навигация и видимый focus",
-  "Reduced motion и семантический fallback",
-  "Unit, browser E2E и production smoke",
+  "Клавиатурная навигация и видимый фокус",
+  "Уменьшение движения и прозрачности",
+  "Unit-тесты, браузерные сценарии и проверка после выкладки",
   "Проверка публичного контента на секреты и внутренние адреса",
 ];
 
 const pipeline = [
-  ["$", "npm run lint", "ESLint, strict, без предупреждений в изменённых файлах"],
-  ["$", "npm run typecheck", "tsc --noEmit, strict: true"],
-  ["$", "npm run test", "14 unit-тестов на каталог и публичный контент"],
-  ["$", "npm run build", "статическая генерация всех 14 кейсов"],
-  ["$", "npm run test:e2e", "50 browser-сценариев, десктоп и мобилка"],
-  ["$", "git push origin main", "сборка и деплой через Git-интеграцию"],
+  ["npm run lint", "ESLint без предупреждений"],
+  ["npm run typecheck", "tsc --noEmit, strict"],
+  ["npm run test", "unit-тесты каталога и публичного контента"],
+  ["npm run build", "статическая генерация всех кейсов"],
+  ["npm run test:e2e", "браузерные сценарии на десктопе и телефоне"],
+  ["git push origin main", "сборка и выкладка через Vercel"],
+];
+
+const palette = [
+  { name: "Фарфор", hex: "#EEF1F6" }, { name: "Чернила", hex: "#0E1220", dark: true }, { name: "Кобальт", hex: "#2F45FF", dark: true },
+  { name: "Коралл", hex: "#FF6B8B" }, { name: "Аква", hex: "#21C6A4" }, { name: "Солнце", hex: "#FFC23D" },
 ];
 
 export default function HowBuiltPage() {
-  return (
-    <main className="inner-page how-built-page">
-      <FieldBackdrop tone="violet" />
-      <section className="page-hero">
-        <div className="eyebrow"><span>META CASE</span><span>Portfolio</span></div>
-        <h1>Как создан<br />этот сайт</h1>
-        <p>Next.js, типизированный каталог, адаптивная композиция и автоматические проверки.</p>
+  return <main className="page">
+    <header className="page-head">
+      <div className="page-lights" aria-hidden="true"><i /><i /></div>
+      <h1>Как устроен этот сайт</h1>
+      <p>Next.js 16, типизированный каталог кейсов, Liquid Glass для навигации и автоматические проверки перед каждой выкладкой.</p>
+    </header>
+    <RevealSection>
+      <section className="page-section built-grid">
+        {architecture.map(([title, text]) => <article key={title}><h2>{title}</h2><p>{text}</p></article>)}
       </section>
-      <RevealSection>
-        <section className="section architecture-grid">
-          {architecture.map(([title, text], index) => (
-            <article key={title} data-spotlight>
-              <span>0{index + 1}</span>
-              <h2>{title}</h2>
-              <p>{text}</p>
-            </article>
-          ))}
-        </section>
-      </RevealSection>
-      <RevealSection>
-        <section className="section pipeline-terminal">
-          <div className="term-window">
-            <div className="term-bar"><i /><i /><i /><span>pipeline</span></div>
-            <ol className="term-lines">
-              {pipeline.map(([prompt, command, note]) => (
-                <li key={command}>
-                  <s>{prompt}</s> <b>{command}</b> <em>{note}</em>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
-      </RevealSection>
-      <RevealSection>
-        <section className="section system-section">
-          <p className="kicker">Design system</p>
-          <h2>Ink / Amber / Status</h2>
-          <div className="color-system">
-            <span className="swatch swatch-paper">Text<small>#eef1f4</small></span>
-            <span className="swatch swatch-ink">Ink<small>#0d1015</small></span>
-            <span className="swatch swatch-teal">Amber<small>#b8e4cf</small></span>
-            <span className="swatch swatch-red">Status<small>#5bd68a</small></span>
-          </div>
-        </section>
-      </RevealSection>
-      <RevealSection>
-        <section className="section quality-section">
-          <div><p className="kicker">Quality gates</p><h2>Проверки качества</h2></div>
-          <ul>{gates.map((item) => <li key={item}><CheckCircle2 aria-hidden="true" />{item}</li>)}</ul>
-        </section>
-      </RevealSection>
-    </main>
-  );
+    </RevealSection>
+    <RevealSection>
+      <section className="page-section terminal" aria-label="Проверки перед выкладкой">
+        <div className="terminal-bar" aria-hidden="true"><i /><i /><i /><span>pipeline</span></div>
+        <ol>{pipeline.map(([command, note]) => <li key={command}><b>$ {command}</b><em>{note}</em></li>)}</ol>
+      </section>
+    </RevealSection>
+    <RevealSection>
+      <section className="page-section built-split">
+        <div>
+          <h2>Палитра</h2>
+          <p>Светлый фарфор и чернила для текста, кобальт для действий. Насыщенные цвета живут только в пятнах света за экранами — их и преломляет стекло.</p>
+          <ul className="palette">{palette.map((color) => <li key={color.hex} style={{ background: color.hex }} data-dark={color.dark ? "" : undefined}><span>{color.name}</span><small>{color.hex}</small></li>)}</ul>
+        </div>
+        <div>
+          <h2>Проверки качества</h2>
+          <ul className="gates">{gates.map((item) => <li key={item}><CheckCircle2 aria-hidden="true" />{item}</li>)}</ul>
+        </div>
+      </section>
+    </RevealSection>
+  </main>;
 }

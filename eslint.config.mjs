@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "build/**",
     "public/demos/**",
     "next-env.d.ts",
+    // Vendored Liquid Glass kit: kept byte-identical to the skill source.
+    "src/lib/liquid-glass/*.js",
   ]),
 ]);
 

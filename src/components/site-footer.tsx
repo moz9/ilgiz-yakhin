@@ -1,28 +1,31 @@
 "use client";
 
-import { ArrowUp, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ArrowUp } from "lucide-react";
 
 export function SiteFooter() {
   const pathname = usePathname();
   if (pathname.startsWith("/demos/")) return null;
 
-  return (
-    <footer className="portfolio-footer">
-      <div className="footer-topline"><span><i aria-hidden="true" />Открыт к удалённой работе</span><a href="#" className="footer-top" aria-label="Наверх" title="Наверх"><ArrowUp aria-hidden="true" /></a></div>
-      <div className="footer-conversation">
-        <h2>На связи<span>.</span></h2>
-        <a className="footer-email" href="mailto:im@angelius.ru"><span>im@angelius.ru</span><ArrowUpRight aria-hidden="true" /></a>
+  return <footer className="site-footer">
+    <div className="site-footer-grid">
+      <div className="site-footer-name">
+        <strong>Ильгиз Яхин</strong>
+        <span>Full-stack и AI-разработчик. Барнаул, работаю удалённо.</span>
       </div>
-      <nav className="footer-navigation" aria-label="Нижняя навигация">
-        <Link href="/projects">Проекты<ArrowUpRight aria-hidden="true" /></Link>
-        <Link href="/about">Обо мне<ArrowUpRight aria-hidden="true" /></Link>
-        <Link href="/resume">Резюме<ArrowUpRight aria-hidden="true" /></Link>
-        <Link href="/how-built">Как создан сайт<ArrowUpRight aria-hidden="true" /></Link>
+      <nav aria-label="Нижняя навигация">
+        <Link href="/projects">Работы</Link>
+        <Link href="/experience">Опыт</Link>
+        <Link href="/about">Обо мне</Link>
+        <Link href="/resume">Резюме</Link>
+        <Link href="/how-built">Как устроен сайт</Link>
       </nav>
-      <Link className="footer-signature" href="/" aria-label="ILGIZ YAKHIN — главная"><span>ILGIZ</span><span>YAKHIN<ArrowUpRight aria-hidden="true" /></span></Link>
-      <div className="footer-baseline"><span>Full-stack / AI-разработчик</span><span>Web · Desktop · Automation</span></div>
-    </footer>
-  );
+      <div className="site-footer-contact">
+        <a href="mailto:im@angelius.ru">im@angelius.ru</a>
+        <a className="site-footer-top" href="#top" aria-label="Наверх" title="Наверх" onClick={(event) => { event.preventDefault(); window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" }); }}><ArrowUp aria-hidden="true" /></a>
+      </div>
+    </div>
+    <p className="site-footer-word" aria-hidden="true">Яхин</p>
+  </footer>;
 }

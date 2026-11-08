@@ -114,3 +114,26 @@ test("the site opens dark, switches to light and remembers it before the first p
   await page.getByRole("tab", { name: "Как в системе" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme-pref", "system");
 });
+
+test("case contents jump straight to the chosen section and keep it selected", async ({ page, isMobile }) => {
+  test.skip(isMobile, "The phone layout scrolls the same way; one run is enough");
+  await page.goto("/projects/routerdesk");
+  await ready(page);
+  const tabs = page.locator(".case-nav-tabs a");
+  const seen = new Set<string>();
+  await page.exposeFunction("seeTab", (name: string) => { seen.add(name); });
+  await page.evaluate(() => setInterval(() => {
+    const name = document.querySelector(".case-nav-tabs a[data-lg-selected]")?.textContent;
+    if (name) (window as unknown as { seeTab: (n: string) => void }).seeTab(name);
+  }, 40));
+  await tabs.filter({ hasText: "Решения" }).click();
+  await expect.poll(() => page.evaluate(() => Math.round(document.getElementById("decisions")!.getBoundingClientRect().top)), { timeout: 8_000 }).toBeLessThan(220);
+  await expect(page.locator(".case-nav-tabs a[aria-current='location']")).toHaveText("Решения");
+  // The sections passed on the way never take the selection.
+  seen.delete("Коротко");
+  expect([...seen]).toEqual(["Решения"]);
+  // The last section cannot reach the top, and still stays the one selected.
+  await tabs.filter({ hasText: "Результаты" }).click();
+  await page.waitForTimeout(1800);
+  await expect(page.locator(".case-nav-tabs a[aria-current='location']")).toHaveText("Результаты");
+});

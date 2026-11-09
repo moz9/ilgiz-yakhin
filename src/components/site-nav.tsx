@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { BriefcaseBusiness, FileText, LayoutGrid, Mail, Moon, RotateCcw, SlidersHorizontal, Sun, UserRound } from "lucide-react";
+import { BriefcaseBusiness, FileText, House, LayoutGrid, Mail, Moon, RotateCcw, SlidersHorizontal, Sun, UserRound } from "lucide-react";
 import { applyTheme, readThemePref, THEME_EVENT, watchSystemTheme, type ThemePref } from "@/lib/theme";
 import { DEFAULT_GLASS_DENSITY, GLASS_DENSITY_KEY, GLASS_OPAQUE_KEY, loadGlassKit, useGlassTabs } from "@/components/glass/glass-runtime";
 
@@ -155,7 +155,7 @@ export function SiteNav() {
   return <>
     <header className={`site-nav${hidden ? " is-tucked" : ""}`}>
       <nav className="site-nav-bar" ref={bar} aria-label="Основная навигация">
-        <Link className="site-nav-mark" href="/" aria-label="Ильгиз Яхин — на главную"><span>IY</span></Link>
+        <Link className="site-nav-mark" href="/" aria-label="Ильгиз Яхин — на главную" aria-current={pathname === "/" ? "page" : undefined}><span className="site-nav-mark-text">IY</span><House aria-hidden="true" /><span className="site-nav-mark-label" aria-hidden="true">Главная</span></Link>
         <div className="site-nav-tabs" ref={tabs} data-selected={selected >= 0 ? "" : undefined}>
           {links.map(({ label, href, icon: Icon }) =>
             <Link key={href} href={href} aria-current={pathname.startsWith(href) ? "page" : undefined}><Icon aria-hidden="true" /><span>{label}</span></Link>)}

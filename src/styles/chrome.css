@@ -31,6 +31,7 @@
   font: 800 0.95rem/1 var(--font-display);
   letter-spacing: -0.04em;
 }
+.site-nav-mark svg, .site-nav-mark-label { display: none; }
 .site-nav-tabs { display: flex; align-items: center; gap: 2px; }
 .site-nav-tabs a,
 .site-nav-contact,
@@ -155,15 +156,22 @@
 @media (max-width: 760px) {
   .site-nav { inset: auto 0 12px; padding: 0 10px; }
   .site-nav.is-tucked { transform: none; }
-  .site-nav-bar { height: 64px; padding: 0 4px; gap: 0; width: 100%; min-width: 0; justify-content: space-between; }
-  .site-nav-mark { display: none; }
-  .site-nav-tabs { flex: 1; min-width: 0; justify-content: space-between; }
-  .site-nav-tabs a { flex: 1 1 0; min-width: 0; flex-direction: column; gap: 2px; height: 54px; padding: 0 2px; font-size: 0.68rem; }
+  .site-nav-bar { height: 64px; padding: 0 2px; gap: 0; width: 100%; min-width: 0; justify-content: space-between; }
+  /* On a phone the mark becomes the way home: a tab-like item with an icon and a label.
+     The theme switch lives in the appearance panel there, which frees its width. */
+  .site-nav-mark { display: flex; align-items: center; justify-content: center; flex: 1 1 0; min-width: 0; flex-direction: column; gap: 2px; width: auto; height: 54px; margin: 0; padding: 0 2px; border-radius: 9999px; font: 500 0.68rem/1.2 var(--font-body); letter-spacing: 0; }
+  .site-nav-mark-text { display: none; }
+  .site-nav-mark svg { display: block; width: 20px; height: 20px; }
+  .site-nav-mark-label { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .site-nav-mark[aria-current="page"] { color: var(--cobalt-ink); }
+  .site-nav-theme { display: none; }
+  .site-nav-tabs { flex: 4 1 0; min-width: 0; justify-content: space-between; }
+  .site-nav-tabs a { flex: 1 1 0; min-width: 0; flex-direction: column; gap: 2px; height: 54px; padding: 0 1px; font-size: 0.68rem; letter-spacing: -0.01em; }
   .site-nav-tabs a span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
   .site-nav-tabs a svg { display: block; }
-  .site-nav-contact { flex: none; width: 40px; padding: 0; }
+  .site-nav-contact { flex: none; width: 34px; padding: 0; }
   .site-nav-contact span { display: none; }
-  .site-nav-settings, .site-nav-theme { flex: none; width: 36px; }
+  .site-nav-settings { flex: none; width: 32px; }
   .appearance-panel { top: auto; bottom: 88px; left: 12px; width: calc(100% - 24px); }
   .site-footer { padding-bottom: 96px; }
   .site-footer-grid { grid-template-columns: minmax(0, 1fr); }

@@ -101,10 +101,16 @@ test("navigation lens follows the current section", async ({ page, isMobile }) =
   }
 });
 
-test("the site opens dark, switches to light and remembers it before the first paint", async ({ page }) => {
+test("the site opens dark, switches to light and remembers it before the first paint", async ({ page, isMobile }) => {
   await page.goto("/");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await page.getByRole("button", { name: "Включить светлую тему" }).click();
+  if (isMobile) {
+    // On a phone the quick switch gives its place to "home"; the panel still has the choice.
+    await ready(page);
+    await page.getByRole("button", { name: "Внешний вид" }).click();
+    await page.getByRole("tab", { name: "Светлая" }).click();
+    await page.keyboard.press("Escape");
+  } else await page.getByRole("button", { name: "Включить светлую тему" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   // The inline script applies the saved choice before React hydrates.
   await page.reload({ waitUntil: "commit" });
@@ -136,4 +142,14 @@ test("case contents jump straight to the chosen section and keep it selected", a
   await tabs.filter({ hasText: "Результаты" }).click();
   await page.waitForTimeout(1800);
   await expect(page.locator(".case-nav-tabs a[aria-current='location']")).toHaveText("Результаты");
+});
+
+test("every page has a way back home, on a phone too", async ({ page }) => {
+  await page.goto("/projects/routerdesk");
+  const home = page.getByRole("link", { name: "Ильгиз Яхин — на главную" });
+  await expect(home).toBeVisible();
+  await expect(home).toBeInViewport();
+  await home.click();
+  await expect(page).toHaveURL(/\/$/);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
 });

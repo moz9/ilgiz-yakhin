@@ -25,6 +25,7 @@ describe("project catalog", () => {
   it("puts neutral commercial cases first and sensitive content last", () => {
     expect(allProjects.map(({ slug }) => slug)).toEqual([
       "chessrise",
+      "pcstudio",
       "pioner",
       "liquid-glass-kit",
       "glassrates",

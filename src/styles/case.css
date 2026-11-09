@@ -304,3 +304,42 @@ body:has(.site-nav.is-tucked) .filter { top: 14px; }
 .showcase-full { position: relative; width: 100%; height: 100dvh; overflow: hidden; background: #05060a; }
 .showcase-back { position: absolute; left: 20px; top: 20px; z-index: 50; }
 .showcase-loading { position: absolute; inset: 0; background: radial-gradient(60% 60% at 50% 50%, rgb(255 255 255 / 0.06), transparent); }
+
+/* PCStudio case: the price path ---------------------------------------------- */
+.pp-stage { display: grid; grid-template-columns: minmax(0, 1fr) minmax(80px, 0.6fr) minmax(0, 1.1fr); align-items: center; min-height: 380px; }
+.pp-shops { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.pp-shop { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 2px 10px; padding: 14px 16px; border-radius: 18px; background: var(--surface); box-shadow: 0 0 0 1px rgb(255 255 255 / 0.12); }
+.pp-dot { width: 12px; height: 12px; border-radius: 50%; }
+.pp-shop b { font-weight: 700; }
+.pp-shop strong { font: 800 1.1rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.pp-shop small { grid-column: 2 / -1; color: var(--ink-2); font-size: 0.8rem; }
+.pp-shop .pp-bank { color: #f2c46d; }
+.pp-shop:not([data-done]) strong { color: var(--ink-2); }
+.pp-wires { width: 100%; height: 300px; overflow: visible; }
+.pp-wire { fill: none; stroke: var(--line-strong); stroke-width: 1.5; stroke-dasharray: 3 6; }
+.pp-pulse { fill: none; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 60 260; stroke-dashoffset: 320; filter: drop-shadow(0 0 6px currentColor); }
+.pp-item { display: grid; gap: 10px; padding: 22px; border-radius: 24px; background: linear-gradient(160deg, color-mix(in srgb, var(--hue-a) 16%, var(--surface)), var(--surface)); box-shadow: 0 0 0 1px rgb(255 255 255 / 0.14), 0 30px 60px -30px rgb(0 0 0 / 0.6); }
+.pp-kicker { margin: 0; color: var(--ink-2); font-size: 0.8rem; font-weight: 600; }
+.pp-item h3 { margin: 0; font: 800 1.3rem/1.15 var(--font-display); }
+.pp-item h3 span { color: var(--ink-2); font: 600 0.95rem/1.3 var(--font-body); }
+.pp-best { display: grid; gap: 4px; margin: 0; font: 800 clamp(1.8rem, 3.4vw, 2.6rem)/1 var(--font-display); font-variant-numeric: tabular-nums; color: #7fe0b5; }
+.pp-best small { color: var(--ink-2); font: 500 0.82rem/1.3 var(--font-body); }
+.pp-chart { width: 100%; height: 80px; }
+.pp-spark { fill: none; stroke: var(--hue-a); stroke-width: 2.5; stroke-linejoin: round; stroke-dasharray: 600; }
+.pp-note { margin: 0; color: var(--ink-2); font-size: 0.8rem; line-height: 1.4; }
+.pp-again { justify-self: start; display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: rgb(255 255 255 / 0.1); color: inherit; font: 700 0.85rem/1 var(--font-body); cursor: pointer; }
+.pp-again:hover { background: rgb(255 255 255 / 0.16); } .pp-again svg { width: 16px; }
+@media (max-width: 860px) { .pp-stage { grid-template-columns: minmax(0, 1fr); gap: 14px; } .pp-wires { display: none; } }
+
+/* PCStudio case: the two sides ----------------------------------------------- */
+.ts-stage { --split: 50%; position: relative; aspect-ratio: 16 / 10; overflow: hidden; border-radius: var(--radius-l); cursor: ew-resize; touch-action: pan-y; user-select: none; }
+.ts-stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.ts-top { clip-path: inset(0 calc(100% - var(--split)) 0 0); }
+.ts-handle { position: absolute; top: 0; bottom: 0; left: var(--split); width: 2px; background: #fff; box-shadow: 0 0 20px rgb(0 0 0 / 0.4); transform: translateX(-1px); pointer-events: none; }
+.ts-handle::after { content: "⟷"; position: absolute; top: 50%; left: 50%; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #fff; color: #111; font-size: 1.1rem; box-shadow: 0 6px 20px rgb(0 0 0 / 0.35); transform: translate(-50%, -50%); }
+.ts-tag { position: absolute; top: 16px; display: grid; gap: 2px; padding: 8px 12px; border-radius: 12px; background: rgb(0 0 0 / 0.55); color: #fff; font: 800 0.95rem/1.1 var(--font-display); pointer-events: none; }
+.ts-tag small { font: 500 0.72rem/1.2 var(--font-body); opacity: 0.8; }
+.ts-tag-dark { left: 16px; } .ts-tag-light { right: 16px; text-align: right; background: rgb(255 255 255 / 0.75); color: #111; }
+.ts-range { position: absolute; inset: auto 0 0; width: 100%; opacity: 0; height: 100%; cursor: ew-resize; }
+.ts-range:focus-visible + .ts-handle, .ts-stage:focus-within .ts-handle { box-shadow: 0 0 0 3px var(--hue-a); }
+@media (max-width: 640px) { .ts-tag small { display: none; } }

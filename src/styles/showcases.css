@@ -450,3 +450,44 @@
 .dm-out button:hover { background: #31313b; } .dm-out button:disabled { opacity: 0.5; } .dm-out svg { width: 15px; }
 @media (max-width: 760px) { .dm-row { grid-template-columns: repeat(8, minmax(0, 1fr)); } .dm-track { grid-column: 1 / -1; min-height: 30px; } .dm-step { height: 30px; } .dm-transport p { display: none; } }
 @media (prefers-reduced-motion: reduce) { .dm-step { transition: none; } .dm-step[aria-selected="true"][data-now] { transform: none; } }
+
+/* PCStudio: the build taken apart by scrolling ------------------------------- */
+.px { position: absolute; inset: 0; overflow-y: auto; overscroll-behavior: contain; background: radial-gradient(80% 70% at 60% 40%, #2a2d36, #121318 70%); color: #f2f2f5; scrollbar-width: thin; container-type: size; }
+.px-track { height: 600%; }
+.px-stage { position: sticky; top: 0; height: 100cqh; overflow: hidden; cursor: grab; touch-action: pan-y; }
+.px-stage:active { cursor: grabbing; }
+.px-stage > canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block; }
+.px-state { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; color: rgb(255 255 255 / 0.6); }
+.px-head { position: absolute; left: clamp(14px, 3cqw, 32px); right: clamp(14px, 3cqw, 32px); top: clamp(14px, 3cqw, 28px); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; pointer-events: none; }
+.px-full .px-head { top: 84px; }
+.px-head p { margin: 0; color: rgb(255 255 255 / 0.6); font-size: 0.82rem; font-weight: 600; }
+.px-chapters { display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: rgb(0 0 0 / 0.35); backdrop-filter: blur(10px); pointer-events: auto; }
+.px-chapters button { min-height: 34px; padding: 0 14px; border: 0; border-radius: 999px; background: none; color: rgb(255 255 255 / 0.7); font: 600 0.82rem/1 var(--font-body); cursor: pointer; }
+.px-chapters button[aria-pressed="true"] { background: #ff8a5c; color: #1a0d06; }
+.px-labels { position: absolute; inset: 0; pointer-events: none; }
+.px-label { position: absolute; display: grid; gap: 2px; max-width: min(240px, 38cqw); padding: 8px 11px; border-radius: 12px; background: rgb(14 15 20 / 0.82); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12), 0 10px 30px -12px #000; backdrop-filter: blur(8px); font-size: 0.78rem; line-height: 1.25; white-space: normal; }
+/* A leader line from the part to its card. */
+.px-label::before { content: ""; position: absolute; left: -40px; top: 50%; width: 36px; height: 1.5px; background: linear-gradient(90deg, #ff8a5c, rgb(255 138 92 / 0.2)); }
+.px-label::after { content: ""; position: absolute; left: -46px; top: 50%; width: 9px; height: 9px; border-radius: 50%; background: #ff8a5c; box-shadow: 0 0 0 3px rgb(255 138 92 / 0.25); transform: translateY(-50%); }
+.px-label[data-side="left"]::before { left: auto; right: -40px; background: linear-gradient(270deg, #ff8a5c, rgb(255 138 92 / 0.2)); }
+.px-label[data-side="left"]::after { left: auto; right: -46px; }
+.px-label b { font-size: 0.86rem; }
+.px-label span { color: rgb(255 255 255 / 0.7); }
+.px-label small { color: #7fe0b5; font-size: 0.74rem; }
+.px-label:not([data-ok]) small { color: #f2c46d; }
+.px-foot { position: absolute; left: clamp(14px, 3cqw, 32px); right: clamp(14px, 3cqw, 32px); bottom: clamp(14px, 3cqw, 26px); display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px; pointer-events: none; }
+.px-score { margin: 0; font-size: 0.9rem; } .px-score b { color: #7fe0b5; font: 800 1.6rem/1 var(--font-display); margin-right: 4px; }
+.px-hint { margin: 0; padding: 7px 12px; border-radius: 999px; background: rgb(0 0 0 / 0.35); font-size: 0.8rem; }
+.px-list { display: none; }
+@container (max-width: 640px) {
+  .px-label { display: none; }
+  .px-head p { display: none; }
+  .px-list { position: absolute; left: 12px; right: 12px; bottom: 74px; display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; font-size: 0.76rem; pointer-events: none; }
+  .px-list li { padding: 6px 10px; border-radius: 10px; background: rgb(14 15 20 / 0.8); color: #7fe0b5; }
+  .px-list li:nth-last-child(n + 4) { display: none; }
+  .px-score { font-size: 0.78rem; } .px-score b { font-size: 1.3rem; }
+  .px-hint { display: none; }
+  .px-list li:not([data-ok]) { color: #f2c46d; }
+  .px-list b { color: #fff; }
+}
+@media (prefers-reduced-motion: reduce) { .px-track { height: 100%; } }

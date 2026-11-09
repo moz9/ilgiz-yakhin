@@ -13,6 +13,7 @@ import { CaseMorph } from "@/components/case-morph";
 import { GlassPlayground } from "@/components/glass-playground";
 import { WidgetShowcase } from "@/components/widget-showcase";
 import { LiveSection } from "@/components/showcases/live-section";
+import { PricePath, TwoSides } from "@/components/pcstudio-story";
 
 export function generateStaticParams() {
   return allProjects.map(({ slug }) => ({ slug }));
@@ -30,6 +31,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   if (!project) notFound();
   const playground = project.slug === "liquid-glass-kit";
   const widgetShowcase = project.slug === "glassrates";
+  const pcstudio = project.slug === "pcstudio";
   const index = projects.findIndex((item) => item.slug === project.slug);
   // A hidden case is outside the shown list: its "next" leads back to the first shown case.
   const next = projects[(index + 1) % projects.length];
@@ -57,7 +59,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       { id: "overview", label: "Коротко" },
       ...(playground ? [{ id: "playground", label: "Попробовать" }] : []),
       ...(widgetShowcase ? [{ id: "widget", label: "Виджет" }] : []),
-      ...(project.live ? [{ id: "live", label: "Живое демо" }] : []),
+      ...(project.live ? [{ id: "live", label: pcstudio ? "Разборка" : "Живое демо" }] : []),
+      ...(pcstudio ? [{ id: "prices", label: "Цены" }, { id: "sides", label: "Рендеры" }] : []),
       ...(project.capabilities ? [{ id: "capabilities", label: "Возможности" }] : []),
       ...(project.media?.length ? [{ id: "interfaces", label: "Интерфейсы" }] : []),
       { id: "decisions", label: "Решения" },
@@ -73,6 +76,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     {playground && <GlassPlayground />}
     {widgetShowcase && <WidgetShowcase />}
     <LiveSection project={project} />
+    {pcstudio && <><PricePath /><TwoSides /></>}
 
     {project.capabilities && <section id="capabilities" className="case-section" aria-labelledby="capabilities-title">
       <div className="case-section-head"><h2 id="capabilities-title">Что умеет продукт</h2><p>Основные пользовательские и операционные сценарии.</p></div>

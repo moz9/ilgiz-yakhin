@@ -7,6 +7,7 @@ import type { CSSProperties } from "react";
 const hues: Record<string, [string, string]> = {
   chessrise: ["#21c6a4", "#ffd257"],
   pioner: ["#ff6b8b", "#ffb36b"],
+  pcstudio: ["#ff8a5c", "#5b7bff"],
   "liquid-glass-kit": ["#5b6cff", "#ff5fa2"],
   glassrates: ["#5b7bff", "#2fd3a0"],
   "gradient-studio": ["#2fd3a0", "#b46bff"],

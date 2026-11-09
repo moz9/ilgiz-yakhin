@@ -105,7 +105,7 @@ test("every live demo runs on its case page and on its own full screen", async (
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   // What proves each demo is alive: a drawing surface, physics-placed tags or split letters.
-  const alive: Record<string, string> = { "gradient-studio": ".gs-canvas", "globe-routes": ".gr canvas", "gravity-tags": ".gt-tag", "kinetic-type": ".kt-word", "shader-gallery": ".sg-canvas", "micro-ui": ".mu-magnet", "particle-type": ".pt-canvas", "scroll-story": ".ss-map", "analytics-dashboard": ".ad-kpis", "kanban-board": ".kb-card", "booking-flow": ".bk-option", "drum-machine": ".dm-step" };
+  const alive: Record<string, string> = { "gradient-studio": ".gs-canvas", "globe-routes": ".gr canvas", "gravity-tags": ".gt-tag", "kinetic-type": ".kt-word", "shader-gallery": ".sg-canvas", "micro-ui": ".mu-magnet", "particle-type": ".pt-canvas", "scroll-story": ".ss-map", "analytics-dashboard": ".ad-kpis", "kanban-board": ".kb-card", "booking-flow": ".bk-option", "drum-machine": ".dm-step", pcstudio: ".px-stage canvas" };
   for (const project of projects.filter(({ live }) => live)) {
     await page.goto(`/projects/${project.slug}`);
     const live = page.locator("#live");

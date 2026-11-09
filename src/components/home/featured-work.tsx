@@ -18,6 +18,7 @@ const plural = (n: number, one: string, few: string, many: string) =>
 
 const labels: Record<string, string> = {
   chessrise: "ChessRise",
+  pcstudio: "PCStudio",
   "liquid-glass-kit": "Glass Kit",
   glassrates: "GlassRates",
   "globe-routes": "Перелёты",
@@ -40,6 +41,7 @@ const labels: Record<string, string> = {
 };
 const statuses: Record<string, string> = {
   chessrise: "Принят и оплачен",
+  pcstudio: "Закрытая проверка",
   "liquid-glass-kit": "Публичное демо",
   glassrates: "В разработке, 2.2",
   "globe-routes": "Живое демо, three.js",

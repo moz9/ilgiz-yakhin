@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // The dev badge sits over the phone navigation bar; build errors still open the overlay.
   devIndicators: false,
+  // Route changes run as React transitions, so named <ViewTransition>s morph between pages.
+  experimental: { viewTransition: true },
   async redirects() {
     return [{ source: "/projects/lunafantasy", destination: "/projects/content-platform", permanent: true }, { source: "/og.jpg", destination: "/og-v2.jpg", permanent: true }];
   },

@@ -9,6 +9,7 @@ import { ProjectStage } from "@/components/project-stage";
 import { ProjectGallery } from "@/components/project-gallery";
 import { CaseNavigation } from "@/components/case-navigation";
 import { CaseHeroStage } from "@/components/case-hero-stage";
+import { CaseMorph } from "@/components/case-morph";
 
 export function generateStaticParams() {
   return projects.map(({ slug }) => ({ slug }));
@@ -97,7 +98,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
     <Link className="case-next" href={`/projects/${next.slug}`} style={caseHueStyle(next.slug)}>
       <span className="case-next-copy"><small>Следующий кейс</small><strong>{next.title}</strong><em>Открыть <ArrowUpRight aria-hidden="true" /></em></span>
-      <span className="case-next-shot"><Image src={next.cover} alt="" width={960} height={600} sizes="(max-width: 860px) 90vw, 560px" /></span>
+      <CaseMorph slug={next.slug}><span className="case-next-shot"><Image src={next.cover} alt="" width={960} height={600} sizes="(max-width: 860px) 90vw, 560px" /></span></CaseMorph>
     </Link>
   </main>;
 }

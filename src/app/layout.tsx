@@ -3,6 +3,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
 import { GlassRuntime } from "@/components/glass/glass-runtime";
 import { LightField } from "@/components/light-field";
+import { TextReveal } from "@/components/text-reveal";
 import { themeScript } from "@/lib/theme";
 import "./fonts.css";
 import "../styles/liquid-glass.css";
@@ -36,7 +37,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <LightField />
         {/* The display face carries the headline, so it is fetched first and early. */}
         <link rel="preload" as="font" type="font/woff2" href="/fonts/unbounded-800-cyrillic.woff2" crossOrigin="anonymous" />
-        <SiteNav />{children}<SiteFooter /><GlassRuntime />
+        <SiteNav />{children}<SiteFooter /><GlassRuntime /><TextReveal />
       </body>
     </html>
   );

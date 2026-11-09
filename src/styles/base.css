@@ -250,3 +250,14 @@ html:not([data-field="on"]) body {
     radial-gradient(50vw 50vh at 0% 60%, color-mix(in srgb, var(--violet) 22%, transparent), transparent 70%) fixed;
 }
 html[data-field="on"] :is(.page-lights, .hero-lights, .contact-lights) { display: none; }
+
+/* Route changes (React <ViewTransition>, see CaseMorph): the screen of the opened case
+   morphs into its cover; the rest of the page crossfades quickly underneath. */
+::view-transition-group(root) { animation-duration: 0.32s; }
+::view-transition-group(.case-morph) { animation-duration: 0.7s; animation-timing-function: cubic-bezier(0.2, 0.9, 0.1, 1); }
+::view-transition-image-pair(.case-morph) { animation-name: case-morph-blur; animation-duration: 0.7s; }
+::view-transition-old(.case-morph), ::view-transition-new(.case-morph) { height: 100%; object-fit: cover; object-position: top; }
+@keyframes case-morph-blur { 40% { filter: blur(2px); } }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*), ::view-transition-image-pair(*) { animation: none !important; }
+}

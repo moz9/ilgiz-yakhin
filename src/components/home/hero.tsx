@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, type CSSProperties } from "react";
+import { useRef, type CSSProperties } from "react";
+import { gsap, MOTION, SCRUB, STILL, useGSAP } from "@/lib/gsap";
 import { HeroLens } from "@/components/glass/hero-lens";
 import { getProject, type Project } from "@/lib/projects";
 
@@ -38,44 +39,40 @@ export function Hero() {
   const hero = useRef<HTMLElement>(null);
   const pin = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useGSAP(() => {
     const element = hero.current;
     const stage = pin.current;
     if (!element || !stage) return;
-    const reduced = matchMedia("(prefers-reduced-motion: reduce)");
-    let frame = 0;
-    const update = () => {
-      if (reduced.matches) {
-        element.dataset.still = "true";
-        for (const name of ["--p", "--rise", "--split"]) element.style.setProperty(name, "0");
-        return;
-      }
-      delete element.dataset.still;
-      const travel = Math.max(1, element.offsetHeight - innerHeight);
-      const p = clamp(-element.getBoundingClientRect().top / travel);
-      element.style.setProperty("--p", p.toFixed(4));
-      element.style.setProperty("--rise", easeOut(clamp(p / 0.55)).toFixed(4));
-      element.style.setProperty("--split", easeInOut(clamp((p - 0.42) / 0.45)).toFixed(4));
-    };
-    const schedule = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(update); };
-    const onMove = (event: PointerEvent) => {
-      if (event.pointerType !== "mouse" || reduced.matches) return;
-      stage.style.setProperty("--px", (event.clientX / innerWidth - 0.5).toFixed(3));
-      stage.style.setProperty("--py", (event.clientY / innerHeight - 0.5).toFixed(3));
-    };
-    update();
-    addEventListener("scroll", schedule, { passive: true });
-    addEventListener("resize", schedule);
-    addEventListener("pointermove", onMove, { passive: true });
-    reduced.addEventListener("change", schedule);
-    return () => {
-      cancelAnimationFrame(frame);
-      removeEventListener("scroll", schedule);
-      removeEventListener("resize", schedule);
-      removeEventListener("pointermove", onMove);
-      reduced.removeEventListener("change", schedule);
-    };
-  }, []);
+    const mm = gsap.matchMedia();
+    mm.add(STILL, () => {
+      element.dataset.still = "true";
+      for (const name of ["--p", "--rise", "--split"]) element.style.setProperty(name, "0");
+      return () => { delete element.dataset.still; };
+    });
+    mm.add(MOTION, () => {
+      // One scrubbed value drives the whole shot; GSAP adds the catch-up that makes it glide.
+      const shot = { p: 0 };
+      const paint = () => {
+        const p = shot.p;
+        element.style.setProperty("--p", p.toFixed(4));
+        element.style.setProperty("--rise", easeOut(clamp(p / 0.55)).toFixed(4));
+        element.style.setProperty("--split", easeInOut(clamp((p - 0.42) / 0.45)).toFixed(4));
+      };
+      gsap.to(shot, { p: 1, ease: "none", onUpdate: paint, scrollTrigger: { trigger: element, start: "top top", end: "bottom bottom", scrub: SCRUB } });
+      // The pointer tilt eases toward the cursor instead of snapping to it.
+      const tilt = { x: 0, y: 0 };
+      const toX = gsap.quickTo(tilt, "x", { duration: 0.8, ease: "power3.out", onUpdate: () => stage.style.setProperty("--px", tilt.x.toFixed(3)) });
+      const toY = gsap.quickTo(tilt, "y", { duration: 0.8, ease: "power3.out", onUpdate: () => stage.style.setProperty("--py", tilt.y.toFixed(3)) });
+      const onMove = (event: PointerEvent) => {
+        if (event.pointerType !== "mouse") return;
+        toX(event.clientX / innerWidth - 0.5);
+        toY(event.clientY / innerHeight - 0.5);
+      };
+      addEventListener("pointermove", onMove, { passive: true });
+      return () => removeEventListener("pointermove", onMove);
+    });
+    return () => mm.revert();
+  }, { scope: hero });
 
   const layers = [
     { className: "hero-layer hero-layer-back", src: worktime.cover, width: 1440, height: 900, phone: false },

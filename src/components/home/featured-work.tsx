@@ -2,12 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useRef, useState, type CSSProperties } from "react";
+import { gsap, MOTION, SCRUB, ScrollTrigger, STILL, useGSAP } from "@/lib/gsap";
 import { ArrowUpRight } from "lucide-react";
 import { projects, type Project } from "@/lib/projects";
 import { featured } from "@/lib/featured";
 import { caseHue, caseHueStyle } from "@/lib/case-hues";
 import { useGlassTabs } from "@/components/glass/glass-runtime";
+import { CaseMorph } from "@/components/case-morph";
 
 const labels: Record<string, string> = {
   chessrise: "ChessRise",
@@ -59,46 +61,40 @@ export function FeaturedWork() {
   const picker = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
 
-  useEffect(() => {
+  useGSAP(() => {
     const root = list.current;
     if (!root) return;
     const chapters = Array.from(root.querySelectorAll<HTMLElement>(".chapter"));
-    const reduced = matchMedia("(prefers-reduced-motion: reduce)");
-    let frame = 0;
-    const update = () => {
-      let current = 0;
-      chapters.forEach((chapter, index) => {
-        const box = chapter.getBoundingClientRect();
-        if (box.top <= innerHeight * 0.5) current = index;
-        if (reduced.matches) {
-          chapter.style.setProperty("--in", "1");
-          chapter.style.setProperty("--split", "0.5");
-          chapter.style.setProperty("--out", "0");
-          chapter.style.setProperty("--p", "0.5");
-          return;
-        }
+    const mm = gsap.matchMedia();
+    mm.add(STILL, () => {
+      for (const chapter of chapters) {
+        chapter.style.setProperty("--in", "1");
+        chapter.style.setProperty("--split", "0.5");
+        chapter.style.setProperty("--out", "0");
+        chapter.style.setProperty("--p", "0.5");
+      }
+    });
+    mm.add(MOTION, () => {
+      chapters.forEach((chapter) => {
         // 0 when the chapter's top meets the bottom of the screen, 1 when its end leaves.
-        const p = clamp((innerHeight - box.top) / Math.max(1, box.height));
-        const mobile = innerWidth <= 860;
-        chapter.style.setProperty("--p", p.toFixed(4));
-        chapter.style.setProperty("--in", easeOut(clamp(p / (mobile ? 0.6 : 0.46))).toFixed(4));
-        chapter.style.setProperty("--split", mobile ? "0" : easeInOut(clamp((p - 0.48) / 0.3)).toFixed(4));
-        chapter.style.setProperty("--out", mobile ? "0" : clamp((p - 0.9) / 0.1).toFixed(4));
+        const run = { p: 0 };
+        const paint = () => {
+          const p = run.p;
+          const mobile = innerWidth <= 860;
+          chapter.style.setProperty("--p", p.toFixed(4));
+          chapter.style.setProperty("--in", easeOut(clamp(p / (mobile ? 0.6 : 0.46))).toFixed(4));
+          chapter.style.setProperty("--split", mobile ? "0" : easeInOut(clamp((p - 0.48) / 0.3)).toFixed(4));
+          chapter.style.setProperty("--out", mobile ? "0" : clamp((p - 0.9) / 0.1).toFixed(4));
+        };
+        gsap.to(run, { p: 1, ease: "none", onUpdate: paint, scrollTrigger: { trigger: chapter, start: "top bottom", end: "bottom bottom", scrub: SCRUB } });
       });
-      setActive(current);
-    };
-    const schedule = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(update); };
-    update();
-    addEventListener("scroll", schedule, { passive: true });
-    addEventListener("resize", schedule);
-    reduced.addEventListener("change", schedule);
-    return () => {
-      cancelAnimationFrame(frame);
-      removeEventListener("scroll", schedule);
-      removeEventListener("resize", schedule);
-      reduced.removeEventListener("change", schedule);
-    };
-  }, []);
+    });
+    // The picker follows the chapter that holds the middle of the screen.
+    chapters.forEach((chapter, index) => {
+      ScrollTrigger.create({ trigger: chapter, start: "top center", end: "bottom center", onToggle: (self) => { if (self.isActive) setActive(index); } });
+    });
+    return () => mm.revert();
+  }, { scope: list });
 
   const jump = useCallback((index: number, behavior: ScrollBehavior = "smooth") => {
     const chapter = list.current?.querySelectorAll<HTMLElement>(".chapter")[index];
@@ -137,7 +133,7 @@ export function FeaturedWork() {
               <Link className="chapter-stack" href={`/projects/${project.slug}`} tabIndex={-1} aria-hidden="true">
                 <span className="chapter-plate" />
                 {back && <span className="chapter-layer chapter-layer-back"><span className="stage-chrome"><i /><i /><i /></span><Image src={back} alt="" width={1440} height={900} sizes="(max-width: 860px) 80vw, 700px" /></span>}
-                <span className="chapter-layer chapter-layer-main"><span className="stage-chrome"><i /><i /><i /></span><Image src={project.cover} alt="" width={1440} height={900} sizes="(max-width: 860px) 92vw, 900px" /></span>
+                <CaseMorph slug={project.slug}><span className="chapter-layer chapter-layer-main"><span className="stage-chrome"><i /><i /><i /></span><Image src={project.cover} alt="" width={1440} height={900} sizes="(max-width: 860px) 92vw, 900px" /></span></CaseMorph>
                 {phone && <span className="chapter-layer chapter-layer-phone"><Image src={phone} alt="" width={390} height={844} sizes="220px" /></span>}
                 <span className="chapter-layer chapter-layer-note" style={{ "--n": 0 } as CSSProperties}><b>{project.results[0]}</b></span>
               </Link>

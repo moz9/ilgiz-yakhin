@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { Project } from "@/lib/projects";
 import { caseHueStyle } from "@/lib/case-hues";
+import { CaseMorph } from "@/components/case-morph";
 
 type Props = { project: Project; priority?: boolean; compact?: boolean; sizes?: string };
 
@@ -17,10 +18,12 @@ export function ProjectStage({ project, priority = false, compact = false, sizes
 
   return <div className={`stage${compact ? " stage-compact" : ""}${phone ? " has-phone" : ""}`} style={caseHueStyle(project.slug)} data-project={project.slug}>
     <span className="stage-light" aria-hidden="true" />
-    <div className={`stage-screen${desktop ? " is-app" : ""}`}>
-      <span className="stage-chrome" aria-hidden="true"><i /><i /><i /></span>
-      <Image src={project.cover} alt={project.coverAlt} width={1440} height={900} priority={priority} sizes={sizes ?? (compact ? "(max-width: 760px) 92vw, 760px" : "(max-width: 900px) 94vw, 1200px")} />
-    </div>
+    <CaseMorph slug={project.slug}>
+      <div className={`stage-screen${desktop ? " is-app" : ""}`}>
+        <span className="stage-chrome" aria-hidden="true"><i /><i /><i /></span>
+        <Image src={project.cover} alt={project.coverAlt} width={1440} height={900} priority={priority} sizes={sizes ?? (compact ? "(max-width: 760px) 92vw, 760px" : "(max-width: 900px) 94vw, 1200px")} />
+      </div>
+    </CaseMorph>
     {phone && <div className="stage-phone"><Image src={phone.src} alt={phone.alt} width={390} height={844} sizes="(max-width: 760px) 26vw, 220px" /></div>}
   </div>;
 }

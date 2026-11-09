@@ -8,6 +8,7 @@ import { motion, useMotionValue, useSpring } from "motion/react";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import type { Project } from "@/lib/projects";
 import { caseHueStyle } from "@/lib/case-hues";
+import { CaseMorph } from "@/components/case-morph";
 
 /**
  * The rest of the catalogue as a quiet list. On a desktop a preview of the case floats
@@ -51,7 +52,7 @@ export function MoreWork({ projects }: { projects: Project[] }) {
         <Link key={project.slug} className="more-row" href={`/projects/${project.slug}`} style={caseHueStyle(project.slug)}
           onPointerEnter={(event) => { if (event.pointerType === "mouse") setHover(project.slug); }}
           onFocus={() => setHover(null)}>
-          <Image className="more-thumb" src={project.cover} alt="" width={240} height={150} sizes="96px" />
+          <CaseMorph slug={project.slug}><Image className="more-thumb" src={project.cover} alt="" width={240} height={150} sizes="96px" /></CaseMorph>
           <span className="more-title">{project.title}</span>
           <span className="more-kind">{project.category.join(", ")}</span>
           <span className="more-stack">{project.stack.slice(0, 3).join(", ")}</span>

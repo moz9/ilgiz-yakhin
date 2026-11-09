@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { gsap, MOTION, useGSAP } from "@/lib/gsap";
 
 const rows = [
   ["Web-продукты", "Android", "Desktop", "AI-инструменты"],
@@ -13,20 +14,21 @@ const rows = [
  */
 export function SkillBand() {
   const band = useRef<HTMLDivElement>(null);
-  useEffect(() => {
+  useGSAP(() => {
     const element = band.current;
-    if (!element || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let frame = 0;
-    const update = () => {
-      const box = element.getBoundingClientRect();
-      const p = (innerHeight - box.top) / (innerHeight + box.height);
-      element.style.setProperty("--p", Math.max(0, Math.min(1, p)).toFixed(4));
-    };
-    const schedule = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(update); };
-    update();
-    addEventListener("scroll", schedule, { passive: true });
-    return () => { cancelAnimationFrame(frame); removeEventListener("scroll", schedule); };
-  }, []);
+    if (!element) return;
+    const mm = gsap.matchMedia();
+    mm.add(MOTION, () => {
+      const run = { p: 0 };
+      gsap.to(run, {
+        p: 1,
+        ease: "none",
+        onUpdate: () => element.style.setProperty("--p", run.p.toFixed(4)),
+        scrollTrigger: { trigger: element, start: "top bottom", end: "bottom top", scrub: 1.2 },
+      });
+    });
+    return () => mm.revert();
+  }, { scope: band });
 
   return <div className="skill-band" ref={band}>
     {rows.map((row, index) =>

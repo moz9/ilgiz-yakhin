@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Clapperboard, Download, Link2, Shuffle } from "lucide-react";
-import { useGlassTabs } from "@/components/glass/glass-runtime";
+import { useGlassTabs, GlassRange } from "@/components/glass/glass-runtime";
 import type { ShowcaseProps } from "./registry";
 
 type Preset = { name: string; colors: [string, string, string, string] };
@@ -77,6 +77,8 @@ export default function GradientStudio({ mode }: ShowcaseProps) {
   const [grain, setGrain] = useState(shared?.grain ?? 35);
   const [failed, setFailed] = useState(false);
   const [format, setFormat] = useState(0);
+  const formatTabs = useRef<HTMLDivElement>(null);
+  useGlassTabs(formatTabs, format, setFormat);
   const [note, setNote] = useState("");
   const [recording, setRecording] = useState(false);
   const api = useRef<{ snapshot: (w: number, h: number) => string; record: (w: number, h: number, seconds: number) => Promise<Blob | null> } | null>(null);
@@ -236,11 +238,11 @@ export default function GradientStudio({ mode }: ShowcaseProps) {
       <div className="gs-sliders">
         {([["Скорость", speed, setSpeed], ["Изгиб", warp, setWarp], ["Зерно", grain, setGrain]] as const).map(([label, value, set]) =>
           <label key={label}><span>{label}<output>{value}</output></span>
-            <input type="range" min="0" max="100" value={value} onChange={(event) => set(Number(event.target.value))} />
+            <GlassRange min="0" max="100" value={value} onChange={(event) => set(Number(event.target.value))} />
           </label>)}
       </div>
-      <div className="gs-formats" role="group" aria-label="Размер для экспорта">
-        {FORMATS.map((f, i) => <button key={f.name} type="button" aria-pressed={format === i} onClick={() => setFormat(i)}>{f.name}<small>{f.w}×{f.h}</small></button>)}
+      <div className="gs-formats" ref={formatTabs} role="tablist" aria-label="Размер для экспорта">
+        {FORMATS.map((f, i) => <button key={f.name} type="button" role="tab" aria-selected={format === i} tabIndex={format === i ? 0 : -1}>{f.name}<small>{f.w}×{f.h}</small></button>)}
       </div>
       <div className="gs-actions">
         <button type="button" className="button button-primary" data-lg="button" data-lg-variant="prominent" onClick={save}><Download aria-hidden="true" />PNG</button>

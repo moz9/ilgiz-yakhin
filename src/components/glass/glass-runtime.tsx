@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type RefObject } from "react";
+import { useEffect, useRef, type InputHTMLAttributes, type RefObject } from "react";
 import type * as Kit from "@/lib/liquid-glass/liquid-glass-kit.js";
 
 type KitModule = typeof Kit;
@@ -64,4 +64,28 @@ export function useGlassTabs(ref: RefObject<HTMLElement | null>, selected: numbe
   useEffect(() => {
     if (selected >= 0 && controller.current && controller.current.index !== selected) controller.current.select(selected);
   }, [selected]);
+}
+
+type SliderController = Kit.Controller & { sync?: () => void };
+
+/**
+ * A range input with the kit's liquid thumb. The kit wraps the input in its own track, so
+ * the input sits alone inside a span React owns; value changes made by React (presets,
+ * links) are pushed to the lens with `sync`, since they fire no input event.
+ */
+export function GlassRange({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
+  const input = useRef<HTMLInputElement>(null);
+  const controller = useRef<SliderController | null>(null);
+  useEffect(() => {
+    const el = input.current;
+    if (!el) return;
+    let cancelled = false;
+    loadGlassKit().then((kit) => {
+      if (cancelled || !input.current) return;
+      controller.current = kit.mountSlider(el) as SliderController;
+    });
+    return () => { cancelled = true; controller.current?.destroy(); controller.current = null; };
+  }, []);
+  useEffect(() => { controller.current?.sync?.(); }, [props.value]);
+  return <span className={`glass-range${className ? ` ${className}` : ""}`}><input ref={input} type="range" {...props} /></span>;
 }

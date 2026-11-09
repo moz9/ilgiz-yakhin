@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { RotateCw } from "lucide-react";
 import { gsap, MOTION, useGSAP } from "@/lib/gsap";
+import { caseAssetBase } from "@/lib/projects";
 
 type Offer = { shop: string; color: string; price: number; bank: number | null; seller: string; city: boolean; stock: boolean };
 const BASE: Offer[] = [
@@ -94,7 +95,7 @@ export function PricePath() {
         <p className="pp-best">{best ? rub(best.price) : "—"}<small>{best ? `лучшая обычная цена · ${best.shop}` : "проверяю магазины"}</small></p>
         <svg className="pp-chart" viewBox="0 0 300 80" aria-hidden="true">{best && <path className="pp-spark" d={line} />}</svg>
         <p className="pp-note">{best ? "История за 90 дней · цена «с картой банка» хранится отдельно и не подменяет обычную" : "Город и наличие помечаются, а не угадываются"}</p>
-        <button type="button" className="pp-again" onClick={again}><RotateCw aria-hidden="true" />Проверить ещё раз</button>
+        <button type="button" className="button pp-again" data-lg="button" onClick={again}><RotateCw aria-hidden="true" />Проверить ещё раз</button>
       </article>
     </div>
   </section>;
@@ -119,8 +120,8 @@ export function TwoSides() {
       <p>Две витринные сборки — студийные рендеры Blender из той же геометрии, что крутится на сайте в three.js. Тяните ручку.</p>
     </div>
     <div className="ts-stage" ref={box} onPointerDown={drag} onPointerMove={drag} style={{ "--split": `${split}%` } as React.CSSProperties}>
-      <Image src="/cases/pcstudio-setup-white.webp" alt="Светлое рабочее место: белый корпус с вентиляторами, монитор, клавиатура и мышь на белом столе" fill sizes="(max-width: 900px) 94vw, 1200px" />
-      <Image className="ts-top" src="/cases/pcstudio-setup-dark.webp" alt="Тёмное рабочее место: корпус с деревянными рейками, монитор, клавиатура и мышь на тёмном столе" fill sizes="(max-width: 900px) 94vw, 1200px" />
+      <Image src={`${caseAssetBase}/pcstudio-setup-white.webp`} alt="Светлое рабочее место: белый корпус с вентиляторами, монитор, клавиатура и мышь на белом столе" fill sizes="(max-width: 900px) 94vw, 1200px" />
+      <Image className="ts-top" src={`${caseAssetBase}/pcstudio-setup-dark.webp`} alt="Тёмное рабочее место: корпус с деревянными рейками, монитор, клавиатура и мышь на тёмном столе" fill sizes="(max-width: 900px) 94vw, 1200px" />
       <span className="ts-tag ts-tag-dark">Тёмная<small>Fractal North · Ryzen 7 7800X3D · RX 7800 XT</small></span>
       <span className="ts-tag ts-tag-light">Светлая<small>JONSBO TK-5 White · Core Ultra 9 · RTX 5090</small></span>
       <span className="ts-handle" aria-hidden="true" />

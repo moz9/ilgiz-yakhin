@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Clapperboard, Code2, ImagePlus } from "lucide-react";
 import { gsap } from "@/lib/gsap";
-import { useGlassTabs } from "@/components/glass/glass-runtime";
+import { useGlassTabs, GlassRange } from "@/components/glass/glass-runtime";
 import type { ShowcaseProps } from "./registry";
 
 type Slide = { src: string; title: string };
@@ -242,8 +242,8 @@ export default function ShaderGallery({ mode }: ShowcaseProps) {
     {dropping && <p className="sg-drop" aria-hidden="true"><ImagePlus />Отпустите — картинки станут кадрами</p>}
 
     <aside className="sg-studio" data-lg="surface" aria-label="Настройки перехода">
-      <label>Длительность <b>{duration.toFixed(1).replace(".", ",")} с</b><input type="range" min="0.5" max="3" step="0.1" value={duration} onChange={(e) => setDuration(Number(e.target.value))} /></label>
-      <label>Сила <b>{Math.round(amount * 100)}%</b><input type="range" min="0" max="1" step="0.05" value={amount} onChange={(e) => setAmount(Number(e.target.value))} /></label>
+      <label>Длительность <b>{duration.toFixed(1).replace(".", ",")} с</b><GlassRange min="0.5" max="3" step="0.1" value={duration} onChange={(e) => setDuration(Number(e.target.value))} /></label>
+      <label>Сила <b>{Math.round(amount * 100)}%</b><GlassRange min="0" max="1" step="0.05" value={amount} onChange={(e) => setAmount(Number(e.target.value))} /></label>
       <div className="sg-actions">
         <button type="button" onClick={() => file.current?.click()}><ImagePlus aria-hidden="true" />Свои картинки</button>
         <button type="button" onClick={record} disabled={busy}><Clapperboard aria-hidden="true" />{busy ? "Пишу…" : "Записать видео"}</button>

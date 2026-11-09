@@ -12,8 +12,8 @@ test("home presents the name, the selected work and every other case", async ({ 
   const socialPreview = await request.get("/og-v2.jpg");
   expect(socialPreview.headers()["content-type"]).toContain("image/jpeg");
   await expect(page.locator(".chapter")).toHaveCount(featured.length);
-  await expect(page.locator(".chapter h3 a").first()).toHaveAttribute("href", "/projects/chessrise");
-  await expect(page.locator(".chapter h3 a").nth(1)).toHaveAttribute("href", "/projects/pcstudio");
+  await expect(page.locator(".chapter h3 a").first()).toHaveAttribute("href", "/projects/pcstudio");
+  await expect(page.locator(".chapter h3 a").nth(1)).toHaveAttribute("href", "/projects/liquid-glass-kit");
   await expect(page.locator(".more-row")).toHaveCount(otherProjects.length);
   await expect(page.getByRole("navigation", { name: "Основная навигация" })).toBeVisible();
   await expect(page.locator(".hero")).not.toContainText("Барнаул");

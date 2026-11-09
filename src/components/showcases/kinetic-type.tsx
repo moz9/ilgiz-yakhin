@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { FileDown } from "lucide-react";
 import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
 import { gsap, SplitText } from "@/lib/gsap";
-import { useGlassTabs } from "@/components/glass/glass-runtime";
+import { useGlassTabs, GlassRange } from "@/components/glass/glass-runtime";
 import type { ShowcaseProps } from "./registry";
 
 gsap.registerPlugin(ScrambleTextPlugin);
@@ -127,7 +127,7 @@ export default function KineticType({ mode }: ShowcaseProps) {
         </div>
         <button type="button" className="kt-save" onClick={download}><FileDown aria-hidden="true" />HTML</button>
         <label className="kt-speed"><span>Темп {speed.toFixed(1)}×</span>
-          <input type="range" min="0.4" max="2" step="0.1" value={speed} onChange={(event) => setSpeed(Number(event.target.value))} />
+          <GlassRange min="0.4" max="2" step="0.1" value={speed} onChange={(event) => setSpeed(Number(event.target.value))} />
         </label>
       </div>
     </div>

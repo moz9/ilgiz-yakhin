@@ -1,10 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { ArrowLeft, ArrowRight, Expand, X, ZoomIn, ZoomOut } from "lucide-react";
 import { motion, useMotionValue, useSpring } from "motion/react";
 import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
 import type { ProjectMedia } from "@/lib/projects";
+
+// The live PCStudio scene: three.js stays out of every other case page.
+const DeskViewer = dynamic(() => import("./pcstudio-desk-viewer"), { ssr: false });
 
 function subscribeReducedMotion(callback: () => void) {
   const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -53,6 +57,15 @@ function GalleryFigure({ item, index, onOpen, reduceMotion }: { item: ProjectMed
     tiltX.set(0);
     tiltY.set(0);
   }
+
+  // A live 3D scene owns its pointer: no tilt, no lightbox, just the window chrome around it.
+  if (item.presentation === "scene3d") return <figure data-presentation="scene3d">
+    <div className="gallery-shot shot-scene3d">
+      <span className="gallery-shot-bar" aria-hidden="true"><i /><i /><i /><span>{item.label}</span><b className="gallery-live-dot" /></span>
+      <div className="shot-scene3d-stage"><DeskViewer /></div>
+    </div>
+    <figcaption><strong>{item.label}</strong><span>{item.caption}</span></figcaption>
+  </figure>;
 
   return <motion.figure
     data-presentation={item.presentation ?? "browser"}

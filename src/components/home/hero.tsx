@@ -16,7 +16,7 @@ function phoneOf(project: Project) {
   return project.cover;
 }
 
-const chess = getProject("chessrise")!;
+const pcstudio = getProject("pcstudio")!;
 const pioner = getProject("pioner")!;
 const worktime = getProject("worktime-reporting")!;
 const glassrates = getProject("glassrates")!;
@@ -76,7 +76,7 @@ export function Hero() {
 
   const layers = [
     { className: "hero-layer hero-layer-back", src: worktime.cover, width: 1440, height: 900, phone: false },
-    { className: "hero-layer hero-layer-main", src: chess.cover, width: 1440, height: 900, phone: false },
+    { className: "hero-layer hero-layer-main", src: pcstudio.cover, width: 1440, height: 900, phone: false },
     { className: "hero-layer hero-layer-phone", src: phoneOf(pioner), width: 390, height: 844, phone: true },
     { className: "hero-layer hero-layer-phone hero-layer-phone-b", src: phoneOf(glassrates), width: 390, height: 844, phone: true },
   ];

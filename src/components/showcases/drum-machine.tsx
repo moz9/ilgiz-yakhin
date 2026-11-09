@@ -1,5 +1,6 @@
 "use client";
 
+import { GlassRange } from "@/components/glass/glass-runtime";
 import { useEffect, useRef, useState } from "react";
 import { Download, Link2, Pause, Play, Trash2 } from "lucide-react";
 import type { ShowcaseProps } from "./registry";
@@ -216,8 +217,8 @@ export default function DrumMachine({ mode }: ShowcaseProps) {
     </div>
     <footer className="dm-transport">
       <button type="button" className="dm-play" onClick={toggle} aria-pressed={playing}>{playing ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}{playing ? "Стоп" : "Играть"}</button>
-      <label>Темп <b>{tempo}</b> BPM<input type="range" min="70" max="170" value={tempo} onChange={(e) => setTempo(Number(e.target.value))} /></label>
-      <label>Свинг <b>{swing}%</b><input type="range" min="0" max="60" value={swing} onChange={(e) => setSwing(Number(e.target.value))} /></label>
+      <label>Темп <b>{tempo}</b> BPM<GlassRange min="70" max="170" value={tempo} onChange={(e) => setTempo(Number(e.target.value))} /></label>
+      <label>Свинг <b>{swing}%</b><GlassRange min="0" max="60" value={swing} onChange={(e) => setSwing(Number(e.target.value))} /></label>
       <div className="dm-out">
         <button type="button" onClick={wav} disabled={rendering}><Download aria-hidden="true" />{rendering ? "Свожу…" : "WAV"}</button>
         <button type="button" onClick={share}><Link2 aria-hidden="true" />Ссылка</button>

@@ -6,6 +6,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import type { ShowcaseProps } from "./registry";
+import { useGlassTabs } from "@/components/glass/glass-runtime";
 
 /** The parts of the dark showcase build, in the order they leave the case, with the check each one passes. */
 const PARTS = [
@@ -68,12 +69,14 @@ export default function PcstudioExplode({ mode }: ShowcaseProps) {
     floor.position.y = 0.002;
     turntable.add(floor);
 
-    type Part = { key: string; node: THREE.Object3D; home: THREE.Vector3; angle: number; reach: number; lag: number };
+    type Part = { key: string; node: THREE.Object3D; home: THREE.Vector3; angle: number; reach: number; lag: number; half: number };
     let parts: Part[] = [];
     let caseMaterials: THREE.Material[] = [];
     let computer: THREE.Object3D | null = null;
     const focus = new THREE.Vector3(0.54, 0.95, -0.07);
     let disposed = false;
+    // The desk top under the case: no part may sink below it, whichever way the camera looks.
+    let floorY = -Infinity;
 
     const loader = new GLTFLoader();
     loader.setMeshoptDecoder(MeshoptDecoder);
@@ -89,6 +92,7 @@ export default function PcstudioExplode({ mode }: ShowcaseProps) {
       const caseBox = caseNode ? new THREE.Box3().setFromObject(caseNode) : new THREE.Box3();
       const caseCenter = caseBox.getCenter(new THREE.Vector3());
       focus.copy(caseCenter);
+      floorY = caseBox.min.y;
       // The case keeps its frame but its panels become glass, so the parts read through it.
       caseNode?.traverse((o) => {
         const mesh = o as THREE.Mesh;
@@ -98,10 +102,10 @@ export default function PcstudioExplode({ mode }: ShowcaseProps) {
       // Each part bursts out along its own screen direction (see PARTS); the second memory stick trails the first.
       parts = PARTS.map((p) => {
         const node = named(p.key);
-        return node ? { key: p.key, node, home: node.position.clone(), angle: p.angle * Math.PI / 180, reach: p.reach, lag: 0 } : null;
+        return node ? { key: p.key, node, home: node.position.clone(), angle: p.angle * Math.PI / 180, reach: p.reach, lag: 0, half: node.getWorldPosition(new THREE.Vector3()).y - new THREE.Box3().setFromObject(node).min.y } : null;
       }).filter(Boolean) as Part[];
       const ram2 = computer?.children.find((n) => n.name === "ramshowcase-ram1");
-      if (ram2) parts.push({ key: "ram2", node: ram2, home: ram2.position.clone(), angle: 28 * Math.PI / 180, reach: 0.4, lag: 0 });
+      if (ram2) parts.push({ key: "ram2", node: ram2, home: ram2.position.clone(), angle: 28 * Math.PI / 180, reach: 0.4, lag: 0, half: 0.07 });
       setState("ready");
     }, undefined, () => setState("failed"));
 
@@ -169,7 +173,10 @@ export default function PcstudioExplode({ mode }: ShowcaseProps) {
         const offset = right.clone().multiplyScalar(Math.cos(part.angle) * part.reach * wideK).addScaledVector(upward, Math.sin(part.angle) * part.reach * tallK);
         // A little towards the viewer as well, so parts clear the glass instead of sliding through it.
         offset.addScaledVector(camera.position.clone().sub(homeWorld).normalize(), 0.12);
-        part.node.position.copy(parent.worldToLocal(homeWorld.addScaledVector(offset, k)));
+        homeWorld.addScaledVector(offset, k);
+        // `half` is how far the part reaches below its origin; that lowest point stays on the desk.
+        homeWorld.y = Math.max(homeWorld.y, Math.min(parent.localToWorld(part.home.clone()).y, floorY + part.half + 0.01));
+        part.node.position.copy(parent.worldToLocal(homeWorld));
         if (part.key === "ram2" || k < 0.05) return;
         new THREE.Box3().setFromObject(part.node).getCenter(tmp);
         tmp.project(camera);
@@ -206,6 +213,8 @@ export default function PcstudioExplode({ mode }: ShowcaseProps) {
     const max = sc.scrollHeight - sc.clientHeight;
     sc.scrollTo({ top: max * [0, 0.38, 1][i], behavior: "smooth" });
   };
+  const chapterTabs = useRef<HTMLDivElement>(null);
+  useGlassTabs(chapterTabs, chapter, jump);
   const passed = labels.filter((l) => l.on > 0.6 && PARTS.find((p) => p.key === l.key)?.ok).length;
 
   return <div className={`px px-${mode}`} ref={scroller} tabIndex={0} aria-label="Сборка PCStudio: листайте внутри блока, чтобы разобрать компьютер">
@@ -215,8 +224,10 @@ export default function PcstudioExplode({ mode }: ShowcaseProps) {
         {state === "failed" && <p className="px-state">3D не загрузилось — браузер не дал WebGL.</p>}
         <header className="px-head">
           <p>PCStudio · тёмная сборка</p>
-          <div className="px-chapters" role="group" aria-label="Перейти">
-            {CHAPTERS.map((c, i) => <button key={c} type="button" aria-pressed={chapter === i} onClick={() => jump(i)}>{c}</button>)}
+          <div className="px-chapters" data-lg="surface">
+            <div className="px-tabs" ref={chapterTabs} role="tablist" aria-label="Перейти">
+              {CHAPTERS.map((c, i) => <button key={c} type="button" role="tab" aria-selected={chapter === i} tabIndex={chapter === i ? 0 : -1}>{c}</button>)}
+            </div>
           </div>
         </header>
         <div className="px-labels" aria-live="polite">

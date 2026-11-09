@@ -18,7 +18,7 @@ export type ProjectMedia = {
   alt: string;
   label: string;
   caption: string;
-  presentation?: "browser" | "desktop" | "phone" | "document" | "diagram" | "live" | "collage" | "strip" | "detail";
+  presentation?: "browser" | "desktop" | "phone" | "document" | "diagram" | "live" | "collage" | "strip" | "detail" | "scene3d";
   frames?: (string | { src: string; alt: string; presentation?: "phone" | "desktop" | "browser" })[];
   width?: number;
   height?: number;
@@ -56,7 +56,7 @@ export type Project = {
   coverDetail?: string;
 };
 
-const caseAssetBase = "https://raw.githubusercontent.com/moz9/ilgiz-yakhin/main/public/cases";
+export const caseAssetBase = "https://raw.githubusercontent.com/moz9/ilgiz-yakhin/main/public/cases";
 
 const projectCatalog: Project[] = [
   {
@@ -283,7 +283,7 @@ const projectCatalog: Project[] = [
     slug: "chessrise",
     cover: `${caseAssetBase}/chessrise-desktop.webp`,
     coverAlt: "Главная страница шахматной школы ChessRise",
-    index: "01",
+    index: "02",
     title: "ChessRise",
     shortTitle: "Commercial web launch",
     category: ["Web", "Infrastructure"],
@@ -340,7 +340,7 @@ const projectCatalog: Project[] = [
     cover: `${caseAssetBase}/pcstudio-cover.webp`,
     coverAlt: "Тёмное рабочее место PCStudio в 3D: компьютер на столе разобран на детали с подписями проверок совместимости",
     coverVideo: "/cases/pcstudio-tour",
-    index: "02",
+    index: "01",
     title: "PCStudio",
     shortTitle: "PC configurator with 3D and price tracking",
     category: ["Web", "Infrastructure"],
@@ -361,10 +361,10 @@ const projectCatalog: Project[] = [
       { title: "Цены и сообщество", summary: "Деньги и мнения.", items: ["Расширение для Chrome и Яндекс Браузера", "История цены, обычная и «с банками»", "Публикации, комментарии, оценки и модерация"] },
     ],
     media: [
-      { src: `${caseAssetBase}/pcstudio-home-3d.webp`, alt: "Живая 3D-сцена светлого рабочего места на главной странице PCStudio", label: "01 / ЖИВАЯ СЦЕНА", caption: "Главная PCStudio: интерактивная сцена рабочего места на three.js со сборкой «Светлая сторона».", width: 1440, height: 900 },
-      { src: `${caseAssetBase}/pcstudio-offers-ozon.webp`, alt: "Диалог детали сборки с ценой из карточки Ozon: обычная цена, цена с банками, продавец и артикул", label: "02 / ЦЕНА ИЗ OZON", caption: "Цена из карточки Ozon в диалоге детали: обычная и «с банками» отдельно, продавец и артикул магазина.", width: 1440, height: 900 },
-      { src: `${caseAssetBase}/pcstudio-offers-market.webp`, alt: "Предложения DNS и Яндекс Маркета для оперативной памяти с историей цены", label: "03 / НЕСКОЛЬКО МАГАЗИНОВ", caption: "Одна проверка проходит магазины по очереди; неподтверждённые город и наличие помечаются, а не угадываются.", width: 1440, height: 900 },
-      { src: `${caseAssetBase}/pcstudio-extension-setup.webp`, alt: "Страница подключения расширения PCStudio: три шага", label: "04 / РАСШИРЕНИЕ", caption: "Подключение расширения за три шага: установить, подтвердить аккаунт, выбрать магазины.", width: 1440, height: 900 },
+      { src: `${caseAssetBase}/pcstudio-home-3d.webp`, alt: "Живая 3D-сцена светлого рабочего места на главной странице PCStudio", label: "01 / ЖИВАЯ СЦЕНА", caption: "Сцена с главной PCStudio прямо здесь: обе витринные сборки из GLB продукта на three.js. Поверните стол, переключите сборку и подойдите к компьютеру.", presentation: "scene3d", width: 1440, height: 900 },
+      { src: `${caseAssetBase}/pcstudio-offers.webp`, alt: "Деталь сборки с ценой из Ozon (обычная и с картой банка, артикул, продавец) и предложения Яндекс Маркета и DNS с историей цены", label: "02 / ЦЕНЫ МАГАЗИНОВ", caption: "Слева — деталь сборки: цена из Ozon, обычная и «с картой» отдельно, артикул и продавец. Справа — предложения нескольких магазинов с историей цены за два месяца. Данные демонстрационные.", width: 2880, height: 1800 },
+      { src: `${caseAssetBase}/pcstudio-extension-setup.webp`, alt: "Страница помощника PCStudio в браузере: три шага подключения расширения", label: "03 / РАСШИРЕНИЕ", caption: "Подключение расширения за три шага: установить, подтвердить аккаунт, выбрать, что проверять. Пароли и cookies магазинов остаются в браузере.", width: 2880, height: 1800 },
+      { src: `${caseAssetBase}/pcstudio-extension-access.webp`, alt: "Настройки доступа расширения: передача цен, уточнение при просмотре и выбор магазинов DNS, Ozon и Яндекс Маркет", label: "04 / ДОСТУП И МАГАЗИНЫ", caption: "Пользователь сам решает, что помощник передаёт в PCStudio, и может отозвать доступ.", width: 2272, height: 1068 },
     ],
     results: ["Сборка по ссылкам магазинов и из каталога на ~47 тыс. позиций", "Проверка совместимости с источниками и честным «нет данных»", "3D-сцена рабочего места и расширение для цен из браузера"],
     evidence: [

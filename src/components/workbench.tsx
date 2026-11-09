@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, ArrowUpRight, FileSpreadsheet, LibraryBig, MonitorPlay } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Coins, Droplets, FileSpreadsheet } from "lucide-react";
 import { useRef, useState } from "react";
 import { motion } from "motion/react";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
@@ -12,8 +12,8 @@ import { useGlassTabs } from "@/components/glass/glass-runtime";
 
 const scenes = [
   { slug: "worktime-reporting", label: "Отчётность", icon: FileSpreadsheet, title: "От выгрузки до готового Excel", note: "Импорт, проверка расчёта и документ, который можно сразу отправлять.", labels: ["Импорт", "Проверка", "Экспорт"], indices: [0, 1, 2] },
-  { slug: "revalib", label: "База знаний", icon: LibraryBig, title: "Библиотека и связанные материалы", note: "От общего каталога к подробному гайду, на компьютере и телефоне.", labels: ["Библиотека", "Гайд", "Телефон"], indices: [0, 1, 3] },
-  { slug: "streaming-web-platform", label: "Стриминг", icon: MonitorPlay, title: "Расписание, списки и AI-контур", note: "Пользовательские сценарии стриминговой платформы на обезличенном демо.", labels: ["Расписание", "Списки", "AI-контур"], indices: [2, 6, 8] },
+  { slug: "glassrates", label: "Курсы валют", icon: Coins, title: "Курс ЦБ на рабочем столе", note: "Курсы с изменением, график за период и выбор валют в стеклянном окне.", labels: ["Курсы", "График", "Валюты"], indices: [0, 1, 2] },
+  { slug: "liquid-glass-kit", label: "Стекло", icon: Droplets, title: "Жидкое стекло поверх готовой страницы", note: "Линза преломляет настоящий HTML, а сравнение материалов показывает разницу на одном кадре.", labels: ["В продукте", "Преломление", "Оптика"], indices: [0, 2, 3] },
 ];
 
 export function Workbench() {

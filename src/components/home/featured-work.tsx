@@ -12,10 +12,22 @@ import { useGlassTabs } from "@/components/glass/glass-runtime";
 import { CaseMorph } from "@/components/case-morph";
 import { CaseVideo } from "@/components/case-video";
 
+/** Russian noun form for a count: 1 проект, 2 проекта, 5 проектов. */
+const plural = (n: number, one: string, few: string, many: string) =>
+  n % 10 === 1 && n % 100 !== 11 ? one : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? few : many;
+
 const labels: Record<string, string> = {
   chessrise: "ChessRise",
   "liquid-glass-kit": "Glass Kit",
   glassrates: "GlassRates",
+  "globe-routes": "Глобус",
+  "gradient-studio": "Градиенты",
+  "gravity-tags": "Гравитация",
+  "kinetic-type": "Кинетика",
+  "shader-gallery": "Галерея",
+  "micro-ui": "Микро-UI",
+  "particle-type": "Частицы",
+  "scroll-story": "Скролл",
   pioner: "Пионер",
   "worktime-reporting": "Отчётность",
   "infrastructure-inventory": "Учёт ИТ",
@@ -26,6 +38,14 @@ const statuses: Record<string, string> = {
   chessrise: "Принят и оплачен",
   "liquid-glass-kit": "Публичное демо",
   glassrates: "В разработке, 2.2",
+  "globe-routes": "Живое демо, three.js",
+  "gradient-studio": "Живое демо, WebGL2",
+  "gravity-tags": "Живое демо, Matter.js",
+  "kinetic-type": "Живое демо, GSAP",
+  "shader-gallery": "Живое демо, WebGL2",
+  "micro-ui": "Живое демо, GSAP",
+  "particle-type": "Живое демо, Canvas",
+  "scroll-story": "Живое демо, ScrollTrigger",
   pioner: "Публичный preview",
   "worktime-reporting": "Windows, демо",
   "infrastructure-inventory": "Windows, демо",
@@ -114,7 +134,7 @@ export function FeaturedWork() {
   return <section className="work" id="work" aria-labelledby="work-title">
     <div className="work-intro">
       <h2 id="work-title">Избранные работы</h2>
-      <p>Восемь проектов, которые я спроектировал, написал и довёл до запуска. Ещё восемь — ниже и в каталоге.</p>
+      <p>{featured.length} {plural(featured.length, "проект", "проекта", "проектов")}, которые я спроектировал, написал и довёл до запуска. Ещё {projects.length - featured.length} — ниже и в каталоге.</p>
       <Link className="text-link" href="/projects">Все {projects.length} проектов <ArrowUpRight aria-hidden="true" /></Link>
     </div>
     <div className="chapters" ref={list}>

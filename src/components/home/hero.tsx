@@ -19,7 +19,7 @@ function phoneOf(project: Project) {
 const chess = getProject("chessrise")!;
 const pioner = getProject("pioner")!;
 const worktime = getProject("worktime-reporting")!;
-const revalib = getProject("revalib")!;
+const glassrates = getProject("glassrates")!;
 
 // Each letter scatters along its own path as the name is pulled apart.
 const scatter = [-0.5, 0.35, -0.2, 0.6, -0.45, 0.25, 0.5, -0.35, 0.15, -0.6];
@@ -78,7 +78,7 @@ export function Hero() {
     { className: "hero-layer hero-layer-back", src: worktime.cover, width: 1440, height: 900, phone: false },
     { className: "hero-layer hero-layer-main", src: chess.cover, width: 1440, height: 900, phone: false },
     { className: "hero-layer hero-layer-phone", src: phoneOf(pioner), width: 390, height: 844, phone: true },
-    { className: "hero-layer hero-layer-phone hero-layer-phone-b", src: phoneOf(revalib), width: 390, height: 844, phone: true },
+    { className: "hero-layer hero-layer-phone hero-layer-phone-b", src: phoneOf(glassrates), width: 390, height: 844, phone: true },
   ];
   let letter = 0;
 

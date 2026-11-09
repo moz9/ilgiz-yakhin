@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, Check } from "lucide-react";
-import { getProject, projects } from "@/lib/projects";
+import { allProjects, getProject, projects } from "@/lib/projects";
 import { caseHue, caseHueStyle } from "@/lib/case-hues";
 import { ProjectStage } from "@/components/project-stage";
 import { ProjectGallery } from "@/components/project-gallery";
@@ -12,9 +12,10 @@ import { CaseHeroStage } from "@/components/case-hero-stage";
 import { CaseMorph } from "@/components/case-morph";
 import { GlassPlayground } from "@/components/glass-playground";
 import { WidgetShowcase } from "@/components/widget-showcase";
+import { LiveSection } from "@/components/showcases/live-section";
 
 export function generateStaticParams() {
-  return projects.map(({ slug }) => ({ slug }));
+  return allProjects.map(({ slug }) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -30,6 +31,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const playground = project.slug === "liquid-glass-kit";
   const widgetShowcase = project.slug === "glassrates";
   const index = projects.findIndex((item) => item.slug === project.slug);
+  // A hidden case is outside the shown list: its "next" leads back to the first shown case.
   const next = projects[(index + 1) % projects.length];
 
   return <main className="case" style={caseHueStyle(project.slug)} data-field={`${caseHue(project.slug).join(" ")} 0.62`}>
@@ -37,7 +39,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       <div className="page-lights case-lights" aria-hidden="true"><i /><i /></div>
       <div className="case-top">
         <Link className="text-link case-back" href="/projects"><ArrowLeft aria-hidden="true" />Все работы</Link>
-        <span>{index + 1} из {projects.length}</span>
+        {index >= 0 && <span>{index + 1} из {projects.length}</span>}
       </div>
       <p className="case-status"><i aria-hidden="true" />{project.status}</p>
       <h1>{project.title}</h1>
@@ -55,6 +57,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       { id: "overview", label: "Коротко" },
       ...(playground ? [{ id: "playground", label: "Попробовать" }] : []),
       ...(widgetShowcase ? [{ id: "widget", label: "Виджет" }] : []),
+      ...(project.live ? [{ id: "live", label: "Живое демо" }] : []),
       ...(project.capabilities ? [{ id: "capabilities", label: "Возможности" }] : []),
       ...(project.media?.length ? [{ id: "interfaces", label: "Интерфейсы" }] : []),
       { id: "decisions", label: "Решения" },
@@ -69,6 +72,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
     {playground && <GlassPlayground />}
     {widgetShowcase && <WidgetShowcase />}
+    <LiveSection project={project} />
 
     {project.capabilities && <section id="capabilities" className="case-section" aria-labelledby="capabilities-title">
       <div className="case-section-head"><h2 id="capabilities-title">Что умеет продукт</h2><p>Основные пользовательские и операционные сценарии.</p></div>

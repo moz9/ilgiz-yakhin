@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { projects } from "../../src/lib/projects";
+import { featured, otherProjects } from "../../src/lib/featured";
 
 test("all case images render when Vercel image delivery fails", async ({ page }) => {
   test.setTimeout(180_000);
@@ -23,10 +24,10 @@ test("the chapter picker scrolls straight to the chosen case", async ({ page, is
   await page.goto("/");
   await page.locator("#work").scrollIntoViewIfNeeded();
   const picker = page.getByRole("tablist", { name: "Быстрый переход к проекту" });
-  await picker.getByRole("tab", { name: "Учёт ИТ" }).click();
-  await expect.poll(() => picker.getByRole("tab", { name: "Учёт ИТ" }).getAttribute("aria-selected"), { timeout: 8_000 }).toBe("true");
+  await picker.getByRole("tab", { name: "Отчётность" }).click();
+  await expect.poll(() => picker.getByRole("tab", { name: "Отчётность" }).getAttribute("aria-selected"), { timeout: 8_000 }).toBe("true");
   // The page scrolls smoothly: wait for the chosen chapter to be pinned and opened up.
-  const chapter = page.locator(".chapter").nth(5);
+  const chapter = page.locator(".chapter").nth(featured.findIndex(({ slug }) => slug === "worktime-reporting"));
   await expect.poll(async () => (await chapter.boundingBox())?.y ?? Infinity, { timeout: 8_000 }).toBeLessThanOrEqual(0);
   await expect(chapter.getByRole("heading", { level: 3 })).toBeInViewport();
 });
@@ -37,20 +38,20 @@ test("scenarios switch products and steps with real screenshots", async ({ page 
   const scenes = page.locator(".scenes");
   await scenes.scrollIntoViewIfNeeded();
   await expect(scenes.getByRole("heading", { name: "От выгрузки до готового Excel" })).toBeVisible();
-  await scenes.getByRole("tab", { name: "База знаний" }).click();
-  await expect(scenes.getByRole("heading", { name: "Библиотека и связанные материалы" })).toBeVisible();
-  await scenes.getByRole("tab", { name: /Гайд/ }).click();
-  await expect(scenes.getByRole("tab", { name: /Гайд/ })).toHaveAttribute("aria-selected", "true");
+  await scenes.getByRole("tab", { name: "Курсы валют" }).click();
+  await expect(scenes.getByRole("heading", { name: "Курс ЦБ на рабочем столе" })).toBeVisible();
+  await scenes.getByRole("tab", { name: /График/ }).click();
+  await expect(scenes.getByRole("tab", { name: /График/ })).toHaveAttribute("aria-selected", "true");
   const front = scenes.locator(".scenes-card:not([aria-hidden='true']) img");
   await expect.poll(() => front.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
   await scenes.getByRole("button", { name: "Следующий этап" }).click();
-  await expect(scenes.getByRole("tab", { name: /Телефон/ })).toHaveAttribute("aria-selected", "true");
+  await expect(scenes.getByRole("tab", { name: /Валюты/ })).toHaveAttribute("aria-selected", "true");
 });
 
 test("the list of other cases links every case and the footer reaches all sections", async ({ page }) => {
   await page.goto("/");
   const rows = page.locator(".more-row");
-  await expect(rows).toHaveCount(8);
+  await expect(rows).toHaveCount(otherProjects.length);
   for (const row of await rows.all()) await expect(row).toHaveAttribute("href", /^\/projects\/[a-z-]+$/);
   const footer = page.locator(".site-footer");
   await expect(footer.getByRole("link", { name: "im@angelius.ru" })).toHaveAttribute("href", "mailto:im@angelius.ru");
@@ -97,4 +98,22 @@ test("stages keep decoded images with reduced motion", async ({ page }) => {
     await expect.poll(() => image.evaluate((element: HTMLImageElement) => element.complete && element.naturalWidth)).toBeGreaterThan(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
   }
+});
+
+test("every live demo runs on its case page and on its own full screen", async ({ page }) => {
+  test.setTimeout(120_000);
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  // What proves each demo is alive: a drawing surface, physics-placed tags or split letters.
+  const alive: Record<string, string> = { "gradient-studio": ".gs-canvas", "globe-routes": ".gr canvas", "gravity-tags": ".gt-tag", "kinetic-type": ".kt-word", "shader-gallery": ".sg-canvas", "micro-ui": ".mu-magnet", "particle-type": ".pt-canvas", "scroll-story": ".ss-map" };
+  for (const project of projects.filter(({ live }) => live)) {
+    await page.goto(`/projects/${project.slug}`);
+    const live = page.locator("#live");
+    await live.scrollIntoViewIfNeeded();
+    await expect(live.locator(alive[project.slug]).first()).toBeVisible({ timeout: 15_000 });
+    await page.goto(`/demos/lab/${project.slug}`);
+    await expect(page.locator(".showcase-full " + alive[project.slug]).first()).toBeVisible({ timeout: 15_000 });
+    expect((await page.locator(".showcase-full").boundingBox())!.height).toBeGreaterThan(300);
+  }
+  expect(errors).toEqual([]);
 });

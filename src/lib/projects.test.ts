@@ -3,11 +3,11 @@ import path from "node:path";
 import { getImageProps } from "next/image";
 import { describe, expect, it } from "vitest";
 import nextConfig from "../../next.config";
-import { filterProjects, getProject, projectCategories, projects } from "./projects";
+import { allProjects, filterProjects, getProject, projectCategories, projects } from "./projects";
 
 describe("project catalog", () => {
   it("delivers case images without depending on the Vercel image endpoint", () => {
-    for (const project of projects) {
+    for (const project of allProjects) {
       for (const src of [project.cover, ...(project.media ?? []).map((media) => media.src)]) {
         expect(src).toMatch(/^https:\/\/raw\.githubusercontent\.com\/moz9\/ilgiz-yakhin\/main\/public\/cases\//);
         const { props } = getImageProps({ src, alt: "Case", width: 1440, height: 900, unoptimized: nextConfig.images?.unoptimized });
@@ -17,18 +17,25 @@ describe("project catalog", () => {
     }
   });
 
-  it("publishes sixteen unique cases", () => {
-    expect(projects).toHaveLength(16);
-    expect(new Set(projects.map(({ slug }) => slug)).size).toBe(16);
-    expect(new Set(projects.map(({ index }) => index)).size).toBe(16);
+  it("publishes unique cases", () => {
+    expect(new Set(allProjects.map(({ slug }) => slug)).size).toBe(allProjects.length);
+    expect(new Set(allProjects.map(({ index }) => index)).size).toBe(allProjects.length);
   });
 
   it("puts neutral commercial cases first and sensitive content last", () => {
-    expect(projects.map(({ slug }) => slug)).toEqual([
+    expect(allProjects.map(({ slug }) => slug)).toEqual([
       "chessrise",
       "pioner",
       "liquid-glass-kit",
       "glassrates",
+      "gradient-studio",
+      "globe-routes",
+      "gravity-tags",
+      "kinetic-type",
+      "shader-gallery",
+      "micro-ui",
+      "particle-type",
+      "scroll-story",
       "streaming-web-platform",
       "streaming-android-tv",
       "worktime-reporting",
@@ -45,7 +52,7 @@ describe("project catalog", () => {
   });
 
   it("keeps every case evidence-driven", () => {
-    for (const project of projects) {
+    for (const project of allProjects) {
       expect(project.stack.length).toBeGreaterThanOrEqual(5);
       expect(project.decisions).toHaveLength(3);
       expect(project.evidence.length).toBeGreaterThanOrEqual(3);
@@ -90,11 +97,11 @@ describe("project catalog", () => {
   });
 
   it("does not expose links for private internal tools", () => {
-    expect(projects.filter(({ access }) => access === "private").every(({ links }) => !links)).toBe(true);
+    expect(allProjects.filter(({ access }) => access === "private").every(({ links }) => !links)).toBe(true);
   });
 
   it("keeps streaming demos free from source brands and private infrastructure", () => {
-    const publicDemoCases = projects.filter(({ slug }) => slug.startsWith("streaming-"));
+    const publicDemoCases = allProjects.filter(({ slug }) => slug.startsWith("streaming-"));
     expect(publicDemoCases).toHaveLength(2);
     expect(JSON.stringify(publicDemoCases)).not.toMatch(/animego|shikimori|kodik|anixart|dorama|192\.168|\.vc|\.biz/i);
   });
@@ -103,8 +110,16 @@ describe("project catalog", () => {
     const project = getProject("content-platform")!;
     expect(project.title).toBe("Контентная платформа");
     expect(project.media).toHaveLength(2);
-    expect(JSON.stringify(projects)).not.toMatch(/luna.?fantasy/i);
+    expect(JSON.stringify(allProjects)).not.toMatch(/luna.?fantasy/i);
     expect(existsSync("public/cases/lunafantasy.webp")).toBe(false);
     expect(existsSync("public/og.jpg")).toBe(false);
+  });
+
+  it("hides the outdated cases from the site but keeps their pages", () => {
+    const hidden = ["streaming-web-platform", "streaming-android-tv", "launcher", "backup-lifecycle-automation", "revalib", "atlant-business-site", "infrastructure-inventory"];
+    for (const slug of hidden) {
+      expect(projects.some((project) => project.slug === slug)).toBe(false);
+      expect(getProject(slug)?.hidden).toBe(true);
+    }
   });
 });

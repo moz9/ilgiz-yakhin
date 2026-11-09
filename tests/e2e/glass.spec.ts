@@ -174,3 +174,27 @@ test("the kit case lets the reader move and reshape a real lens", async ({ page 
   await page.locator(".playground-density input").fill("70");
   await expect.poll(() => page.evaluate(() => localStorage.getItem("portfolio-glass-density"))).toBe("70");
 });
+
+test("the GlassRates widget flows between sizes and refreshes on its right half", async ({ page, request }) => {
+  // The site answers with CBR rates (live, or the saved ones when no source is reachable).
+  const rates = await (await request.get("/api/rates")).json();
+  expect(rates.rates.map((rate: { code: string }) => rate.code)).toEqual(["USD", "EUR"]);
+  expect(rates.rates.every((rate: { value: number; previous: number }) => rate.value > 0 && rate.previous > 0)).toBe(true);
+  await page.goto("/projects/glassrates");
+  await ready(page);
+  const widget = page.locator(".ws-widget");
+  await widget.scrollIntoViewIfNeeded();
+  const sizes = page.getByRole("tablist", { name: "Размер" });
+  await sizes.getByRole("tab", { name: "1 × 2" }).click();
+  await expect.poll(async () => { const box = (await widget.boundingBox())!; return box.width / box.height; }).toBeGreaterThan(1.8);
+  await sizes.getByRole("tab", { name: "2 × 4" }).click();
+  await expect(widget).toHaveAttribute("data-size", "2 × 4");
+  await expect.poll(async () => { const box = (await widget.boundingBox())!; return box.width / box.height; }, { timeout: 4_000 }).toBeGreaterThan(1.8);
+  // The rolled digits land on the rate the endpoint returned.
+  const usd = rates.rates[0].value.toFixed(2).replace(".", ",");
+  await expect(widget.getByLabel(`${usd} ₽`)).toBeVisible();
+  await expect.poll(() => widget.locator(".roll-strip").first().evaluate((el) => getComputedStyle(el).getPropertyValue("--roll").trim()), { timeout: 4_000 }).toMatch(new RegExp(`^${usd[0]}(\\.0+)?$`));
+  await page.getByRole("button", { name: "Обновить курсы на виджете" }).click();
+  await expect(widget.locator(".ws-foot")).not.toContainText("09.11 07:11", { timeout: 3_000 });
+  await expect(widget).toHaveClass(/\blg\b/);
+});

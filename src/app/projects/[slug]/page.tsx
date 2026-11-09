@@ -11,6 +11,7 @@ import { CaseNavigation } from "@/components/case-navigation";
 import { CaseHeroStage } from "@/components/case-hero-stage";
 import { CaseMorph } from "@/components/case-morph";
 import { GlassPlayground } from "@/components/glass-playground";
+import { WidgetShowcase } from "@/components/widget-showcase";
 
 export function generateStaticParams() {
   return projects.map(({ slug }) => ({ slug }));
@@ -27,6 +28,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const project = getProject((await params).slug);
   if (!project) notFound();
   const playground = project.slug === "liquid-glass-kit";
+  const widgetShowcase = project.slug === "glassrates";
   const index = projects.findIndex((item) => item.slug === project.slug);
   const next = projects[(index + 1) % projects.length];
 
@@ -52,6 +54,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     <CaseNavigation sections={[
       { id: "overview", label: "Коротко" },
       ...(playground ? [{ id: "playground", label: "Попробовать" }] : []),
+      ...(widgetShowcase ? [{ id: "widget", label: "Виджет" }] : []),
       ...(project.capabilities ? [{ id: "capabilities", label: "Возможности" }] : []),
       ...(project.media?.length ? [{ id: "interfaces", label: "Интерфейсы" }] : []),
       { id: "decisions", label: "Решения" },
@@ -65,6 +68,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     </section>
 
     {playground && <GlassPlayground />}
+    {widgetShowcase && <WidgetShowcase />}
 
     {project.capabilities && <section id="capabilities" className="case-section" aria-labelledby="capabilities-title">
       <div className="case-section-head"><h2 id="capabilities-title">Что умеет продукт</h2><p>Основные пользовательские и операционные сценарии.</p></div>

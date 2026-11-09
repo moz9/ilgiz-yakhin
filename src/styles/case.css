@@ -178,7 +178,7 @@ body:has(.site-nav.is-tucked) .filter { top: 14px; }
 /* Live glass playground (Liquid Glass Kit case) --------------------------------- */
 .playground-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px 32px; margin-bottom: 18px; padding: 14px 18px; border-radius: var(--radius-l); --lgv-fill-regular: var(--glass-dense); }
 .playground-shapes { display: flex; gap: 4px; padding: 4px; border-radius: 999px; }
-.playground-shapes button { min-height: 40px; padding: 0 18px; border: 0; border-radius: 999px; background: none; color: inherit; font: 600 0.95rem/1 var(--font-text); cursor: pointer; }
+.playground-shapes button { min-height: 40px; padding: 0 18px; border: 0; border-radius: 999px; background: none; color: inherit; font: 600 0.95rem/1 var(--font-body); cursor: pointer; }
 .playground-shapes button[aria-selected="true"] { color: var(--ink); }
 .playground-density { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: min(100%, 320px); font-size: 0.95rem; }
 .playground-density > span { display: flex; justify-content: space-between; font-weight: 600; }
@@ -200,7 +200,7 @@ body:has(.site-nav.is-tucked) .filter { top: 14px; }
 .playground-word.is-outline { color: transparent; -webkit-text-stroke: 2px #fff; }
 .playground-map { position: absolute; inset: auto 0 0; width: 100%; height: 45%; fill: none; stroke: #fff; stroke-width: 4; }
 .playground-map .is-dashed { stroke: #ffe36b; stroke-dasharray: 2 12; stroke-linecap: round; stroke-width: 6; }
-.playground-lines { position: absolute; right: 5%; bottom: 7%; display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; font: 500 0.82rem/1.3 var(--font-text); text-align: right; opacity: 0.92; }
+.playground-lines { position: absolute; right: 5%; bottom: 7%; display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; font: 500 0.82rem/1.3 var(--font-body); text-align: right; opacity: 0.92; }
 .playground-hint { position: absolute; left: 50%; bottom: 18px; margin: 0; padding: 8px 16px; border-radius: 999px; background: rgb(0 0 0 / 0.35); color: #fff; font-size: 0.85rem; transform: translateX(-50%); pointer-events: none; }
 .playground-lens { z-index: 2; }
 
@@ -210,3 +210,89 @@ body:has(.site-nav.is-tucked) .filter { top: 14px; }
   .playground-shapes button { flex: 1 1 0; min-width: 0; padding: 0 8px; }
   .playground-lines { display: none; }
 }
+
+/* GlassRates: the widget in motion ------------------------------------------- */
+.ws-layout { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: center; }
+.ws-controls { display: grid; gap: 22px; padding: 24px; border-radius: var(--radius-l); --lg-radius: 32px; --lgv-fill-regular: var(--glass-dense); }
+.ws-control { display: grid; gap: 10px; }
+.ws-caption { color: var(--ink-2); font-size: 0.9rem; font-weight: 600; }
+.ws-tabs { display: flex; gap: 4px; padding: 4px; border-radius: 999px; }
+.ws-tabs button { flex: 1 1 0; min-width: 0; min-height: 42px; padding: 0 10px; border: 0; border-radius: 999px; background: none; color: inherit; font: 600 0.95rem/1 var(--font-body); white-space: nowrap; cursor: pointer; }
+.ws-switch { display: flex; align-items: center; justify-content: space-between; gap: 16px; font-weight: 600; cursor: pointer; }
+.ws-switch small { display: block; margin-top: 2px; color: var(--ink-2); font-size: 0.82rem; font-weight: 400; }
+.ws-note { margin: 0; color: var(--ink-2); font-size: 0.85rem; }
+
+/* The phone: a home screen with a slow living wallpaper under the glass. */
+.ws-phone { display: grid; place-items: center; perspective: 1400px; }
+.ws-screen {
+  --cell: clamp(58px, 7.4vw, 82px); --gap: clamp(10px, 1.4vw, 16px);
+  position: relative; width: min(100%, calc(4 * var(--cell) + 3 * var(--gap) + 2 * 22px)); aspect-ratio: 9 / 16.5; overflow: hidden;
+  padding: 22px; border-radius: 46px; background: #0c0f1c; box-shadow: 0 40px 80px -30px rgb(0 0 0 / 0.7), inset 0 0 0 1px rgb(255 255 255 / 0.12); isolation: isolate;
+}
+.ws-wallpaper { position: absolute; inset: 0; z-index: -1; overflow: hidden; background: linear-gradient(160deg, #1b2450, #0b0d18 60%); }
+.ws-wallpaper i { position: absolute; width: 70%; aspect-ratio: 1; border-radius: 50%; filter: blur(34px); opacity: 0.9; animation: ws-drift 14s ease-in-out infinite alternate; }
+.ws-wallpaper i:nth-child(1) { left: -20%; top: -10%; background: #5b7bff; }
+.ws-wallpaper i:nth-child(2) { right: -25%; top: 20%; width: 60%; background: #2fd3a0; animation-duration: 17s; animation-delay: -6s; }
+.ws-wallpaper i:nth-child(3) { left: 10%; bottom: -15%; width: 55%; background: #b46bff; animation-duration: 19s; animation-delay: -3s; }
+.ws-wallpaper i:nth-child(4) { right: 0; top: 2%; width: 26%; background: #ffd27a; animation-duration: 11s; animation-delay: -8s; }
+.ws-screen[data-style="light"] .ws-wallpaper { background: linear-gradient(160deg, #dfe6ff, #f4efe6 70%); }
+@keyframes ws-drift { to { transform: translate(18%, 14%) scale(1.12); } }
+.ws-screen .ws-clock { margin: 10px 0 26px; color: #fff; font: 300 3.4rem/1 var(--font-body); letter-spacing: -0.03em; }
+.ws-screen .ws-clock small { display: block; margin-top: 6px; font-size: 0.85rem; font-weight: 500; letter-spacing: 0; opacity: 0.85; }
+.ws-screen[data-style="light"] .ws-clock { color: #1c2133; }
+.ws-screen[data-style="light"] .ws-wallpaper i { opacity: 0.55; }
+.ws-dock { position: absolute; left: 22px; right: 22px; bottom: 26px; display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gap); }
+.ws-app { aspect-ratio: 1; border-radius: 30%; background: rgb(255 255 255 / 0.16); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.18); }
+
+/* The widget itself: kit glass, sized by the grid, its content laid out per size. */
+.ws-widget-wrap { height: var(--cell-px, 160px); height: calc(2 * var(--cell-px, 72px) + var(--gap-px, 14px)); transform-origin: 50% 0; }
+.ws-apps { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gap); margin-top: var(--gap); }
+.ws-screen { --u: 1; transform-style: preserve-3d; }
+.ws-widget {
+  --lg-radius: 26px; --lgv-fill-regular: rgb(18 22 36 / 0.32);
+  position: relative; display: flex; flex-direction: column; justify-content: center; gap: 6px; overflow: hidden;
+  width: calc(2 * var(--cell) + var(--gap)); height: calc(2 * var(--cell) + var(--gap)); padding: 14px 16px; border-radius: 26px; color: #fff;
+}
+.ws-screen[data-style="light"] .ws-widget { --lgv-fill-regular: rgb(255 255 255 / 0.42); color: #18203a; }
+.ws-widget[data-solid] { --lgv-fill-regular: rgb(22 26 40 / 0.96); }
+.ws-screen[data-style="light"] .ws-widget[data-solid] { --lgv-fill-regular: rgb(250 251 255 / 0.97); }
+.ws-widget { font-size: calc(16px * var(--u)); padding: calc(12px * var(--u)) calc(14px * var(--u)); }
+.ws-head, .ws-foot { margin: 0; font-size: 0.66em; opacity: 0.78; white-space: nowrap; }
+.ws-head b { display: block; margin-bottom: 2px; font-size: 1.03em; letter-spacing: 0.14em; text-transform: uppercase; }
+.ws-rows { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.ws-widget[data-rows="2"] .ws-rows { flex: 1; align-content: space-evenly; }
+.ws-rows li { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.ws-code { display: flex; align-items: baseline; gap: 4px; font-size: 0.78em; font-weight: 600; letter-spacing: 0.06em; opacity: 0.86; }
+.ws-code i { font-style: normal; opacity: 0.7; }
+.ws-code small { margin-left: 8px; font-size: 0.92em; font-weight: 400; letter-spacing: 0; }
+.ws-value { display: flex; flex-direction: column; align-items: flex-end; }
+.ws-change { font-size: 0.66em; color: #7ef0b0; }
+.ws-screen[data-style="light"] .ws-change { color: #0b8a4e; }
+.ws-widget[data-cols="4"] .ws-rows li { align-items: center; }
+/* Colour only for movement: red when the CBR rate fell, neutral when it stood still. */
+.ws-rows li[data-dir="down"] .roll, .ws-rows li[data-dir="down"] .ws-change { color: #ff8a9a; }
+.ws-screen[data-style="light"] .ws-rows li[data-dir="down"] .roll, .ws-screen[data-style="light"] .ws-rows li[data-dir="down"] .ws-change { color: #c62f48; }
+.ws-rows li[data-dir="flat"] .roll, .ws-rows li[data-dir="flat"] .ws-change { color: inherit; }
+
+/* A price rolls in digit by digit; the cell shows one digit of each strip. */
+.roll { display: inline-flex; align-items: baseline; color: #8ef0b8; font: 500 1.45em/1 var(--font-body); font-variant-numeric: tabular-nums; }
+.ws-screen[data-style="light"] .roll { color: #0b8a4e; }
+.ws-widget[data-rows="1"] .roll { font-size: 1.2em; }
+.roll-cell { display: inline-block; height: 1em; overflow: hidden; }
+.roll-strip { --roll: 0; display: flex; flex-direction: column; transform: translateY(calc(var(--roll) * -5%)); }
+.roll-strip span { height: 1em; line-height: 1; }
+.roll-unit { margin-left: 2px; font-size: 0.7em; opacity: 0.8; }
+
+/* Right half refreshes, as on the phone; a sweep of light shows it is fetching. */
+.ws-refresh { position: absolute; inset: 0 0 0 50%; border: 0; background: none; cursor: pointer; }
+.ws-refresh:focus-visible { outline: 2px solid currentColor; outline-offset: -4px; border-radius: 0 26px 26px 0; }
+.ws-widget::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgb(255 255 255 / 0.28) 50%, transparent 70%); transform: translateX(-120%); pointer-events: none; }
+.ws-widget[data-busy]::after { animation: ws-sweep 0.65s ease-in-out; }
+@keyframes ws-sweep { to { transform: translateX(120%); } }
+
+@media (max-width: 860px) {
+  .ws-layout { grid-template-columns: minmax(0, 1fr); }
+  .ws-phone { order: -1; }
+  .ws-screen { --cell: min(17vw, 72px); }
+}
+@media (prefers-reduced-motion: reduce) { .ws-wallpaper i, .ws-widget[data-busy]::after { animation: none; } }

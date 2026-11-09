@@ -21,6 +21,10 @@ export const showcases: Record<string, ComponentType<ShowcaseProps>> = {
   "micro-ui": dynamic(() => import("./micro-ui"), { ssr: false, loading }),
   "particle-type": dynamic(() => import("./particle-type"), { ssr: false, loading }),
   "scroll-story": dynamic(() => import("./scroll-story"), { ssr: false, loading }),
+  "analytics-dashboard": dynamic(() => import("./analytics-dashboard"), { ssr: false, loading }),
+  "kanban-board": dynamic(() => import("./kanban-board"), { ssr: false, loading }),
+  "booking-flow": dynamic(() => import("./booking-flow"), { ssr: false, loading }),
+  "drum-machine": dynamic(() => import("./drum-machine"), { ssr: false, loading }),
 };
 
 export function ShowcaseHost({ slug, mode }: { slug: string; mode: ShowcaseProps["mode"] }) {

@@ -105,7 +105,7 @@ test("every live demo runs on its case page and on its own full screen", async (
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   // What proves each demo is alive: a drawing surface, physics-placed tags or split letters.
-  const alive: Record<string, string> = { "gradient-studio": ".gs-canvas", "globe-routes": ".gr canvas", "gravity-tags": ".gt-tag", "kinetic-type": ".kt-word", "shader-gallery": ".sg-canvas", "micro-ui": ".mu-magnet", "particle-type": ".pt-canvas", "scroll-story": ".ss-map" };
+  const alive: Record<string, string> = { "gradient-studio": ".gs-canvas", "globe-routes": ".gr canvas", "gravity-tags": ".gt-tag", "kinetic-type": ".kt-word", "shader-gallery": ".sg-canvas", "micro-ui": ".mu-magnet", "particle-type": ".pt-canvas", "scroll-story": ".ss-map", "analytics-dashboard": ".ad-kpis", "kanban-board": ".kb-card", "booking-flow": ".bk-option", "drum-machine": ".dm-step" };
   for (const project of projects.filter(({ live }) => live)) {
     await page.goto(`/projects/${project.slug}`);
     const live = page.locator("#live");
@@ -116,4 +116,69 @@ test("every live demo runs on its case page and on its own full screen", async (
     expect((await page.locator(".showcase-full").boundingBox())!.height).toBeGreaterThan(300);
   }
   expect(errors).toEqual([]);
+});
+
+test("the product showcases do their job end to end", async ({ page }) => {
+  // Booking: service → master → day → slot → contacts → ticket.
+  await page.goto("/demos/lab/booking-flow");
+  await page.getByRole("button", { name: /Мужская стрижка/ }).click();
+  await page.getByRole("button", { name: "Дальше" }).click();
+  await page.getByRole("button", { name: /Илья/ }).click();
+  await page.getByRole("button", { name: "Дальше" }).click();
+  await page.locator(".bk-grid button[data-load]:not([disabled])").first().click();
+  await page.locator(".bk-slots button:not([disabled])").first().click();
+  await page.getByRole("button", { name: "Дальше" }).click();
+  await page.getByRole("button", { name: "Записаться" }).click();
+  await expect(page.getByRole("alert").first()).toBeVisible();
+  await page.locator(".bk-form input").first().fill("Ильгиз");
+  await page.locator(".bk-form input").nth(1).fill("9001234567");
+  await expect(page.locator(".bk-form input").nth(1)).toHaveValue("+7 (900) 123-45-67");
+  await page.getByRole("button", { name: "Записаться" }).click();
+  await expect(page.getByRole("heading", { name: "Вы записаны" })).toBeVisible();
+
+  // Kanban: a card moved by its button changes column and survives a reload.
+  await page.goto("/demos/lab/kanban-board");
+  await page.evaluate(() => localStorage.removeItem("showcase-kanban-v1"));
+  await page.reload();
+  const card = page.locator(".kb-card", { hasText: "Письмо о доставке" });
+  await card.focus();
+  await card.getByRole("button", { name: "В следующую колонку" }).click();
+  await expect(page.locator('[data-column="doing"]')).toContainText("Письмо о доставке");
+  // Three of three is the limit, not over it; a fourth card turns the warning on.
+  await expect(page.locator('[data-column="doing"] h4')).toContainText("3 / 3");
+  await expect(page.locator('[data-column="doing"]')).not.toHaveAttribute("data-over", "true");
+  const second = page.locator(".kb-card", { hasText: "Макет карточки товара" });
+  await second.focus();
+  await second.getByRole("button", { name: "В следующую колонку" }).click();
+  await expect(page.locator('[data-column="doing"]')).toHaveAttribute("data-over", "true");
+  await page.reload();
+  await expect(page.locator('[data-column="doing"]')).toContainText("Письмо о доставке");
+
+  // Flights: two airports from the search make a route with a real great-circle distance.
+  await page.goto("/demos/lab/globe-routes");
+  // The demo opens with Moscow as the origin; pressing "Откуда" starts the route over.
+  await page.getByRole("button", { name: /^Откуда/ }).click();
+  await page.locator(".gr-search input").fill("Токио");
+  await page.locator(".gr-found button").first().click();
+  await page.locator(".gr-search input").fill("JFK");
+  await page.locator(".gr-found button").first().click();
+  await expect(page.locator(".gr-big")).toHaveText(/10\s875 км/);
+  await expect(page.locator(".gr-fact")).toContainText("длиннее");
+
+  // Drum machine: the share link restores the beat it was made from.
+  await page.goto("/demos/lab/drum-machine#b=802809490000ffff02000012-136-15");
+  await expect(page.locator(".dm-transport label b").first()).toHaveText("136");
+  await expect(page.getByRole("gridcell", { name: "Хэт, шаг 7" })).toHaveAttribute("aria-selected", "true");
+
+  // Scroll story: the totals end at the repository's real numbers.
+  await page.goto("/demos/lab/scroll-story");
+  await page.locator(".ss").evaluate((el) => el.scrollTo(0, el.scrollHeight));
+  await expect(page.locator(".ss-index")).toContainText("Глава 8 из 8");
+  await expect(page.locator(".ss-totals dd").first()).toHaveText("78");
+
+  // Dashboard: the period changes the numbers, the table view lists every day.
+  await page.goto("/demos/lab/analytics-dashboard");
+  await page.getByRole("tab", { name: "7 дней" }).click();
+  await page.getByRole("button", { name: "Таблица" }).click();
+  await expect(page.locator(".ad-table tbody tr")).toHaveCount(7);
 });

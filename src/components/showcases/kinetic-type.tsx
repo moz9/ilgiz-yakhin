@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { FileDown } from "lucide-react";
 import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
 import { gsap, SplitText } from "@/lib/gsap";
 import { useGlassTabs } from "@/components/glass/glass-runtime";
@@ -14,6 +15,30 @@ const PALETTES = [
   { name: "Кислота", bg: "#0d0f06", ink: "#e9ff6b", accent: "#ff2fd1" },
   { name: "Бумага", bg: "#efe9dc", ink: "#16130f", accent: "#ff5f3a" },
 ];
+
+/** The same five timelines as plain JavaScript for the exported poster (el = the word, chars = its letters). */
+const SCRIPT: Record<(typeof PRESETS)[number], string> = {
+  "Волна": `tl.to(chars,{yPercent:-38,rotate:-6,duration:.5,stagger:{each:.05,yoyo:true,repeat:1},ease:"sine.inOut"}).to(chars,{scaleY:1.25,transformOrigin:"50% 100%",duration:.35,stagger:{each:.03,yoyo:true,repeat:1}},"-=0.6");`,
+  "Разлёт": `tl.from(chars,{x:()=>gsap.utils.random(-500,500),y:()=>gsap.utils.random(-300,300),rotate:()=>gsap.utils.random(-180,180),opacity:0,scale:.2,duration:1.1,stagger:{each:.02,from:"random"},ease:"expo.out"}).to({}, {duration:1}).to(chars,{y:()=>gsap.utils.random(200,420),rotate:()=>gsap.utils.random(-90,90),opacity:0,duration:.7,stagger:{each:.015,from:"edges"},ease:"power2.in"});`,
+  "Маска": `tl.fromTo(chars,{yPercent:110,clipPath:"inset(0 0 100% 0)"},{yPercent:0,clipPath:"inset(0 0 0% 0)",duration:.7,stagger:.03,ease:"expo.out"}).to(chars,{color:"var(--accent)",duration:.25,stagger:{each:.03,yoyo:true,repeat:1}},"+=0.2").to(chars,{yPercent:-110,clipPath:"inset(100% 0 0 0)",duration:.6,stagger:.02,ease:"expo.in"},"+=0.6");`,
+  "Шифр": `split.revert();tl.to(el,{duration:1.6,scrambleText:{text:el.textContent,chars:"01#%&*+=?АБВГДЕЖЗИКЛМНОПРСТ",revealDelay:.3,speed:.6}}).to(el,{color:"var(--accent)",duration:.2,yoyo:true,repeat:3},"+=0.4").to({}, {duration:.8});`,
+  "Флип": `gsap.set(el,{perspective:800});tl.from(chars,{rotateX:-100,opacity:0,transformOrigin:"50% 50% -40px",duration:.8,stagger:.04,ease:"back.out(1.6)"}).to(chars,{rotateY:360,duration:1,stagger:{each:.04,from:"center"},ease:"power2.inOut"},"+=0.5").to(chars,{rotateX:100,opacity:0,duration:.6,stagger:.03,ease:"power2.in"},"+=0.4");`,
+};
+const escapeHtml = (v: string) => v.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
+
+/** A standalone poster: one HTML file with the phrase, motion, palette and pace, GSAP from a CDN. */
+function posterHtml(text: string, preset: (typeof PRESETS)[number], colors: (typeof PALETTES)[number], speed: number) {
+  const cdn = "https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist";
+  return `<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escapeHtml(text)}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@800&display=swap" rel="stylesheet">
+<style>:root{--bg:${colors.bg};--ink:${colors.ink};--accent:${colors.accent}}html,body{height:100%;margin:0}body{display:grid;place-items:center;overflow:hidden;background:var(--bg);color:var(--ink);font:800 clamp(2.6rem,9vw,9rem)/.98 Unbounded,sans-serif;letter-spacing:-.045em}p{max-width:92%;margin:0;text-align:center;text-wrap:balance}.c{display:inline-block}</style>
+</head><body><p id="w">${escapeHtml(text)}</p>
+<script src="${cdn}/gsap.min.js"></script><script src="${cdn}/SplitText.min.js"></script><script src="${cdn}/ScrambleTextPlugin.min.js"></script>
+<script>gsap.registerPlugin(SplitText,ScrambleTextPlugin);document.fonts.ready.then(()=>{const el=document.getElementById("w");const split=SplitText.create(el,{type:"words,chars",charsClass:"c"});const chars=split.chars;const tl=gsap.timeline({repeat:-1,repeatDelay:.4,defaults:{ease:"power3.inOut"}});${SCRIPT[preset]}tl.timeScale(${speed});});</script>
+</body></html>`;
+}
 
 /**
  * Kinetic type: a poster that moves. Type any phrase, pick a motion and a palette; every
@@ -75,6 +100,13 @@ export default function KineticType({ mode }: ShowcaseProps) {
   }, [text, preset, speed]);
 
   const colors = PALETTES[palette];
+  const download = () => {
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(new Blob([posterHtml(text.trim() || "Движение", PRESETS[preset], colors, speed)], { type: "text/html" }));
+    link.download = `постер-${PRESETS[preset].toLowerCase()}.html`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 2000);
+  };
   return <div className={`kt kt-${mode}`} style={{ "--kt-bg": colors.bg, "--kt-ink": colors.ink, "--kt-accent": colors.accent } as React.CSSProperties}>
     <div className="kt-echo" ref={echo} aria-hidden="true">{Array.from({ length: 5 }, (_, i) => <span key={i}>{text}</span>)}</div>
     {/* SplitText rewrites this node, so React never renders text into it; readers get the copy below. */}
@@ -93,6 +125,7 @@ export default function KineticType({ mode }: ShowcaseProps) {
             <i style={{ background: item.accent, boxShadow: `0 0 0 3px ${item.bg}, 0 0 0 4px ${item.ink}` }} aria-hidden="true" />{item.name}
           </button>)}
         </div>
+        <button type="button" className="kt-save" onClick={download}><FileDown aria-hidden="true" />HTML</button>
         <label className="kt-speed"><span>Темп {speed.toFixed(1)}×</span>
           <input type="range" min="0.4" max="2" step="0.1" value={speed} onChange={(event) => setSpeed(Number(event.target.value))} />
         </label>

@@ -198,3 +198,15 @@ test("the GlassRates widget flows between sizes and refreshes on its right half"
   await expect(widget.locator(".ws-foot")).not.toContainText("09.11 07:11", { timeout: 3_000 });
   await expect(widget).toHaveClass(/\blg\b/);
 });
+
+test("the navigation is glass again after coming back from a full-screen demo", async ({ page }) => {
+  await page.goto("/projects/gravity-tags");
+  await ready(page);
+  await expect(page.locator(".site-nav-bar")).toHaveClass(/\blg\b/);
+  await page.getByRole("link", { name: /Открыть на весь экран/ }).click();
+  await expect(page.locator(".site-nav-bar")).toHaveCount(0);
+  await page.goBack();
+  // The layout keeps the navigation mounted while it renders nothing: it must mount its glass again.
+  await expect(page.locator(".site-nav-bar")).toHaveClass(/\blg\b/);
+  await expect(page.locator(".site-nav-tabs")).toHaveClass(/lgk-track/);
+});

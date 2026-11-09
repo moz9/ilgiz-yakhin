@@ -118,13 +118,17 @@ export function SiteNav() {
   const settings = useRef<HTMLButtonElement>(null);
   const [hidden, setHidden] = useState(false);
   const selected = links.findIndex(({ href }) => pathname.startsWith(href));
-  useGlassTabs(tabs, selected < 0 ? 0 : selected);
+  // Demos are standalone product surfaces: the site navigation would cover their own controls.
+  // The component stays mounted in the layout while it renders nothing there, so coming back
+  // gives it fresh DOM: every glass mount below re-runs when this flips.
+  const onDemo = pathname.startsWith("/demos/");
+  useGlassTabs(tabs, selected < 0 ? 0 : selected, undefined, onDemo);
 
   useEffect(() => {
     const trigger = settings.current;
     const surface = bar.current;
     const panel = document.getElementById("appearance-panel");
-    if (!trigger || !surface || !panel) return;
+    if (onDemo || !trigger || !surface || !panel) return;
     let cancelled = false;
     let destroy = () => {};
     // The bar becomes glass first, so the menu trigger is recognised as an item of it
@@ -136,7 +140,7 @@ export function SiteNav() {
       destroy = () => { menu.destroy(); glass.destroy(); };
     });
     return () => { cancelled = true; destroy(); };
-  }, []);
+  }, [onDemo]);
 
   useEffect(() => {
     let last = window.scrollY;
@@ -150,8 +154,7 @@ export function SiteNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Demos are standalone product surfaces: the site navigation would cover their own controls.
-  if (pathname.startsWith("/demos/")) return null;
+  if (onDemo) return null;
   return <>
     <header className={`site-nav${hidden ? " is-tucked" : ""}`}>
       <nav className="site-nav-bar" ref={bar} aria-label="Основная навигация">

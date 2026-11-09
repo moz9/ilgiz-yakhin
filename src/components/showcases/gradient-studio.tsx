@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Download, Shuffle } from "lucide-react";
+import { Clapperboard, Download, Link2, Shuffle } from "lucide-react";
 import { useGlassTabs } from "@/components/glass/glass-runtime";
 import type { ShowcaseProps } from "./registry";
 
@@ -12,6 +12,18 @@ const PRESETS: Preset[] = [
   { name: "Океан", colors: ["#021526", "#03346e", "#6eacda", "#e2e2b6"] },
   { name: "Неон", colors: ["#07010f", "#ff2fd1", "#00f0ff", "#7a5cff"] },
 ];
+
+const FORMATS = [
+  { name: "Экран", w: 1920, h: 1080 }, { name: "Сторис", w: 1080, h: 1920 }, { name: "Квадрат", w: 1080, h: 1080 }, { name: "4K", w: 3840, h: 2160 },
+];
+type Look = { colors: [string, string, string, string]; speed: number; warp: number; grain: number };
+/** A look travels in the link: #g=<colors without #>-<speed>-<warp>-<grain>. */
+const encode = (l: Look) => `g=${l.colors.map((c) => c.slice(1)).join(".")}-${l.speed}-${l.warp}-${l.grain}`;
+function decode(hash: string): Look | null {
+  const m = hash.match(/g=([0-9a-f.]{27})-(\d+)-(\d+)-(\d+)/i);
+  if (!m) return null;
+  return { colors: m[1].split(".").map((c) => `#${c}`) as Look["colors"], speed: Number(m[2]), warp: Number(m[3]), grain: Number(m[4]) };
+}
 
 const VERT = `#version 300 es
 in vec2 p; out vec2 uv;
@@ -56,12 +68,19 @@ const rgb = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 
 export default function GradientStudio({ mode }: ShowcaseProps) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const tabs = useRef<HTMLDivElement>(null);
-  const [preset, setPreset] = useState(0);
-  const [colors, setColors] = useState(PRESETS[0].colors);
-  const [speed, setSpeed] = useState(60);
-  const [warp, setWarp] = useState(55);
-  const [grain, setGrain] = useState(35);
+  // A shared link opens with its look; the demo renders on the client only, so the hash is readable here.
+  const [shared] = useState(() => decode(location.hash));
+  const [preset, setPreset] = useState(shared ? -1 : 0);
+  const [colors, setColors] = useState(shared?.colors ?? PRESETS[0].colors);
+  const [speed, setSpeed] = useState(shared?.speed ?? 60);
+  const [warp, setWarp] = useState(shared?.warp ?? 55);
+  const [grain, setGrain] = useState(shared?.grain ?? 35);
   const [failed, setFailed] = useState(false);
+  const [format, setFormat] = useState(0);
+  const [note, setNote] = useState("");
+  const [recording, setRecording] = useState(false);
+  const api = useRef<{ snapshot: (w: number, h: number) => string; record: (w: number, h: number, seconds: number) => Promise<Blob | null> } | null>(null);
+
   // The render loop reads the latest controls from a ref, so it never restarts on a change.
   const state = useRef({ colors, speed, warp, grain });
   useEffect(() => { state.current = { colors, speed, warp, grain }; }, [colors, speed, warp, grain]);
@@ -136,6 +155,31 @@ export default function GradientStudio({ mode }: ShowcaseProps) {
     observer.observe(el);
     el.parentElement?.addEventListener("pointermove", onMove);
     frame = requestAnimationFrame(loop);
+
+    // Exports render at the chosen size into the same canvas, then give it back its screen size.
+    const atSize = (w: number, h: number) => { el.width = w; el.height = h; gl.viewport(0, 0, w, h); };
+    api.current = {
+      snapshot: (w, h) => {
+        atSize(w, h);
+        draw(performance.now());
+        const url = el.toDataURL("image/png");
+        resize();
+        return url;
+      },
+      record: (w, h, seconds) => new Promise((resolve) => {
+        if (typeof MediaRecorder === "undefined" || !el.captureStream) { resolve(null); return; }
+        // Browsers encode video up to about 1080p reliably: larger formats are scaled down to fit.
+        const k = Math.min(1, 1920 / Math.max(w, h));
+        atSize(Math.round(w * k / 2) * 2, Math.round(h * k / 2) * 2);
+        const type = ["video/mp4;codecs=avc1", "video/webm;codecs=vp9", "video/webm"].find((t) => MediaRecorder.isTypeSupported(t)) ?? "";
+        const recorder = new MediaRecorder(el.captureStream(30), { mimeType: type, videoBitsPerSecond: 10_000_000 });
+        const chunks: Blob[] = [];
+        recorder.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+        recorder.onstop = () => { resize(); resolve(new Blob(chunks, { type: type.split(";")[0] || "video/webm" })); };
+        recorder.start();
+        setTimeout(() => recorder.stop(), seconds * 1000);
+      }),
+    };
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
@@ -143,6 +187,7 @@ export default function GradientStudio({ mode }: ShowcaseProps) {
       el.parentElement?.removeEventListener("pointermove", onMove);
       gl.deleteProgram(program);
       gl.deleteBuffer(buffer);
+      api.current = null;
     };
   }, []);
 
@@ -150,11 +195,33 @@ export default function GradientStudio({ mode }: ShowcaseProps) {
     const hue = () => `#${Array.from({ length: 3 }, () => Math.floor(40 + Math.random() * 215).toString(16).padStart(2, "0")).join("")}`;
     setColors(["#08060f", hue(), hue(), hue()]);
   };
+  const flash = (text: string) => { setNote(text); setTimeout(() => setNote(""), 2600); };
+  const size = FORMATS[format];
   const save = () => {
+    const url = api.current?.snapshot(size.w, size.h);
+    if (!url) return;
     const link = document.createElement("a");
-    link.download = "gradient.png";
-    link.href = canvas.current!.toDataURL("image/png");
+    link.download = `градиент-${size.w}x${size.h}.png`;
+    link.href = url;
     link.click();
+    flash(`PNG ${size.w}×${size.h} сохранён`);
+  };
+  const video = async () => {
+    if (!api.current || recording) return;
+    setRecording(true);
+    const blob = await api.current.record(size.w, size.h, 6);
+    setRecording(false);
+    if (!blob) { flash("Этот браузер не умеет записывать видео с canvas"); return; }
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `градиент-6с.${blob.type.includes("mp4") ? "mp4" : "webm"}`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 2000);
+    flash("Видео на 6 секунд сохранено");
+  };
+  const share = async () => {
+    const url = `${location.origin}/demos/lab/gradient-studio#${encode({ colors, speed, warp, grain })}`;
+    try { await navigator.clipboard.writeText(url); flash("Ссылка на этот градиент скопирована"); } catch { flash(url); }
   };
 
   return <div className={`gs gs-${mode}`}>
@@ -172,10 +239,16 @@ export default function GradientStudio({ mode }: ShowcaseProps) {
             <input type="range" min="0" max="100" value={value} onChange={(event) => set(Number(event.target.value))} />
           </label>)}
       </div>
-      <div className="gs-actions">
-        <button type="button" className="button" data-lg="button" onClick={shuffle}><Shuffle aria-hidden="true" />Случайные цвета</button>
-        <button type="button" className="button button-primary" data-lg="button" data-lg-variant="prominent" onClick={save}><Download aria-hidden="true" />Сохранить PNG</button>
+      <div className="gs-formats" role="group" aria-label="Размер для экспорта">
+        {FORMATS.map((f, i) => <button key={f.name} type="button" aria-pressed={format === i} onClick={() => setFormat(i)}>{f.name}<small>{f.w}×{f.h}</small></button>)}
       </div>
+      <div className="gs-actions">
+        <button type="button" className="button button-primary" data-lg="button" data-lg-variant="prominent" onClick={save}><Download aria-hidden="true" />PNG</button>
+        <button type="button" className="button" data-lg="button" onClick={video} disabled={recording}><Clapperboard aria-hidden="true" />{recording ? "Пишу 6 с…" : "Видео 6 с"}</button>
+        <button type="button" className="button" data-lg="button" onClick={shuffle} aria-label="Случайные цвета"><Shuffle aria-hidden="true" /></button>
+        <button type="button" className="button" data-lg="button" onClick={share} aria-label="Скопировать ссылку на градиент"><Link2 aria-hidden="true" /></button>
+      </div>
+      {note && <p className="gs-note" role="status">{note}</p>}
     </div>
   </div>;
 }

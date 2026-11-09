@@ -18,6 +18,8 @@ const PARTS = [
   { key: "mb", angle: 175, reach: 0.36, name: "Материнская плата", model: "MSI MAG B650 Tomahawk WiFi", check: "ATX — форм-фактор корпуса подходит", ok: true },
   { key: "psu", angle: -125, reach: 0.32, name: "Блок питания", model: "Corsair RM850e", check: "Разъёмы питания видеокарты — нет данных", ok: false },
 ] as const;
+/** The case itself: not a compatibility check, but it gets a card too, and says why its walls turn clear. */
+const CASE = { key: "case", name: "Корпус", model: "Fractal North", check: "Стенки показаны прозрачными, чтобы было видно сборку", ok: true } as const;
 const CHAPTERS = ["Рабочее место", "Компьютер", "Детали"] as const;
 const smooth = (a: number, b: number, x: number) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 
@@ -54,7 +56,10 @@ export default function PcstudioExplode({ mode }: ShowcaseProps) {
     key.position.set(-2, 4, 3);
     scene.add(key, new THREE.AmbientLight(0x8090b0, 0.35));
     const camera = new THREE.PerspectiveCamera(30, 1, 0.05, 50);
-    const turntable = new THREE.Group();
+    // The desk turns around a pivot that slides from the room's centre to the computer as the
+    // camera closes in, so the computer stays in frame however far it is turned.
+    const turntable = new THREE.Group(), content = new THREE.Group();
+    turntable.add(content);
     scene.add(turntable);
 
     // A soft floor shadow under the desk, drawn as a radial gradient.
@@ -67,7 +72,7 @@ export default function PcstudioExplode({ mode }: ShowcaseProps) {
     const floor = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 1.6), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(shadowCanvas), transparent: true, depthWrite: false }));
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = 0.002;
-    turntable.add(floor);
+    content.add(floor);
 
     type Part = { key: string; node: THREE.Object3D; home: THREE.Vector3; angle: number; reach: number; lag: number; half: number };
     let parts: Part[] = [];
@@ -77,22 +82,25 @@ export default function PcstudioExplode({ mode }: ShowcaseProps) {
     let disposed = false;
     // The desk top under the case: no part may sink below it, whichever way the camera looks.
     let floorY = -Infinity;
+    let caseObj: THREE.Object3D | null = null;
 
     const loader = new GLTFLoader();
     loader.setMeshoptDecoder(MeshoptDecoder);
     loader.load("/cases/pcstudio-desk.glb", (gltf) => {
       if (disposed) return;
       const root = gltf.scene;
-      turntable.add(root);
+      // Measured before it joins the turning group: every box below is in the desk's own frame.
       root.updateMatrixWorld(true);
       computer = root.getObjectByName("computer") ?? null;
       // GLTFLoader strips ":" from node names: "case:showcase-case" arrives as "caseshowcase-case".
       const named = (key: string) => computer?.children.find((n) => n.name.startsWith(`${key}showcase`));
       const caseNode = named("case");
+      caseObj = caseNode ?? null;
       const caseBox = caseNode ? new THREE.Box3().setFromObject(caseNode) : new THREE.Box3();
       const caseCenter = caseBox.getCenter(new THREE.Vector3());
       focus.copy(caseCenter);
       floorY = caseBox.min.y;
+      content.add(root);
       // The case keeps its frame but its panels become glass, so the parts read through it.
       caseNode?.traverse((o) => {
         const mesh = o as THREE.Mesh;
@@ -120,7 +128,8 @@ export default function PcstudioExplode({ mode }: ShowcaseProps) {
     if (reduced) progress = 1;
 
     // Drag turns the turntable with inertia.
-    const spin = { yaw: -0.35, v: 0, dragging: false, x: 0 };
+    const START_YAW = -0.35;
+    const spin = { yaw: START_YAW, v: 0, dragging: false, x: 0 };
     const down = (e: PointerEvent) => { spin.dragging = true; spin.x = e.clientX; host.setPointerCapture(e.pointerId); };
     const move = (e: PointerEvent) => { if (!spin.dragging) return; spin.v = (e.clientX - spin.x) * 0.006; spin.yaw += spin.v; spin.x = e.clientX; };
     const up = () => { spin.dragging = false; };
@@ -139,7 +148,7 @@ export default function PcstudioExplode({ mode }: ShowcaseProps) {
     resize();
 
     const wide = { pos: new THREE.Vector3(2.4, 2.1, 2.9), look: new THREE.Vector3(0.1, 0.7, 0) };
-    const tmp = new THREE.Vector3(), look = new THREE.Vector3(), pos = new THREE.Vector3(), right = new THREE.Vector3(), upward = new THREE.Vector3();
+    const tmp = new THREE.Vector3(), look = new THREE.Vector3(), pos = new THREE.Vector3(), right = new THREE.Vector3(), upward = new THREE.Vector3(), toward = new THREE.Vector3(), Y = new THREE.Vector3(0, 1, 0);
     let shown = 0;
     let frame = 0, visible = true, lastLabels = "";
     const loop = () => {
@@ -147,6 +156,10 @@ export default function PcstudioExplode({ mode }: ShowcaseProps) {
       const p = shown;
       if (!spin.dragging) { spin.v *= 0.94; spin.yaw += spin.v; }
       turntable.rotation.y = spin.yaw + (reduced ? 0 : Math.sin(performance.now() / 6000) * 0.05);
+      const pivotK = smooth(0.08, 0.38, p);
+      turntable.position.set(focus.x * pivotK, 0, focus.z * pivotK);
+      content.position.copy(turntable.position).negate();
+      turntable.updateMatrixWorld(true);
       // Camera: from the desk to the computer.
       const zoom = smooth(0.08, 0.38, p);
       const portrait = camera.aspect < 0.9;
@@ -158,11 +171,23 @@ export default function PcstudioExplode({ mode }: ShowcaseProps) {
       // The side panels clear, then the parts leave one by one.
       const glass = smooth(0.3, 0.44, p);
       caseMaterials.forEach((m) => { m.opacity = 1 - glass * 0.86; m.depthWrite = glass < 0.5; });
-      // Offsets are taken in the camera's screen plane, so the fan stays readable while the case turns.
-      camera.updateMatrixWorld();
-      right.setFromMatrixColumn(camera.matrixWorld, 0);
-      upward.setFromMatrixColumn(camera.matrixWorld, 1);
+      // The fan is laid out in the screen plane of the starting close-up and then belongs to the
+      // desk: the directions live in the turntable's frame, so turning the desk turns the whole
+      // exploded build with it instead of letting the parts drift across the table.
+      const view = new THREE.Vector3(portrait ? 1.9 : 1.35, 0.4, portrait ? 2.4 : 1.6).negate().normalize();
+      right.crossVectors(view, Y).normalize();
+      upward.crossVectors(right, view).normalize();
+      toward.copy(view).negate();
+      for (const v of [right, upward, toward]) v.applyAxisAngle(Y, turntable.rotation.y - START_YAW);
       const labelsNow: Label[] = [];
+      // The case card sits at the top front corner of the case once its walls have cleared.
+      if (caseObj && glass > 0.05) {
+        const box = new THREE.Box3().setFromObject(caseObj);
+        const corners = [0, 1, 2, 3].map((c) => new THREE.Vector3(c & 1 ? box.max.x : box.min.x, box.max.y, c & 2 ? box.max.z : box.min.z).project(camera));
+        const top = corners.reduce((a, b) => (b.y > a.y ? b : a));
+        const center = box.getCenter(new THREE.Vector3()).project(camera);
+        labelsNow.push({ key: "case", x: (top.x * 0.5 + 0.5) * 100, y: (-top.y * 0.5 + 0.5) * 100, on: glass, side: top.x < center.x ? "left" : "right" });
+      }
       parts.forEach((part, i) => {
         const index = part.key === "ram2" ? PARTS.findIndex((x) => x.key === "ram") : i;
         const k = smooth(0.42 + index * 0.075, 0.56 + index * 0.075, p);
@@ -172,7 +197,7 @@ export default function PcstudioExplode({ mode }: ShowcaseProps) {
         const wideK = portrait ? 0.62 : 1, tallK = portrait ? 1.25 : 0.85;
         const offset = right.clone().multiplyScalar(Math.cos(part.angle) * part.reach * wideK).addScaledVector(upward, Math.sin(part.angle) * part.reach * tallK);
         // A little towards the viewer as well, so parts clear the glass instead of sliding through it.
-        offset.addScaledVector(camera.position.clone().sub(homeWorld).normalize(), 0.12);
+        offset.addScaledVector(toward, 0.12);
         homeWorld.addScaledVector(offset, k);
         // `half` is how far the part reaches below its origin; that lowest point stays on the desk.
         homeWorld.y = Math.max(homeWorld.y, Math.min(parent.localToWorld(part.home.clone()).y, floorY + part.half + 0.01));
@@ -180,7 +205,9 @@ export default function PcstudioExplode({ mode }: ShowcaseProps) {
         if (part.key === "ram2" || k < 0.05) return;
         new THREE.Box3().setFromObject(part.node).getCenter(tmp);
         tmp.project(camera);
-        labelsNow.push({ key: part.key, x: (tmp.x * 0.5 + 0.5) * 100, y: (-tmp.y * 0.5 + 0.5) * 100, on: k, side: Math.cos(part.angle) < -0.2 ? "left" : "right" });
+        // The card goes on the side the part flew to, as seen right now.
+        const from = parent.localToWorld(part.home.clone()).project(camera);
+        labelsNow.push({ key: part.key, x: (tmp.x * 0.5 + 0.5) * 100, y: (-tmp.y * 0.5 + 0.5) * 100, on: k, side: tmp.x < from.x - 0.02 ? "left" : "right" });
       });
       const signature = labelsNow.map((l) => `${l.key}${l.x.toFixed(1)}${l.y.toFixed(1)}${l.on.toFixed(2)}`).join();
       if (signature !== lastLabels) { lastLabels = signature; setLabels(labelsNow); }
@@ -216,6 +243,7 @@ export default function PcstudioExplode({ mode }: ShowcaseProps) {
   const chapterTabs = useRef<HTMLDivElement>(null);
   useGlassTabs(chapterTabs, chapter, jump);
   const passed = labels.filter((l) => l.on > 0.6 && PARTS.find((p) => p.key === l.key)?.ok).length;
+  const partLabels = labels.filter((l) => l.key !== "case");
 
   return <div className={`px px-${mode}`} ref={scroller} tabIndex={0} aria-label="Сборка PCStudio: листайте внутри блока, чтобы разобрать компьютер">
     <div className="px-track">
@@ -232,18 +260,18 @@ export default function PcstudioExplode({ mode }: ShowcaseProps) {
         </header>
         <div className="px-labels" aria-live="polite">
           {labels.map((l) => {
-            const part = PARTS.find((p) => p.key === l.key)!;
-            return <div key={l.key} className="px-label" data-ok={part.ok || undefined} data-side={l.side} style={{ left: `${l.x}%`, top: `${l.y}%`, opacity: Math.min(1, l.on * 1.6), transform: `translate(${l.side === "left" ? "calc(-100% - 46px)" : "46px"}, -50%) scale(${0.9 + l.on * 0.1})` }}>
-              <b>{part.name}</b><span>{part.model}</span><small>{part.ok ? "✓" : "?"} {part.check}</small>
+            const part = l.key === "case" ? CASE : PARTS.find((p) => p.key === l.key)!;
+            return <div key={l.key} className="px-label" data-ok={part.ok || undefined} data-info={l.key === "case" || undefined} data-side={l.side} style={{ left: `${l.x}%`, top: `${l.y}%`, opacity: Math.min(1, l.on * 1.6), transform: `translate(${l.side === "left" ? "calc(-100% - 46px)" : "46px"}, -50%) scale(${0.9 + l.on * 0.1})` }}>
+              <b>{part.name}</b><span>{part.model}</span><small>{l.key === "case" ? "" : part.ok ? "✓ " : "? "}{part.check}</small>
             </div>;
           })}
         </div>
         {/* On a narrow stage the checks gather in one list instead of cards beside the parts. */}
         <ul className="px-list" aria-hidden="true">
-          {PARTS.filter((part) => labels.some((l) => l.key === part.key && l.on > 0.6)).map((part) => <li key={part.key} data-ok={part.ok || undefined}><b>{part.name}</b> {part.check}</li>)}
+          {[CASE, ...PARTS].filter((part) => labels.some((l) => l.key === part.key && l.on > 0.6)).map((part) => <li key={part.key} data-ok={(part.ok && part.key !== "case") || undefined}><b>{part.name}</b> {part.check}</li>)}
         </ul>
         <footer className="px-foot">
-          <p className="px-score"><b>{passed}</b> из 7 проверок совместимости пройдено{labels.length === 7 && labels.every((l) => l.on > 0.6) ? " · 1 без данных · конфликтов нет" : ""}</p>
+          <p className="px-score"><b>{passed}</b> из 7 проверок совместимости пройдено{partLabels.length === 7 && partLabels.every((l) => l.on > 0.6) ? " · 1 без данных · конфликтов нет" : ""}</p>
           <p className="px-hint">{chapter < 2 ? "Листайте внутри блока ↓ · тяните, чтобы повернуть" : "Тяните, чтобы повернуть · листайте вверх, чтобы собрать"}</p>
         </footer>
       </div>

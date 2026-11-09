@@ -478,6 +478,7 @@
 .px-label span { color: rgb(255 255 255 / 0.7); }
 .px-label small { color: #7fe0b5; font-size: 0.74rem; }
 .px-label:not([data-ok]) small { color: #f2c46d; }
+.px-label[data-info] small { color: rgb(255 255 255 / 0.6); }
 .px-foot { position: absolute; left: clamp(14px, 3cqw, 32px); right: clamp(14px, 3cqw, 32px); bottom: clamp(14px, 3cqw, 26px); display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px; pointer-events: none; }
 .px-score { margin: 0; font-size: 0.9rem; } .px-score b { color: #7fe0b5; font: 800 1.6rem/1 var(--font-display); margin-right: 4px; }
 .px-hint { margin: 0; padding: 7px 12px; border-radius: 999px; background: rgb(0 0 0 / 0.35); font-size: 0.8rem; }

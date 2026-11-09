@@ -153,3 +153,24 @@ test("every page has a way back home, on a phone too", async ({ page }) => {
   await expect(page).toHaveURL(/\/$/);
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
 });
+
+test("the kit case lets the reader move and reshape a real lens", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/projects/liquid-glass-kit");
+  await ready(page);
+  const stage = page.locator(".playground-stage");
+  await stage.scrollIntoViewIfNeeded();
+  const lens = page.locator(".playground-lens");
+  await expect(lens).toBeVisible();
+  const before = await lens.boundingBox();
+  // Arrow keys move the lens, so the scene is usable without a pointer.
+  await stage.focus();
+  await page.keyboard.press("Shift+ArrowRight");
+  await expect.poll(async () => (await lens.boundingBox())!.x).toBeGreaterThan(before!.x + 40);
+  // The shape tabs change the lens itself, not only the selected tab.
+  await page.getByRole("tablist", { name: "Форма линзы" }).getByRole("tab", { name: "Панель" }).click();
+  await expect.poll(async () => (await lens.boundingBox())!.width).toBeGreaterThan(before!.width * 1.2);
+  // The density control is the site-wide setting.
+  await page.locator(".playground-density input").fill("70");
+  await expect.poll(() => page.evaluate(() => localStorage.getItem("portfolio-glass-density"))).toBe("70");
+});

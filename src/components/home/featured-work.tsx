@@ -10,9 +10,11 @@ import { featured } from "@/lib/featured";
 import { caseHue, caseHueStyle } from "@/lib/case-hues";
 import { useGlassTabs } from "@/components/glass/glass-runtime";
 import { CaseMorph } from "@/components/case-morph";
+import { CaseVideo } from "@/components/case-video";
 
 const labels: Record<string, string> = {
   chessrise: "ChessRise",
+  "liquid-glass-kit": "Glass Kit",
   pioner: "Пионер",
   "worktime-reporting": "Отчётность",
   "infrastructure-inventory": "Учёт ИТ",
@@ -21,6 +23,7 @@ const labels: Record<string, string> = {
 };
 const statuses: Record<string, string> = {
   chessrise: "Принят и оплачен",
+  "liquid-glass-kit": "Публичное демо",
   pioner: "Публичный preview",
   "worktime-reporting": "Windows, демо",
   "infrastructure-inventory": "Windows, демо",
@@ -109,7 +112,7 @@ export function FeaturedWork() {
   return <section className="work" id="work" aria-labelledby="work-title">
     <div className="work-intro">
       <h2 id="work-title">Избранные работы</h2>
-      <p>Шесть проектов, которые я спроектировал, написал и довёл до запуска. Ещё восемь — ниже и в каталоге.</p>
+      <p>Семь проектов, которые я спроектировал, написал и довёл до запуска. Ещё восемь — ниже и в каталоге.</p>
       <Link className="text-link" href="/projects">Все {projects.length} проектов <ArrowUpRight aria-hidden="true" /></Link>
     </div>
     <div className="chapters" ref={list}>
@@ -133,7 +136,7 @@ export function FeaturedWork() {
               <Link className="chapter-stack" href={`/projects/${project.slug}`} tabIndex={-1} aria-hidden="true">
                 <span className="chapter-plate" />
                 {back && <span className="chapter-layer chapter-layer-back"><span className="stage-chrome"><i /><i /><i /></span><Image src={back} alt="" width={1440} height={900} sizes="(max-width: 860px) 80vw, 700px" /></span>}
-                <CaseMorph slug={project.slug}><span className="chapter-layer chapter-layer-main"><span className="stage-chrome"><i /><i /><i /></span><Image src={project.cover} alt="" width={1440} height={900} sizes="(max-width: 860px) 92vw, 900px" /></span></CaseMorph>
+                <CaseMorph slug={project.slug}><span className="chapter-layer chapter-layer-main"><span className="stage-chrome"><i /><i /><i /></span><span className="case-media"><Image src={project.cover} alt="" width={1440} height={900} sizes="(max-width: 860px) 92vw, 900px" />{project.coverVideo && <CaseVideo src={project.coverVideo} />}</span></span></CaseMorph>
                 {phone && <span className="chapter-layer chapter-layer-phone"><Image src={phone} alt="" width={390} height={844} sizes="220px" /></span>}
                 <span className="chapter-layer chapter-layer-note" style={{ "--n": 0 } as CSSProperties}><b>{project.results[0]}</b></span>
               </Link>

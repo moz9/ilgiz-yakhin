@@ -10,6 +10,7 @@ import { ProjectGallery } from "@/components/project-gallery";
 import { CaseNavigation } from "@/components/case-navigation";
 import { CaseHeroStage } from "@/components/case-hero-stage";
 import { CaseMorph } from "@/components/case-morph";
+import { GlassPlayground } from "@/components/glass-playground";
 
 export function generateStaticParams() {
   return projects.map(({ slug }) => ({ slug }));
@@ -25,6 +26,7 @@ const access = { public: "Публичный", mixed: "Частично публ
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const project = getProject((await params).slug);
   if (!project) notFound();
+  const playground = project.slug === "liquid-glass-kit";
   const index = projects.findIndex((item) => item.slug === project.slug);
   const next = projects[(index + 1) % projects.length];
 
@@ -49,6 +51,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
     <CaseNavigation sections={[
       { id: "overview", label: "Коротко" },
+      ...(playground ? [{ id: "playground", label: "Попробовать" }] : []),
       ...(project.capabilities ? [{ id: "capabilities", label: "Возможности" }] : []),
       ...(project.media?.length ? [{ id: "interfaces", label: "Интерфейсы" }] : []),
       { id: "decisions", label: "Решения" },
@@ -60,6 +63,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       <article><h2>Что я сделал</h2><ul>{project.decisions.map((item) => <li key={item.title}>{item.title}</li>)}</ul></article>
       <article className="case-overview-result"><h2>Главный результат</h2><p>{project.results[0]}</p></article>
     </section>
+
+    {playground && <GlassPlayground />}
 
     {project.capabilities && <section id="capabilities" className="case-section" aria-labelledby="capabilities-title">
       <div className="case-section-head"><h2 id="capabilities-title">Что умеет продукт</h2><p>Основные пользовательские и операционные сценарии.</p></div>

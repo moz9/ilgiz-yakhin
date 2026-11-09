@@ -8,6 +8,7 @@ const hues: Record<string, [string, string]> = {
   chessrise: ["#21c6a4", "#ffd257"],
   pioner: ["#ff6b8b", "#ffb36b"],
   "liquid-glass-kit": ["#5b6cff", "#ff5fa2"],
+  glassrates: ["#5b7bff", "#2fd3a0"],
   "worktime-reporting": ["#3ba8ff", "#21c6a4"],
   "visitor-flow-reporting": ["#3ba8ff", "#8a6bff"],
   "infrastructure-inventory": ["#8a6bff", "#3ba8ff"],

@@ -15,6 +15,7 @@ import { CaseVideo } from "@/components/case-video";
 const labels: Record<string, string> = {
   chessrise: "ChessRise",
   "liquid-glass-kit": "Glass Kit",
+  glassrates: "GlassRates",
   pioner: "Пионер",
   "worktime-reporting": "Отчётность",
   "infrastructure-inventory": "Учёт ИТ",
@@ -24,6 +25,7 @@ const labels: Record<string, string> = {
 const statuses: Record<string, string> = {
   chessrise: "Принят и оплачен",
   "liquid-glass-kit": "Публичное демо",
+  glassrates: "В разработке, 2.2",
   pioner: "Публичный preview",
   "worktime-reporting": "Windows, демо",
   "infrastructure-inventory": "Windows, демо",
@@ -112,7 +114,7 @@ export function FeaturedWork() {
   return <section className="work" id="work" aria-labelledby="work-title">
     <div className="work-intro">
       <h2 id="work-title">Избранные работы</h2>
-      <p>Семь проектов, которые я спроектировал, написал и довёл до запуска. Ещё восемь — ниже и в каталоге.</p>
+      <p>Восемь проектов, которые я спроектировал, написал и довёл до запуска. Ещё восемь — ниже и в каталоге.</p>
       <Link className="text-link" href="/projects">Все {projects.length} проектов <ArrowUpRight aria-hidden="true" /></Link>
     </div>
     <div className="chapters" ref={list}>

@@ -281,12 +281,12 @@
   position: sticky;
   bottom: clamp(16px, 3vh, 32px);
   z-index: 20;
-  width: min(680px, 100% - 2 * var(--gutter));
+  width: min(1000px, 100% - 2 * var(--gutter));
   margin: -64px auto 0;
   padding: 6px;
 }
 .work-picker-tabs { position: relative; z-index: 2; display: flex; justify-content: space-between; }
-.work-picker-tabs button { flex: 1 1 0; min-width: 0; height: 44px; padding: 0 8px; border: 0; border-radius: 9999px; background: none; font-weight: 500; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.work-picker-tabs button { flex: 1 1 auto; min-width: 0; height: 44px; padding: 0 12px; border: 0; border-radius: 9999px; background: none; font-weight: 500; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .work-picker-tabs button[data-lg-selected] { color: var(--cobalt-ink); }
 
 /* Scenarios ------------------------------------------------------------------ */

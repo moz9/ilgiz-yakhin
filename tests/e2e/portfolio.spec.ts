@@ -9,7 +9,7 @@ test("home presents the name, the selected work and every other case", async ({ 
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /\/og-v2\.jpg$/);
   const socialPreview = await request.get("/og-v2.jpg");
   expect(socialPreview.headers()["content-type"]).toContain("image/jpeg");
-  await expect(page.locator(".chapter")).toHaveCount(7);
+  await expect(page.locator(".chapter")).toHaveCount(8);
   await expect(page.locator(".chapter h3 a").first()).toHaveAttribute("href", "/projects/chessrise");
   await expect(page.locator(".chapter h3 a").nth(1)).toHaveAttribute("href", "/projects/liquid-glass-kit");
   await expect(page.locator(".more-row")).toHaveCount(8);
@@ -20,7 +20,7 @@ test("home presents the name, the selected work and every other case", async ({ 
 test("selected work stays reachable without motion", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await expect(page.locator(".chapter")).toHaveCount(7);
+  await expect(page.locator(".chapter")).toHaveCount(8);
   await page.locator(".chapter").last().scrollIntoViewIfNeeded();
   await expect(page.locator(".chapter").last()).toBeInViewport();
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
@@ -29,7 +29,7 @@ test("selected work stays reachable without motion", async ({ page }) => {
 test("catalogue filters cases and opens a technical breakdown", async ({ page }) => {
   await page.goto("/projects");
   await expect(page.getByRole("heading", { name: "Работы", exact: true })).toBeVisible();
-  await expect(page.locator(".project-card")).toHaveCount(15);
+  await expect(page.locator(".project-card")).toHaveCount(16);
   await page.getByRole("tab", { name: /Desktop/ }).click();
   await expect(page.locator(".project-card")).toHaveCount(6);
   await page.getByRole("heading", { name: "Система подготовки отчетности рабочего времени" }).click();

@@ -17,10 +17,10 @@ describe("project catalog", () => {
     }
   });
 
-  it("publishes fifteen unique cases", () => {
-    expect(projects).toHaveLength(15);
-    expect(new Set(projects.map(({ slug }) => slug)).size).toBe(15);
-    expect(new Set(projects.map(({ index }) => index)).size).toBe(15);
+  it("publishes sixteen unique cases", () => {
+    expect(projects).toHaveLength(16);
+    expect(new Set(projects.map(({ slug }) => slug)).size).toBe(16);
+    expect(new Set(projects.map(({ index }) => index)).size).toBe(16);
   });
 
   it("puts neutral commercial cases first and sensitive content last", () => {
@@ -28,6 +28,7 @@ describe("project catalog", () => {
       "chessrise",
       "pioner",
       "liquid-glass-kit",
+      "glassrates",
       "streaming-web-platform",
       "streaming-android-tv",
       "worktime-reporting",

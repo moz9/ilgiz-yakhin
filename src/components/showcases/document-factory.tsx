@@ -161,7 +161,7 @@ export default function DocumentFactory({ mode }: ShowcaseProps) {
             </tbody>
           </table>
         </div>
-        <p className="df-foot">Ячейки можно править. Кадровые сведения: {PEOPLE.length} сотрудников, по ним подбираются полное ФИО, должность и трудовой договор.</p>
+        <p className="df-foot">Ячейки можно править. Кадровые сведения: {PEOPLE.length} {plural(PEOPLE.length, ["сотрудник", "сотрудника", "сотрудников"])}, по ним подбираются полное ФИО, должность и трудовой договор.</p>
       </section>
 
       <section className="df-issues" aria-label="Замечания">

@@ -500,3 +500,4 @@
   .chapter { height: auto; }
   .chapter-pin { position: relative; height: auto; min-height: 90vh; padding-block: 48px; }
 }
+.more-preview-video { position: absolute; inset: 14px auto auto 14px; width: calc(100% - 28px); aspect-ratio: 16 / 10; border-radius: 10px; object-fit: cover; object-position: top; }

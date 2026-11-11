@@ -26,6 +26,7 @@ export const showcases: Record<string, ComponentType<ShowcaseProps>> = {
   "booking-flow": dynamic(() => import("./booking-flow"), { ssr: false, loading }),
   "drum-machine": dynamic(() => import("./drum-machine"), { ssr: false, loading }),
   "document-factory": dynamic(() => import("./document-factory"), { ssr: false, loading }),
+  chessrise: dynamic(() => import("./chess-trainer"), { ssr: false, loading }),
   pcstudio: dynamic(() => import("./pcstudio-explode"), { ssr: false, loading }),
 };
 

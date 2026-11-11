@@ -6,7 +6,7 @@ import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 import { InertiaPlugin } from "gsap/InertiaPlugin";
 import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
 import { Physics2DPlugin } from "gsap/Physics2DPlugin";
-import { Heart } from "lucide-react";
+import { Heart, Minus, Plus, RotateCcw } from "lucide-react";
 import { gsap, MOTION, useGSAP } from "@/lib/gsap";
 import type { ShowcaseProps } from "./registry";
 
@@ -14,8 +14,11 @@ gsap.registerPlugin(Draggable, DrawSVGPlugin, InertiaPlugin, MorphSVGPlugin, Phy
 
 const SUN = "M50 22a28 28 0 1 1 0 56a28 28 0 1 1 0-56z";
 const MOON = "M62 20a30 30 0 1 0 18 52a24 24 0 1 1-18-52z";
-const TASKS = ["Сверстать макет", "Подключить API", "Прогнать тесты", "Выкатить релиз"];
+const PRICE = 12990;
+const COLORS = [{ name: "Графит", value: "#3b4252", glow: "#7b8cff" }, { name: "Лаванда", value: "#a78bfa", glow: "#d5c4ff" }, { name: "Мята", value: "#4fd1a5", glow: "#b6f5dc" }, { name: "Коралл", value: "#ff7a66", glow: "#ffc9bf" }] as const;
+const EXTRAS = [{ name: "Чехол для зарядки", price: 990 }, { name: "Гарантия на 2 года", price: 1490 }, { name: "Доставка завтра", price: 390 }] as const;
 const CONFETTI = ["#5b7bff", "#2fd3a0", "#ff6b8b", "#ffc23d", "#b46bff"];
+const rub = (value: number) => `${Math.round(value).toLocaleString("ru-RU")} ₽`;
 
 /** Confetti thrown up from a host and falling under gravity; each bit removes itself when it lands. */
 function burst(host: HTMLElement, count = 36) {
@@ -30,25 +33,31 @@ function burst(host: HTMLElement, count = 36) {
 }
 
 /**
- * A board of micro-interactions, each answering a person's action: a magnetic button,
- * a spotlight card that tilts, a sun that morphs into the moon, slide to confirm with
- * inertia and confetti, a checklist that draws its ticks, and a like that bursts.
- * Built on GSAP's Draggable, Inertia, MorphSVG, DrawSVG and Physics2D plugins.
+ * One checkout screen where every control answers the hand that uses it: the product card
+ * tilts under a light, the colour repaints the product, the promo sticker is magnetic, the
+ * extras draw their ticks, the total counts to its new value, the theme morphs the sun into
+ * the moon, and the payment is a swipe with inertia that ends in confetti and a receipt.
+ * Built on GSAP's Draggable, Inertia, MorphSVG, DrawSVG and Physics2D plugins. The shop is invented.
  */
 export default function MicroUi({ mode }: ShowcaseProps) {
   const board = useRef<HTMLDivElement>(null);
-  const [night, setNight] = useState(false);
-  const [done, setDone] = useState<boolean[]>([true, false, false, false]);
-  const [confirmed, setConfirmed] = useState(false);
-  const [likes, setLikes] = useState(128);
+  const shown = useRef({ value: PRICE });
+  const [night, setNight] = useState(true);
+  const [color, setColor] = useState(1);
+  const [count, setCount] = useState(1);
+  const [extras, setExtras] = useState<boolean[]>([true, false, false]);
+  const [promo, setPromo] = useState(false);
+  const [paid, setPaid] = useState(false);
   const [liked, setLiked] = useState(false);
+  const full = PRICE * count + EXTRAS.reduce((sum, extra, i) => sum + (extras[i] ? extra.price : 0), 0);
+  const total = promo ? Math.round(full * 0.9) : full;
 
-  // Magnet, spotlight tilt and slide-to-confirm live for the whole life of the board.
+  // Magnet, spotlight tilt and swipe-to-pay live for the whole life of the screen.
   const { contextSafe } = useGSAP((_, safe) => {
     const root = board.current!;
     const mm = gsap.matchMedia();
     mm.add(MOTION, () => {
-      // Magnetic button: the button and its label lean toward the pointer at different strengths.
+      // Magnetic sticker: it and its label lean toward the pointer at different strengths.
       const magnet = root.querySelector<HTMLElement>(".mu-magnet")!;
       const label = magnet.querySelector<HTMLElement>("span")!;
       const mx = gsap.quickTo(magnet, "x", { duration: 0.6, ease: "elastic.out(1, 0.4)" });
@@ -65,7 +74,7 @@ export default function MicroUi({ mode }: ShowcaseProps) {
       field.addEventListener("pointermove", pull);
       field.addEventListener("pointerleave", release);
 
-      // Spotlight card: a light follows the pointer and the card tilts toward it.
+      // Product card: a light follows the pointer, the card tilts toward it and the product floats above it.
       const card = root.querySelector<HTMLElement>(".mu-spot")!;
       const rx = gsap.quickTo(card, "rotateX", { duration: 0.5 });
       const ry = gsap.quickTo(card, "rotateY", { duration: 0.5 });
@@ -73,18 +82,20 @@ export default function MicroUi({ mode }: ShowcaseProps) {
         const b = card.getBoundingClientRect();
         const x = (e.clientX - b.left) / b.width, y = (e.clientY - b.top) / b.height;
         card.style.setProperty("--x", `${x * 100}%`); card.style.setProperty("--y", `${y * 100}%`);
-        ry((x - 0.5) * 18); rx(-(y - 0.5) * 14);
+        ry((x - 0.5) * 20); rx(-(y - 0.5) * 16);
       };
       const off = () => { rx(0); ry(0); };
       card.addEventListener("pointermove", light);
       card.addEventListener("pointerleave", off);
+      const float = gsap.to(".mu-art", { y: -8, duration: 2.4, ease: "sine.inOut", yoyo: true, repeat: -1 });
       return () => {
+        float.kill();
         field.removeEventListener("pointermove", pull); field.removeEventListener("pointerleave", release);
         card.removeEventListener("pointermove", light); card.removeEventListener("pointerleave", off);
       };
     });
 
-    // Slide to confirm: drag with inertia; past 85% it locks and celebrates, otherwise springs back.
+    // Swipe to pay: drag with inertia; past 85% it locks and celebrates, otherwise springs back.
     const knob = root.querySelector<HTMLElement>(".mu-knob")!;
     const track = knob.parentElement!;
     const [drag] = Draggable.create(knob, {
@@ -95,8 +106,8 @@ export default function MicroUi({ mode }: ShowcaseProps) {
         const max = track.clientWidth - knob.offsetWidth - 8;
         if (self.x > max * 0.85) {
           gsap.to(knob, { x: max, duration: 0.25 });
-          setConfirmed(true);
-          burst(track);
+          setPaid(true);
+          burst(track, 48);
           self.disable();
         } else gsap.to(knob, { x: 0, duration: 0.6, ease: "elastic.out(1, 0.5)" });
       }),
@@ -104,6 +115,12 @@ export default function MicroUi({ mode }: ShowcaseProps) {
     return () => { drag.kill(); mm.revert(); };
   }, { scope: board });
 
+  // The total counts to its new value instead of jumping.
+  useGSAP(() => {
+    const node = board.current!.querySelector<HTMLElement>(".mu-sum")!;
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    gsap.to(shown.current, { value: total, duration: still ? 0 : 0.6, ease: "power3.out", overwrite: true, onUpdate: () => { node.textContent = rub(shown.current.value); } });
+  }, { scope: board, dependencies: [total] });
 
   const toggleNight = contextSafe(() => {
     const next = !night;
@@ -112,73 +129,105 @@ export default function MicroUi({ mode }: ShowcaseProps) {
     gsap.to(".mu-rays line", { scale: next ? 0 : 1, opacity: next ? 0 : 1, transformOrigin: "50% 50%", duration: 0.5, stagger: 0.03 });
   });
 
-  const toggleTask = contextSafe((i: number) => {
-    const next = done.map((v, j) => (j === i ? !v : v));
-    setDone(next);
-    gsap.fromTo(`.mu-task-${i} .mu-tick`, { drawSVG: next[i] ? "0%" : "100%", opacity: 1 }, { drawSVG: next[i] ? "100%" : "0%", opacity: next[i] ? 1 : 0, duration: 0.45, ease: "power2.out" });
-    gsap.fromTo(`.mu-task-${i} .mu-strike`, { scaleX: next[i] ? 0 : 1 }, { scaleX: next[i] ? 1 : 0, duration: 0.35, delay: next[i] ? 0.25 : 0, transformOrigin: "0 50%" });
+  const pickColor = contextSafe((i: number) => {
+    setColor(i);
+    gsap.fromTo(".mu-art", { scale: 0.86, rotate: -8 }, { scale: 1, rotate: 0, duration: 0.7, ease: "elastic.out(1, 0.5)" });
+  });
+
+  const step = contextSafe((by: number) => {
+    const next = Math.max(1, Math.min(9, count + by));
+    if (next === count) { gsap.fromTo(".mu-count", { x: -5 }, { x: 0, duration: 0.4, ease: "elastic.out(1, 0.3)" }); return; }
+    setCount(next);
+    gsap.fromTo(".mu-count b", { y: by > 0 ? 16 : -16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "power3.out" });
+  });
+
+  const toggleExtra = contextSafe((i: number) => {
+    const next = extras.map((v, j) => (j === i ? !v : v));
+    setExtras(next);
+    gsap.fromTo(`.mu-extra-${i} .mu-tick`, { drawSVG: next[i] ? "0%" : "100%", opacity: 1 }, { drawSVG: next[i] ? "100%" : "0%", opacity: next[i] ? 1 : 0, duration: 0.45, ease: "power2.out" });
+  });
+
+  const togglePromo = contextSafe((event: React.MouseEvent<HTMLButtonElement>) => {
+    const next = !promo;
+    setPromo(next);
+    gsap.fromTo(event.currentTarget, { rotate: next ? -24 : 12 }, { rotate: 0, duration: 0.9, ease: "elastic.out(1, 0.35)" });
+    if (next) burst(event.currentTarget, 14);
   });
 
   const like = contextSafe((event: React.MouseEvent<HTMLButtonElement>) => {
     const next = !liked;
     setLiked(next);
-    setLikes((n) => n + (next ? 1 : -1));
-    gsap.fromTo(event.currentTarget.querySelector("svg"), { scale: 0.6 }, { scale: 1, duration: 0.6, ease: "elastic.out(1.2, 0.4)" });
+    gsap.fromTo(event.currentTarget.querySelector("svg"), { scale: 0.5 }, { scale: 1, duration: 0.6, ease: "elastic.out(1.2, 0.4)" });
     if (next) burst(event.currentTarget, 18);
   });
 
   const reset = contextSafe(() => {
-    setConfirmed(false);
+    setPaid(false);
     gsap.to(".mu-knob", { x: 0, duration: 0.5, ease: "power3.out", onComplete: () => Draggable.get(".mu-knob")?.enable() });
   });
 
-  return <div className={`mu mu-${mode}`} ref={board} data-night={night || undefined}>
-    <section className="mu-tile mu-tile-magnet" aria-label="Магнитная кнопка">
-      <h3>Магнит</h3>
-      <div className="mu-field"><button type="button" className="mu-magnet"><span>Наведите</span></button></div>
-    </section>
-
-    <section className="mu-tile mu-tile-spot" aria-label="Карточка с подсветкой">
-      <h3>Свет и наклон</h3>
-      <div className="mu-spot-wrap"><div className="mu-spot"><b>Pro</b><strong>990 ₽</strong><small>в месяц</small></div></div>
-    </section>
-
-    <section className="mu-tile" aria-label="Переключатель темы">
-      <h3>День и ночь</h3>
-      <button type="button" className="mu-sky" onClick={toggleNight} aria-pressed={night} aria-label={night ? "Включить день" : "Включить ночь"}>
+  const tint = COLORS[color];
+  return <div className={`mu mu-${mode}`} ref={board} data-night={night || undefined} style={{ "--prod": tint.value, "--glow": tint.glow } as React.CSSProperties}>
+    <header className="mu-bar">
+      <p><b>Aura</b>Оформление заказа · демонстрационный магазин</p>
+      <button type="button" className="mu-sky" onClick={toggleNight} aria-pressed={night} aria-label={night ? "Включить дневную тему" : "Включить ночную тему"}>
         <svg viewBox="0 0 100 100" aria-hidden="true">
-          <g className="mu-rays">{Array.from({ length: 8 }, (_, i) => <line key={i} x1="50" y1="8" x2="50" y2="16" transform={`rotate(${i * 45} 50 50)`} />)}</g>
-          <path className="mu-orb" d={SUN} />
+          <g className="mu-rays">{Array.from({ length: 8 }, (_, i) => <line key={i} x1="50" y1="6" x2="50" y2="15" transform={`rotate(${i * 45} 50 50)`} style={{ opacity: 0, transform: "scale(0)", transformOrigin: "50% 50%" }} />)}</g>
+          <path className="mu-orb" d={MOON} />
         </svg>
       </button>
-    </section>
+    </header>
 
-    <section className="mu-tile mu-tile-wide" aria-label="Подтверждение свайпом">
-      <h3>Свайп для подтверждения</h3>
-      <div className="mu-track" data-done={confirmed || undefined}>
-        <span className="mu-track-label">{confirmed ? "Оплачено" : "Потяните, чтобы оплатить"}</span>
-        <div className="mu-knob" aria-hidden="true">→</div>
-      </div>
-      <button type="button" className="mu-link" onClick={reset} disabled={!confirmed}>Ещё раз</button>
-    </section>
+    <div className="mu-scene">
+      <section className="mu-product" aria-label="Товар">
+        <div className="mu-spot-wrap">
+          <div className="mu-spot">
+            <svg className="mu-art" viewBox="0 0 200 200" role="img" aria-label={`Наушники Aura One, цвет ${tint.name.toLowerCase()}`}>
+              <path className="mu-band" d="M42 118V96a58 58 0 0 1 116 0v22" />
+              <rect className="mu-cup" x="24" y="104" width="40" height="64" rx="18" /><rect className="mu-cup" x="136" y="104" width="40" height="64" rx="18" />
+              <rect className="mu-pad" x="58" y="112" width="12" height="48" rx="6" /><rect className="mu-pad" x="130" y="112" width="12" height="48" rx="6" />
+            </svg>
+            <button type="button" className="mu-like" aria-pressed={liked} aria-label={liked ? "Убрать из избранного" : "В избранное"} onClick={like}><Heart aria-hidden="true" /></button>
+          </div>
+        </div>
+        <div className="mu-opts">
+          <div className="mu-colors" role="radiogroup" aria-label="Цвет">
+            {COLORS.map((item, i) => <button key={item.name} type="button" role="radio" aria-checked={color === i} aria-label={item.name} style={{ "--c": item.value } as React.CSSProperties} onClick={() => pickColor(i)} />)}
+            <span>{tint.name}</span>
+          </div>
+          <div className="mu-count" role="group" aria-label="Количество">
+            <button type="button" aria-label="Меньше" onClick={() => step(-1)}><Minus aria-hidden="true" /></button>
+            <b aria-live="polite">{count}</b>
+            <button type="button" aria-label="Больше" onClick={() => step(1)}><Plus aria-hidden="true" /></button>
+          </div>
+        </div>
+      </section>
 
-    <section className="mu-tile" aria-label="Список задач">
-      <h3>Чек-лист</h3>
-      <ul className="mu-tasks">
-        {TASKS.map((task, i) => <li key={task} className={`mu-task-${i}`}>
-          <button type="button" role="checkbox" aria-checked={done[i]} onClick={() => toggleTask(i)}>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6" /><path className="mu-tick" d="M7 12.5l3.2 3.2L17 8.8" style={{ strokeDasharray: done[i] ? undefined : "0 100", opacity: done[i] ? 1 : 0 }} /></svg>
-            <span>{task}<i className="mu-strike" style={{ transform: `scaleX(${done[i] ? 1 : 0})` }} /></span>
-          </button>
-        </li>)}
-      </ul>
-    </section>
-
-    <section className="mu-tile" aria-label="Лайк">
-      <h3>Лайк</h3>
-      <button type="button" className="mu-like" aria-pressed={liked} onClick={like}>
-        <Heart aria-hidden="true" /><span>{likes}</span>
-      </button>
-    </section>
+      <section className="mu-order" aria-label="Заказ">
+        <div className="mu-name"><h3>Aura One</h3><p>Беспроводные наушники с шумоподавлением · {rub(PRICE)}</p></div>
+        <ul className="mu-tasks">
+          {EXTRAS.map((extra, i) => <li key={extra.name} className={`mu-extra-${i}`}>
+            <button type="button" role="checkbox" aria-checked={extras[i]} onClick={() => toggleExtra(i)}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6" /><path className="mu-tick" d="M7 12.5l3.2 3.2L17 8.8" style={{ strokeDasharray: extras[i] ? undefined : "0 100", opacity: extras[i] ? 1 : 0 }} /></svg>
+              <span>{extra.name}</span><em>+ {rub(extra.price)}</em>
+            </button>
+          </li>)}
+        </ul>
+        <div className="mu-promo">
+          <div className="mu-field"><button type="button" className="mu-magnet" aria-pressed={promo} aria-label={promo ? "Убрать промокод DEMO10" : "Применить промокод DEMO10"} onClick={togglePromo}><span>−10%</span></button></div>
+          <p>{promo ? "Промокод DEMO10 применён" : "Наведите на стикер и нажмите: промокод DEMO10"}</p>
+        </div>
+        <div className="mu-total">
+          <span>Итого</span>
+          {promo && <s>{rub(full)}</s>}
+          <strong className="mu-sum" aria-live="polite">{rub(PRICE)}</strong>
+        </div>
+        <div className="mu-track" data-done={paid || undefined}>
+          <span className="mu-track-label">{paid ? "Оплачено · заказ № 2048" : "Потяните, чтобы оплатить"}</span>
+          <div className="mu-knob" aria-hidden="true">→</div>
+        </div>
+        <button type="button" className="mu-link" onClick={reset} disabled={!paid}><RotateCcw aria-hidden="true" />Оформить ещё раз</button>
+      </section>
+    </div>
   </div>;
 }

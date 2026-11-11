@@ -1,5 +1,6 @@
 "use client";
 
+import { plural } from "@/lib/plural";
 import { useRef, useState } from "react";
 import { Download, Table2 } from "lucide-react";
 import { gsap, MOTION, useGSAP } from "@/lib/gsap";
@@ -143,7 +144,7 @@ export default function AnalyticsDashboard({ mode }: ShowcaseProps) {
 
     {table ? <div className="ad-table" tabIndex={0}>
       <table>
-        <caption>Выручка, заказы и визиты по дням за {span} дней</caption>
+        <caption>Выручка, заказы и визиты по дням за {span} {plural(span, "день", "дня", "дней")}</caption>
         <thead><tr><th scope="col">Дата</th><th scope="col">Выручка</th><th scope="col">Заказы</th><th scope="col">Визиты</th>{CHANNELS.map((c) => <th scope="col" key={c.name}>{c.name}</th>)}</tr></thead>
         <tbody>{[...current].reverse().map((d) => <tr key={d.date.toISOString()}><th scope="row">{day(d.date)}</th><td>{rub(d.revenue)}</td><td>{d.orders}</td><td>{d.visits.toLocaleString("ru-RU")}</td>{d.channels.map((c, i) => <td key={i}>{rub(c)}</td>)}</tr>)}</tbody>
       </table>
@@ -153,7 +154,7 @@ export default function AnalyticsDashboard({ mode }: ShowcaseProps) {
           <span className="ad-legend"><i style={{ background: SERIES[0] }} />Текущий период{compare && <><i className="is-dashed" />Прошлый период</>}</span>
         </figcaption>
         <div className="ad-plot">
-          <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Выручка по дням за ${span} дней, всего ${rub(now.revenue)}`} onPointerMove={onMove} onPointerLeave={() => setHover(null)}>
+          <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Выручка по дням за ${span} ${plural(span, "день", "дня", "дней")}, всего ${rub(now.revenue)}`} onPointerMove={onMove} onPointerLeave={() => setHover(null)}>
             <defs><linearGradient id="ad-fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor={SERIES[0]} stopOpacity="0.28" /><stop offset="1" stopColor={SERIES[0]} stopOpacity="0" /></linearGradient></defs>
             {ticks.map((t) => <g key={t}><line className="ad-grid-line" x1={P.l} x2={W - P.r} y1={y(t)} y2={y(t)} /><text className="ad-axis" x={P.l - 8} y={y(t) + 4} textAnchor="end">{short(t)}</text></g>)}
             {[0, Math.floor((span - 1) / 2), span - 1].map((i) => <text key={i} className="ad-axis" x={x(i)} y={H - 8} textAnchor={i === 0 ? "start" : i === span - 1 ? "end" : "middle"}>{day(current[i].date)}</text>)}
@@ -201,7 +202,7 @@ export default function AnalyticsDashboard({ mode }: ShowcaseProps) {
             {[0, 6, 12, 18, 23].map((h) => <text key={h} className="ad-axis" x={40 + h * 28 + 13} y="194" textAnchor="middle">{h}:00</text>)}
           </svg>
           {cell && <div className="ad-tip" style={{ left: `${((40 + cell.h * 28 + 13) / 720) * 100}%`, top: `${((cell.d * 26) / 196) * 100}%` }} role="status">
-            <b>{WEEKDAYS[cell.d]}, {cell.h}:00–{cell.h + 1}:00</b><span>{heat[cell.d][cell.h]} заказов за {span} дн.</span>
+            <b>{WEEKDAYS[cell.d]}, {cell.h}:00–{cell.h + 1}:00</b><span>{heat[cell.d][cell.h]} {plural(heat[cell.d][cell.h], "заказ", "заказа", "заказов")} за {span} дн.</span>
           </div>}
         </div>
       </figure>

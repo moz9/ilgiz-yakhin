@@ -1,5 +1,6 @@
 "use client";
 
+import { plural } from "@/lib/plural";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -9,6 +10,11 @@ import { useReducedMotion } from "@/lib/use-reduced-motion";
 import type { Project } from "@/lib/projects";
 import { caseHueStyle } from "@/lib/case-hues";
 import { CaseMorph } from "@/components/case-morph";
+
+/** The floating preview plays the case loop while its row is hovered; the cover shows until the first frame arrives. */
+function PreviewVideo({ src }: { src: string }) {
+  return <video className="more-preview-video" src={`${src}.mp4`} muted loop playsInline autoPlay aria-hidden="true" tabIndex={-1} />;
+}
 
 /**
  * The rest of the catalogue as a quiet list. On a desktop a preview of the case floats
@@ -44,7 +50,7 @@ export function MoreWork({ projects }: { projects: Project[] }) {
 
   return <section className="more" aria-labelledby="more-title">
     <div className="section-head">
-      <h2 id="more-title">Ещё {projects.length} проектов</h2>
+      <h2 id="more-title">Ещё {projects.length} {plural(projects.length, "проект", "проекта", "проектов")}</h2>
       <p>Desktop-утилиты, Android, автоматизация и инфраструктура: то, что обычно остаётся за кадром, но держит работу.</p>
     </div>
     <div className="more-list" ref={list} onPointerLeave={() => setHover(null)}>
@@ -62,6 +68,7 @@ export function MoreWork({ projects }: { projects: Project[] }) {
         {projects.map((project) =>
           <span key={project.slug} className="more-preview-shot" data-active={project.slug === hover} style={caseHueStyle(project.slug)}>
             <Image src={project.cover} alt="" width={720} height={450} sizes="420px" />
+            {project.slug === hover && project.coverVideo && <PreviewVideo src={project.coverVideo} />}
           </span>)}
       </motion.div>}
     </div>

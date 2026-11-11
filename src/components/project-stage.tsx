@@ -24,7 +24,7 @@ export function ProjectStage({ project, priority = false, compact = false, sizes
         <span className="stage-chrome" aria-hidden="true"><i /><i /><i /></span>
         <span className="case-media">
           <Image src={project.cover} alt={project.coverAlt} width={1440} height={900} priority={priority} sizes={sizes ?? (compact ? "(max-width: 760px) 92vw, 760px" : "(max-width: 900px) 94vw, 1200px")} />
-          {project.coverVideo && !compact && <CaseVideo src={project.coverVideo} />}
+          {project.coverVideo && <CaseVideo src={project.coverVideo} preview={compact} />}
         </span>
       </div>
     </CaseMorph>

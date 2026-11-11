@@ -1,5 +1,6 @@
 "use client";
 
+import { plural } from "@/lib/plural";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Flip } from "gsap/Flip";
 import { ArrowLeft, ArrowRight, Plus, RotateCcw, Search, X } from "lucide-react";
@@ -141,7 +142,7 @@ export default function KanbanBoard({ mode }: ShowcaseProps) {
 
   return <div className={`kb kb-${mode}`} ref={root} data-dragging={drag ? "true" : undefined}>
     <header className="kb-head">
-      <div><h3>Спринт 14 · Магазин</h3><p>{cards.length} задач · сохраняется в этом браузере</p></div>
+      <div><h3>Спринт 14 · Магазин</h3><p>{cards.length} {plural(cards.length, "задача", "задачи", "задач")} · сохраняется в этом браузере</p></div>
       <div className="kb-tools">
         <label className="kb-search"><Search aria-hidden="true" /><input value={query} placeholder="Найти задачу" aria-label="Найти задачу" onChange={(e) => { const v = e.target.value; filterTo(() => setQuery(v)); }} /></label>
         <div className="kb-chips" role="group" aria-label="Тег">
@@ -156,7 +157,7 @@ export default function KanbanBoard({ mode }: ShowcaseProps) {
         const over = col.limit !== undefined && list.length > col.limit;
         return <section key={col.key} className="kb-col" data-column={col.key} data-over={over || undefined} aria-label={col.title}>
           <h4>{col.title}<span>{list.length}{col.limit ? ` / ${col.limit}` : ""}</span></h4>
-          {over && <p className="kb-warn" role="status">Больше {col.limit} задач в работе — команда распыляется</p>}
+          {over && <p className="kb-warn" role="status">Больше {col.limit} {plural(col.limit!, "задачи", "задач", "задач")} в работе — команда распыляется</p>}
           <ul>{list.filter(visible).map((card) => <li key={card.id}>
             <div className="kb-card" data-flip-id={card.id} data-ghosted={drag?.id === card.id || undefined} onPointerDown={(e) => down(e, card.id)}
               onClick={() => { if (dragged.current) { dragged.current = false; return; } setOpen(card.id); }} onKeyDown={(e) => { if (e.key === "Enter") setOpen(card.id); }} tabIndex={0} role="button" aria-label={`${card.title}, ${col.title}`}>

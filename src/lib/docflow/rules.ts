@@ -1,4 +1,4 @@
-import { amountWords, day, fullName, initials, longDate, MONTH_NAMES, rub, shortDate } from "./text";
+import { amountWords, day, fullName, initials, longDate, MONTH_NAMES, plural, rub, shortDate } from "./text";
 
 /**
  * From a timesheet of extra hours to a set of personnel documents. The rules are a
@@ -65,7 +65,7 @@ export function evaluate(rows: Row[], people: Person[], month: string): Evaluati
 
   for (const row of rows) {
     const { person, candidates } = personOf(row, people);
-    if (!person) add(row, "person", candidates.length > 1 ? `в кадровых сведениях ${candidates.length} подходящих сотрудника — выберите нужного.` : "сотрудник не найден в кадровых сведениях — выберите его.", { candidates: candidates.length ? candidates : people });
+    if (!person) add(row, "person", candidates.length > 1 ? `в кадровых сведениях ${candidates.length} ${plural(candidates.length, ["подходящий сотрудник", "подходящих сотрудника", "подходящих сотрудников"])} — выберите нужного.` : "сотрудник не найден в кадровых сведениях — выберите его.", { candidates: candidates.length ? candidates : people });
     else {
       owners.set(row.id, person);
       if (!person.position || !person.contractNumber || !person.contractDate) add(row, "profile", "в кадровых сведениях нет должности или реквизитов трудового договора.");

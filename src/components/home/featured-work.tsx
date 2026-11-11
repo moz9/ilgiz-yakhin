@@ -1,5 +1,6 @@
 "use client";
 
+import { plural } from "@/lib/plural";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useRef, useState, type CSSProperties } from "react";
@@ -12,9 +13,6 @@ import { useGlassTabs } from "@/components/glass/glass-runtime";
 import { CaseMorph } from "@/components/case-morph";
 import { CaseVideo } from "@/components/case-video";
 
-/** Russian noun form for a count: 1 проект, 2 проекта, 5 проектов. */
-const plural = (n: number, one: string, few: string, many: string) =>
-  n % 10 === 1 && n % 100 !== 11 ? one : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? few : many;
 
 const labels: Record<string, string> = {
   chessrise: "ChessRise",
@@ -147,7 +145,7 @@ export function FeaturedWork() {
     <div className="work-intro">
       <h2 id="work-title">Избранные работы</h2>
       <p>{featured.length} {plural(featured.length, "проект", "проекта", "проектов")}, которые я спроектировал, написал и довёл до запуска. Ещё {projects.length - featured.length} — ниже и в каталоге.</p>
-      <Link className="text-link" href="/projects">Все {projects.length} проектов <ArrowUpRight aria-hidden="true" /></Link>
+      <Link className="text-link" href="/projects">{plural(projects.length, "Весь", "Все", "Все")} {projects.length} {plural(projects.length, "проект", "проекта", "проектов")} <ArrowUpRight aria-hidden="true" /></Link>
     </div>
     <div className="chapters" ref={list}>
       {featured.map((project, index) => {

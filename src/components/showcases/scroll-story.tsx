@@ -1,5 +1,6 @@
 "use client";
 
+import { plural } from "@/lib/plural";
 import { useRef, useState } from "react";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
@@ -100,7 +101,7 @@ export default function ScrollStory({ mode }: ShowcaseProps) {
         <div className="ss-bars" aria-hidden="true">
           {CHAPTERS.map((c, i) => <span key={i} data-state={i < active ? "past" : i === active ? "now" : undefined} style={{ height: `${12 + (c.commits / MAX) * 88}%` }}><i>{c.commits}</i></span>)}
         </div>
-        <p className="ss-hint" aria-hidden="true">{progress > 0.98 ? `Итого: ${TOTAL.commits} коммитов за 98 дней` : "Листайте внутри блока ↓"}</p>
+        <p className="ss-hint" aria-hidden="true">{progress > 0.98 ? `Итого: ${TOTAL.commits} ${plural(TOTAL.commits, "коммит", "коммита", "коммитов")} за 98 дней` : "Листайте внутри блока ↓"}</p>
       </div>
     </div>
   </div>;

@@ -1498,8 +1498,9 @@ const projectCatalog: Project[] = [
   },
   {
     slug: "routerdesk",
-    cover: `${caseAssetBase}/routerdesk-devices.webp`,
-    coverAlt: "Список устройств RouterDesk: инвентаризация с реальными состояниями",
+    cover: `${caseAssetBase}/routerdesk-cover.webp`,
+    coverAlt: "Окно RouterDesk в демо-режиме: стеклянный интерфейс со списком из шести роутеров и их состояниями",
+    coverVideo: "/cases/routerdesk-tour",
     coverDetail: `${caseAssetBase}/routerdesk-detail-plan.webp`,
     index: "30",
     title: "RouterDesk",
@@ -1550,10 +1551,10 @@ const projectCatalog: Project[] = [
     media: [
       { src: `${caseAssetBase}/routerdesk-devices.webp`, frames: [`${caseAssetBase}/routerdesk-devices.webp`, `${caseAssetBase}/routerdesk-service.webp`], alt: "Список устройств и план обслуживания в RouterDesk", label: "01 / УСТРОЙСТВА И ОБСЛУЖИВАНИЕ", caption: "Инвентаризация и план операций живут в одном приложении: состояния видно сразу, а состав действий выбирается заранее.", presentation: "collage", width: 1424, height: 861 },
       { src: `${caseAssetBase}/routerdesk-backups.webp`, frames: [`${caseAssetBase}/routerdesk-backups.webp`, `${caseAssetBase}/routerdesk-firmware.webp`], alt: "Копии настроек и подготовка персональной прошивки", label: "02 / КОПИИ И ПРОШИВКИ", caption: "Резервная копия настроек и сборка образа — разные операции с разными гарантиями: файл проверяется по SHA-256 до установки.", presentation: "collage", width: 1424, height: 861 },
-      { src: `${caseAssetBase}/routerdesk-detail-unknown.webp`, alt: "Неизвестный исход операции и запрет автоматического повтора", label: "03 / НЕИЗВЕСТНЫЙ ИСХОД", caption: "Операция без подтверждённого результата фиксируется как есть: автоматический повтор запрещён, новая попытка — отдельный план со своими проверками.", presentation: "detail", width: 1158, height: 235 },
-      { src: `${caseAssetBase}/routerdesk-detail-states.webp`, alt: "Состояния устройств: в порядке, нет SSH-доступа, данные устарели", label: "04 / СОСТОЯНИЯ УСТРОЙСТВ", caption: "Состояние читается без захода на устройство: порядок, устаревшие данные, отсутствие доступа и неподтверждённый исход — разные статусы, а не один зелёный кружок.", presentation: "detail", width: 1165, height: 190 },
-      { src: `${caseAssetBase}/routerdesk-detail-firmware.webp`, alt: "Проверка сборщика образа по SHA-256 и ограничение полного дампа", label: "05 / ПРОВЕРКА СБОРКИ", caption: "Сборщик образа подбирается под конкретный роутер и проверяется по хэшу, а копия конфигурации прямо называется тем, чем она является.", presentation: "detail", width: 1150, height: 160 },
-      { src: `${caseAssetBase}/routerdesk-detail-plan.webp`, alt: "План обслуживания: состав действий по выбранным устройствам", label: "06 / ПЛАН ОБСЛУЖИВАНИЯ", caption: "Подбор настроек не применяется сам: сначала план, потом запуск, и результат остаётся в истории.", presentation: "detail", width: 410, height: 295 },
+      { src: `${caseAssetBase}/routerdesk-detail-unknown.webp`, alt: "Неизвестный исход операции и запрет автоматического повтора", label: "03 / НЕИЗВЕСТНЫЙ ИСХОД", caption: "Операция без подтверждённого результата фиксируется как есть: автоматический повтор запрещён, новая попытка — отдельный план со своими проверками.", presentation: "detail", width: 1177, height: 239 },
+      { src: `${caseAssetBase}/routerdesk-detail-states.webp`, alt: "Состояния устройств: в порядке, нет SSH-доступа, данные устарели", label: "04 / СОСТОЯНИЯ УСТРОЙСТВ", caption: "Состояние читается без захода на устройство: порядок, устаревшие данные, отсутствие доступа и неподтверждённый исход — разные статусы, а не один зелёный кружок.", presentation: "detail", width: 1180, height: 192 },
+      { src: `${caseAssetBase}/routerdesk-detail-firmware.webp`, alt: "Проверка сборщика образа по SHA-256 и ограничение полного дампа", label: "05 / ПРОВЕРКА СБОРКИ", caption: "Сборщик образа подбирается под конкретный роутер и проверяется по хэшу, а копия конфигурации прямо называется тем, чем она является.", presentation: "detail", width: 1174, height: 162 },
+      { src: `${caseAssetBase}/routerdesk-detail-plan.webp`, alt: "План обслуживания: состав действий по выбранным устройствам", label: "06 / ПЛАН ОБСЛУЖИВАНИЯ", caption: "Подбор настроек не применяется сам: сначала план, потом запуск, и результат остаётся в истории.", presentation: "detail", width: 555, height: 366 },
     ],
     results: ["Собран действующий инструмент на WinUI 3 с отдельным CLI и библиотекой ядра", "Операции разделены на план, подготовку и применение с проверкой по SHA-256", "Неизвестный исход фиксируется без автоматического повтора", "Демо-режим работает на синтетических данных: сеть и запись отключены"],
     evidence: [

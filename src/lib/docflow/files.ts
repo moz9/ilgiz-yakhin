@@ -86,27 +86,34 @@ const OFFICE = "http://schemas.openxmlformats.org/officeDocument/2006/relationsh
 const types = (part: string, type: string) => `${XML}<Types xmlns="${PACKAGE}/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>${part ? `<Override PartName="${part}" ContentType="${type}"/>` : ""}</Types>`;
 const rels = (type: string, target: string) => `${XML}<Relationships xmlns="${PACKAGE}/relationships"><Relationship Id="rId1" Type="${OFFICE}/${type}" Target="${target}"/></Relationships>`;
 
-/** The timesheet as a workbook in the layout the importer reads: headers, a row of day numbers, one row per person. */
-export function exportTimesheet(rows: Row[], month: string): Uint8Array {
-  const [year, monthNumber] = month.split("-").map(Number);
-  const last = new Date(Date.UTC(year, monthNumber, 0)).getUTCDate();
-  const grid: (string | number | null)[][] = [
-    [`Табель дополнительной работы · ${MONTH_NAMES[monthNumber - 1]} ${year} · демонстрационные данные`], [],
-    ["ФИО", "Оклад", "Норма часов", "Причина", "Работал за"],
-    [null, null, null, null, null, ...Array.from({ length: last }, (_, i) => i + 1), "Часов"],
-    ...rows.map((row) => [row.name, row.salary, row.normHours, row.reason, row.replaced, ...Array.from({ length: last }, (_, i) => row.marks[i + 1] ?? null), row.reported]),
-  ];
+export type Grid = (string | number | null)[][];
+
+/** A one-sheet .xlsx from a grid of values. `widths` are [first column, last column, width] in Excel units. */
+export function workbook(grid: Grid, sheetName: string, widths: [number, number, number][] = []): Uint8Array {
   const cell = (v: string | number | null, c: number, r: number) => v === null || v === ""
     ? "" : typeof v === "number" ? `<c r="${letters(c + 1)}${r + 1}"><v>${v}</v></c>` : `<c r="${letters(c + 1)}${r + 1}" t="inlineStr"><is><t>${esc(v)}</t></is></c>`;
   const sheet = grid.map((line, r) => `<row r="${r + 1}">${line.map((v, c) => cell(v, c, r)).join("")}</row>`).join("");
+  const cols = widths.length ? `<cols>${widths.map(([min, max, width]) => `<col min="${min}" max="${max}" width="${width}" customWidth="1"/>`).join("")}</cols>` : "";
   const main = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
   return zipSync({
     "[Content_Types].xml": strToU8(types("/xl/workbook.xml", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml").replace("</Types>", '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>')),
     "_rels/.rels": strToU8(rels("officeDocument", "xl/workbook.xml")),
-    "xl/workbook.xml": strToU8(`${XML}<workbook xmlns="${main}" xmlns:r="${OFFICE}"><sheets><sheet name="Табель" sheetId="1" r:id="rId1"/></sheets></workbook>`),
+    "xl/workbook.xml": strToU8(`${XML}<workbook xmlns="${main}" xmlns:r="${OFFICE}"><sheets><sheet name="${esc(sheetName)}" sheetId="1" r:id="rId1"/></sheets></workbook>`),
     "xl/_rels/workbook.xml.rels": strToU8(rels("worksheet", "worksheets/sheet1.xml")),
-    "xl/worksheets/sheet1.xml": strToU8(`${XML}<worksheet xmlns="${main}"><cols><col min="1" max="1" width="24" customWidth="1"/><col min="4" max="5" width="22" customWidth="1"/><col min="6" max="${5 + last}" width="4" customWidth="1"/></cols><sheetData>${sheet}</sheetData></worksheet>`),
+    "xl/worksheets/sheet1.xml": strToU8(`${XML}<worksheet xmlns="${main}">${cols}<sheetData>${sheet}</sheetData></worksheet>`),
   });
+}
+
+/** The timesheet as a workbook in the layout the importer reads: headers, a row of day numbers, one row per person. */
+export function exportTimesheet(rows: Row[], month: string): Uint8Array {
+  const [year, monthNumber] = month.split("-").map(Number);
+  const last = new Date(Date.UTC(year, monthNumber, 0)).getUTCDate();
+  return workbook([
+    [`Табель дополнительной работы · ${MONTH_NAMES[monthNumber - 1]} ${year} · демонстрационные данные`], [],
+    ["ФИО", "Оклад", "Норма часов", "Причина", "Работал за"],
+    [null, null, null, null, null, ...Array.from({ length: last }, (_, i) => i + 1), "Часов"],
+    ...rows.map((row) => [row.name, row.salary, row.normHours, row.reason, row.replaced, ...Array.from({ length: last }, (_, i) => row.marks[i + 1] ?? null), row.reported]),
+  ], "Табель", [[1, 1, 24], [4, 5, 22], [6, 5 + last, 4]]);
 }
 
 function paragraph(block: Block) {

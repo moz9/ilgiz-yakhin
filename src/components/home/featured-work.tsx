@@ -11,7 +11,14 @@ import { featured } from "@/lib/featured";
 import { caseHue, caseHueStyle } from "@/lib/case-hues";
 import { useGlassTabs } from "@/components/glass/glass-runtime";
 import { CaseMorph } from "@/components/case-morph";
+import dynamic from "next/dynamic";
+import { useSyncExternalStore } from "react";
 import { CaseVideo } from "@/components/case-video";
+
+// The PCStudio chapter shows the real 3D desk on a desktop with a mouse; phones keep the video loop.
+const DeskViewer = dynamic(() => import("@/components/pcstudio-desk-viewer"), { ssr: false });
+const DESK = "(hover: hover) and (min-width: 1000px) and (prefers-reduced-motion: no-preference)";
+const watchDesk = (changed: () => void) => { const query = matchMedia(DESK); query.addEventListener("change", changed); return () => query.removeEventListener("change", changed); };
 
 
 const labels: Record<string, string> = {
@@ -95,6 +102,7 @@ export function FeaturedWork() {
   const list = useRef<HTMLDivElement>(null);
   const picker = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+  const desk = useSyncExternalStore(watchDesk, () => matchMedia(DESK).matches, () => false);
 
   useGSAP(() => {
     const root = list.current;
@@ -168,7 +176,7 @@ export function FeaturedWork() {
               <Link className="chapter-stack" href={`/projects/${project.slug}`} tabIndex={-1} aria-hidden="true">
                 <span className="chapter-plate" />
                 {back && <span className="chapter-layer chapter-layer-back"><span className="stage-chrome"><i /><i /><i /></span><Image src={back} alt="" width={1440} height={900} sizes="(max-width: 860px) 80vw, 700px" /></span>}
-                <CaseMorph slug={project.slug}><span className="chapter-layer chapter-layer-main"><span className="stage-chrome"><i /><i /><i /></span><span className="case-media"><Image src={project.cover} alt="" width={1440} height={900} sizes="(max-width: 860px) 92vw, 900px" />{project.coverVideo && <CaseVideo src={project.coverVideo} />}</span></span></CaseMorph>
+                <CaseMorph slug={project.slug}><span className="chapter-layer chapter-layer-main"><span className="stage-chrome"><i /><i /><i /></span><span className="case-media"><Image src={project.cover} alt="" width={1440} height={900} sizes="(max-width: 860px) 92vw, 900px" />{project.slug === "pcstudio" && desk ? <DeskViewer bare /> : project.coverVideo && <CaseVideo src={project.coverVideo} />}</span></span></CaseMorph>
                 {phone && <span className="chapter-layer chapter-layer-phone"><Image src={phone} alt="" width={390} height={844} sizes="220px" /></span>}
                 <span className="chapter-layer chapter-layer-note" style={{ "--n": 0 } as CSSProperties}><b>{project.results[0]}</b></span>
               </Link>

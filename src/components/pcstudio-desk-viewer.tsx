@@ -18,10 +18,15 @@ const VIEWS = ["Стол", "Компьютер"] as const;
  * The PCStudio home scene, live inside the case gallery: both showcase workplaces from the
  * product's own GLB files. Drag turns the desk (with inertia), the fans spin, the build and
  * the camera view switch with buttons. Nothing loads until the frame comes near the screen.
+ *
+ * `bare` is the same scene with no controls, for the home chapter: it sits inside a link and
+ * a 3D-transformed layer, where glass cannot live, shows the dark build only and swallows the
+ * click that ends a drag so that turning the desk does not open the case.
  */
-export default function PcstudioDeskViewer() {
+export default function PcstudioDeskViewer({ bare = false }: { bare?: boolean }) {
   const host = useRef<HTMLDivElement>(null);
-  const [build, setBuild] = useState<Build>("white");
+  const first: Build = bare ? "dark" : "white";
+  const [build, setBuild] = useState<Build>(first);
   const [view, setView] = useState(0);
   const [state, setState] = useState<"idle" | "loading" | "ready" | "failed">("idle");
   const api = useRef<{ show: (b: Build) => void; view: (v: number) => void } | null>(null);
@@ -74,7 +79,7 @@ export default function PcstudioDeskViewer() {
       let rotors: THREE.Object3D[] = [];
       const focus = new THREE.Vector3(0.5, 0.9, 0), pivot = new THREE.Vector3(), lookWide = new THREE.Vector3(0.1, 0.7, 0);
       let disposed = false;
-      let wanted: Build = "white";
+      let wanted: Build = first;
 
       const show = (b: Build) => {
         wanted = b;
@@ -94,24 +99,25 @@ export default function PcstudioDeskViewer() {
           ambient.intensity = b === "white" ? 0.5 : 0.3;
           setState("ready");
           // The other build loads quietly in the background, so the switch is instant.
-          load(b === "white" ? "dark" : "white");
+          if (!bare) load(b === "white" ? "dark" : "white");
         }, () => setState("failed"));
       };
-      show("white");
+      show(first);
 
       let viewTarget = 0, viewNow = 0;
       // Choosing a view hands the turn back to the scene, so the computer comes round to face you.
       api.current = { show, view: (v) => { viewTarget = v; spin.idle = -1e9; if (reduced) { viewNow = v; spin.yaw = v ? 1.6 : 1.15; } } };
 
       // Drag turns the desk; a short idle later it drifts on its own again.
-      const spin = { yaw: 1.2, pitch: 0, v: 0, dragging: false, x: 0, y: 0, idle: -1e9 };
+      const spin = { yaw: 1.2, pitch: 0, v: 0, dragging: false, x: 0, y: 0, idle: -1e9, travelled: 0 };
       const down = (e: PointerEvent) => {
         if ((e.target as HTMLElement).closest("button, [data-lg]")) return;
-        spin.dragging = true; spin.x = e.clientX; spin.y = e.clientY;
+        spin.dragging = true; spin.x = e.clientX; spin.y = e.clientY; spin.travelled = 0;
         el.setPointerCapture(e.pointerId);
       };
       const move = (e: PointerEvent) => {
         if (!spin.dragging) return;
+        spin.travelled += Math.abs(e.clientX - spin.x) + Math.abs(e.clientY - spin.y);
         spin.v = (e.clientX - spin.x) * 0.006;
         spin.yaw += spin.v;
         spin.pitch = Math.max(-0.25, Math.min(0.35, spin.pitch + (e.clientY - spin.y) * 0.003));
@@ -123,6 +129,9 @@ export default function PcstudioDeskViewer() {
       el.addEventListener("pointermove", move);
       el.addEventListener("pointerup", up);
       el.addEventListener("pointercancel", up);
+      // Inside a link, a drag must not count as a click on it.
+      const click = (e: MouseEvent) => { if (spin.travelled > 6) { e.preventDefault(); e.stopPropagation(); } };
+      el.addEventListener("click", click, true);
 
       const resize = () => {
         const w = el.clientWidth, h = el.clientHeight;
@@ -156,7 +165,7 @@ export default function PcstudioDeskViewer() {
         viewNow += (viewTarget - viewNow) * (reduced ? 1 : 0.08);
         if (!reduced) rotors.forEach((o) => o.rotateZ(dt * 9));
         const portrait = camera.aspect < 0.9;
-        const far = portrait ? 1.6 : 1;
+        const far = portrait ? 1.6 : bare ? 0.72 : 1;
         const wide = new THREE.Vector3(2.4 * far, 2.0 * Math.sqrt(far) + spin.pitch * 2.4, 2.9 * far);
         const close = focus.clone().add(new THREE.Vector3(portrait ? 1.7 : 1.15, 0.35 + spin.pitch * 1.2, portrait ? 2.1 : 1.4));
         pos.lerpVectors(wide, close, viewNow);
@@ -178,6 +187,7 @@ export default function PcstudioDeskViewer() {
         el.removeEventListener("pointermove", move);
         el.removeEventListener("pointerup", up);
         el.removeEventListener("pointercancel", up);
+        el.removeEventListener("click", click, true);
         Object.values(cache).forEach((p) => p?.then((root) => root.traverse((o) => {
           const m = o as THREE.Mesh;
           m.geometry?.dispose();
@@ -194,7 +204,7 @@ export default function PcstudioDeskViewer() {
     const near = new IntersectionObserver(([e]) => { if (e.isIntersecting) { near.disconnect(); start(); } }, { rootMargin: "400px 0px" });
     near.observe(el);
     return () => { near.disconnect(); cleanup(); };
-  }, []);
+  }, [bare, first]);
 
   const pick = (b: Build) => { setBuild(b); api.current?.show(b); };
   const look = (v: number) => { setView(v); api.current?.view(v); };
@@ -202,6 +212,9 @@ export default function PcstudioDeskViewer() {
   useGlassTabs(buildTabs, keys.indexOf(build), (i) => pick(keys[i]));
   useGlassTabs(viewTabs, view, look);
 
+  if (bare) return <div className="dv dv-bare" data-build={build} data-state={state} ref={host}>
+    {state === "ready" && <p className="dv-hint">Тяните, чтобы повернуть</p>}
+  </div>;
   return <div className="dv" data-build={build} data-state={state} ref={host}>
     {state !== "ready" && <p className="dv-state">{state === "failed" ? "3D не загрузилось: браузер не дал WebGL." : "Загружаю 3D-сцену…"}</p>}
     <p className="dv-hint">Тяните, чтобы повернуть</p>

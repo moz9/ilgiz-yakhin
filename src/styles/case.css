@@ -377,3 +377,7 @@ body:has(.site-nav.is-tucked) .filter { top: 14px; }
   .dv-tag { left: 12px; right: 12px; bottom: 64px; padding: 10px 14px; }
   .dv-tag span { display: none; }
 }
+
+/* The same scene with no controls, inside the home chapter. */
+.dv-bare { border-radius: inherit; }
+.dv-bare .dv-hint { top: auto; bottom: 14px; left: 14px; }

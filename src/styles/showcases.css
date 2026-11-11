@@ -501,3 +501,106 @@
 :is(.gs-presets, .kt-tabs, .sg-tabs, .ad-tabs, .ws-tabs) [data-lg-selected] { color: inherit; }
 .glass-range { display: block; width: 100%; min-width: 0; }
 .glass-range .lgk-slider { height: 36px; }
+
+/* Documents from a timesheet --------------------------------------------------- */
+.df { --desk: #101319; --panel: #181c24; --cell: #1f242e; --ink: #efede7; --ink-2: #b9b7ae; --muted: #85837c; --line: rgb(255 255 255 / 0.09); --warn: #f0b04a; --ok: #6fd6a4; --paper: #f8f5ed; --paper-ink: #1c1b18;
+  position: absolute; inset: 0; display: flex; flex-direction: column; gap: 12px; padding: clamp(12px, 2cqw, 22px); overflow: hidden; container-type: inline-size;
+  background: radial-gradient(90% 70% at 85% 0%, #222a3d, transparent 70%), var(--desk); color: var(--ink); font: 400 0.88rem/1.35 var(--font-body); }
+.df-full { padding-top: 84px; }
+.df-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; }
+.df-title h3 { margin: 0; font: 800 1.3rem/1.1 var(--font-display); }
+.df-title p { margin: 4px 0 0; color: var(--muted); font-size: 0.78rem; }
+.df-stats { display: flex; gap: 8px; margin: 0 auto 0 0; padding: 0; list-style: none; }
+.df-stats li { display: grid; padding: 6px 12px; border-radius: 12px; background: var(--panel); color: var(--muted); font-size: 0.72rem; line-height: 1.2; }
+.df-stats b { color: var(--ink); font: 800 1.05rem/1.15 var(--font-display); font-variant-numeric: tabular-nums; }
+.df-stats li[data-warn] b { color: var(--warn); }
+.df-tools { display: flex; gap: 6px; }
+.df-tools button, .df-issues button, .df-pager button { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border: 0; border-radius: 999px; background: var(--panel); color: var(--ink); font: 600 0.8rem/1 var(--font-body); white-space: nowrap; cursor: pointer; }
+.df-tools button:hover, .df-issues button:hover, .df-pager button:hover { background: #262c38; }
+.df svg { width: 16px; height: 16px; flex: none; }
+.df-note { margin: 0; padding: 8px 12px; border-radius: 12px; background: var(--panel); color: var(--ink-2); font-size: 0.8rem; }
+.df-switch { display: none; align-self: start; padding: 4px; border-radius: 999px; }
+.df-tabs { position: relative; z-index: 2; display: flex; gap: 2px; }
+.df-tabs button { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; background: none; color: var(--ink-2); font: 600 0.82rem/1 var(--font-body); cursor: pointer; }
+.df-tabs button[data-lg-selected] { color: var(--ink); }
+.df-tabs i { padding: 2px 6px; border-radius: 999px; background: rgb(255 255 255 / 0.12); font-style: normal; font-size: 0.7rem; }
+
+.df-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: "sheet docs" "issues docs"; gap: 12px; }
+.df-sheet { grid-area: sheet; display: flex; flex-direction: column; min-height: 0; border-radius: 18px; background: var(--panel); overflow: hidden; }
+.df-scroll { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; }
+.df table { border-collapse: separate; border-spacing: 0; font-size: 0.78rem; font-variant-numeric: tabular-nums; }
+.df thead th { position: sticky; top: 0; z-index: 2; padding: 8px 4px; background: var(--panel); border-bottom: 1px solid var(--line); color: var(--muted); font-weight: 600; text-align: center; white-space: nowrap; }
+.df thead th[data-weekend] { color: #c98a8a; }
+.df .df-name { position: sticky; left: 0; z-index: 1; min-width: 148px; padding: 7px 10px 7px 14px; background: var(--panel); border-right: 1px solid var(--line); text-align: left; font-weight: 600; white-space: nowrap; }
+.df thead .df-name { z-index: 3; }
+.df tbody th, .df tbody td { border-bottom: 1px solid var(--line); }
+.df tbody tr:last-child > * { border-bottom: 0; }
+.df-name span { display: block; }
+.df-name small { display: inline-flex; align-items: center; gap: 4px; margin-top: 2px; font-size: 0.72rem; font-weight: 600; }
+.df-name small svg { width: 12px; height: 12px; }
+.df-ok { color: var(--ok); } .df-wait { color: var(--warn); }
+.df tr[data-flag] .df-name { box-shadow: inset 3px 0 0 var(--warn); }
+.df tr[data-focus] > * { background-color: #232a3a; }
+.df td { padding: 3px 1px; text-align: center; }
+.df td[data-weekend] { background: rgb(255 255 255 / 0.025); }
+.df td input, .df td select { width: 24px; height: 26px; padding: 0; border: 0; border-radius: 6px; background: none; color: inherit; font: inherit; text-align: center; }
+.df td[data-on] input { background: #3d5bd9; color: #fff; font-weight: 700; }
+.df td input:hover, .df td select:hover { background: var(--cell); }
+.df td[data-on] input:hover { background: #4a69ea; }
+.df td input:focus-visible, .df td select:focus-visible, .df-issues select:focus-visible { outline: 2px solid #8ea2ff; outline-offset: 1px; }
+.df .df-num { padding-inline: 6px; } .df .df-num input { width: 62px; }
+.df .df-num small { display: block; color: var(--warn); font-size: 0.66rem; white-space: nowrap; }
+.df .df-text { padding-inline: 6px; } .df .df-text input, .df .df-text select { width: 190px; padding: 0 8px; text-align: left; }
+.df td select option, .df-issues select option { background: #1f242e; color: #efede7; }
+.df [data-bad] input, .df [data-bad] select { box-shadow: inset 0 0 0 1.5px var(--warn); }
+.df th[data-bad] span { color: var(--warn); }
+.df-foot { margin: 0; padding: 8px 14px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.74rem; }
+
+.df-issues { grid-area: issues; max-height: 190px; overflow: auto; border-radius: 18px; background: var(--panel); }
+.df-issues ul { display: grid; margin: 0; padding: 4px 0; list-style: none; }
+.df-issues li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 7px 14px; }
+.df-issues li + li { border-top: 1px solid var(--line); }
+.df-issues li > svg { color: var(--warn); }
+.df-issues p { margin: 0; font-size: 0.8rem; }
+.df-issues select { max-width: 230px; min-height: 36px; padding: 0 10px; border: 0; border-radius: 999px; background: #2a3040; color: var(--ink); font: 600 0.8rem/1 var(--font-body); cursor: pointer; }
+.df-issues button { background: #2a3040; }
+.df-clear { display: flex; align-items: center; gap: 8px; margin: 0; padding: 14px; color: var(--ok); font-weight: 600; }
+
+.df-docs { grid-area: docs; display: flex; flex-direction: column; gap: 10px; min-height: 0; min-width: 0; }
+.df-list { position: relative; display: flex; gap: 6px; margin: 0; padding: 2px 2px 6px; list-style: none; overflow-x: auto; scrollbar-width: thin; }
+.df-list button { display: flex; align-items: center; gap: 8px; padding: 7px 12px 7px 10px; border: 0; border-radius: 12px; background: var(--panel); color: var(--ink-2); font: 600 0.76rem/1.2 var(--font-body); text-align: left; white-space: nowrap; cursor: pointer; }
+.df-list button small { display: block; color: var(--muted); font-size: 0.7rem; font-weight: 500; }
+.df-list button[aria-pressed="true"] { background: var(--paper); color: var(--paper-ink); } .df-list button[aria-pressed="true"] small { color: #6b6960; }
+.df-desk { position: relative; flex: 1; min-height: 0; display: grid; justify-items: center; padding: 6px 14px 0; overflow: hidden; }
+/* Two sheets of the set peek out from under the open page. */
+.df-desk::before, .df-desk::after { content: ""; position: absolute; top: 12px; bottom: -20px; left: 50%; width: min(100% - 40px, 500px); border-radius: 4px; background: #d9d5c9; transform: translateX(-50%) rotate(-2.4deg); }
+.df-desk::after { background: #e8e4d9; transform: translateX(-50%) rotate(1.6deg); }
+.df-paper { position: relative; z-index: 1; width: min(100%, 520px); height: 100%; overflow: auto; border-radius: 4px; background: var(--paper); color: var(--paper-ink); box-shadow: 0 30px 50px -30px rgb(0 0 0 / 0.8); container-type: inline-size; scrollbar-width: thin; }
+.df-page { padding: 8cqw 8cqw 6cqw 11cqw; font: 400 2.5cqw/1.45 "Times New Roman", Times, Georgia, serif; }
+.df-page p { margin: 0 0 0.35em; overflow-wrap: break-word; }
+.df-page p[data-align="center"] { text-align: center; } .df-page p[data-align="justify"] { text-align: justify; hyphens: auto; }
+.df-page p[data-bold] { font-weight: 700; } .df-page p[data-gap] { margin-bottom: 1.5em; } .df-page p[data-indent] { text-indent: 2.6em; }
+.df-page p:nth-child(2) { color: #8b3a2e; font-size: 0.8em; font-style: italic; }
+.df-paper:focus-visible { outline: 2px solid #8ea2ff; outline-offset: 2px; }
+.df-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.df-pager { display: flex; align-items: center; gap: 8px; margin-right: auto; color: var(--ink-2); font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+.df-pager button { padding: 0; width: 36px; justify-content: center; }
+.df-actions .button { gap: 8px; min-height: 40px; }
+.df-empty { margin: auto; max-width: 30ch; color: var(--ink-2); text-align: center; }
+
+@container (max-width: 860px) {
+  .df-switch { display: block; }
+  .df-body { grid-template: minmax(0, 1fr) / minmax(0, 1fr); grid-template-areas: none; }
+  .df-body > * { grid-area: 1 / 1; display: none; }
+  .df[data-tab="0"] .df-sheet, .df[data-tab="2"] .df-docs { display: flex; }
+  .df[data-tab="1"] .df-issues { display: block; max-height: none; }
+  .df-issues li { grid-template-columns: auto minmax(0, 1fr); } .df-issues li > :last-child { grid-column: 2; justify-self: start; }
+  .df-stats { order: 3; width: 100%; } .df-stats li { flex: 1; }
+  .df-tools button { padding: 0 10px; }
+  .df-paper { width: min(100%, 440px); }
+}
+@container (max-width: 480px) {
+  .df-title p { display: none; }
+  .df-tools button:not([aria-label]) { font-size: 0; gap: 0; width: 36px; justify-content: center; padding: 0; }
+  .df-actions .button { flex: 1; justify-content: center; }
+}

@@ -19,6 +19,7 @@ const hues: Record<string, [string, string]> = {
   "particle-type": ["#5b7bff", "#ff6b8b"],
   "scroll-story": ["#5b7bff", "#2fd3a0"],
   "analytics-dashboard": ["#3987e5", "#199e70"],
+  "document-factory": ["#4a63e8", "#e9b872"],
   "kanban-board": ["#d55181", "#3987e5"],
   "booking-flow": ["#d9893f", "#b46bff"],
   "drum-machine": ["#ff6b3d", "#b46bff"],

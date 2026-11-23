@@ -25,6 +25,7 @@ describe("project catalog", () => {
   it("puts neutral commercial cases first and sensitive content last", () => {
     expect(allProjects.map(({ slug }) => slug)).toEqual([
       "pcstudio",
+      "chess-platform",
       "document-factory",
       "chessrise",
       "pioner",

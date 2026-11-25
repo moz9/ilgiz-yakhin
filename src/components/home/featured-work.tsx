@@ -42,7 +42,9 @@ const labels: Record<string, string> = {
   "drum-machine": "Ритм-16",
   pioner: "Пионер",
   "worktime-reporting": "Отчётность",
-  "infrastructure-inventory": "Учёт ИТ",
+  "infrastructure-inventory": "Sysinvent",
+  podpisoon: "Подпись",
+  routerdesk: "RouterDesk",
   "content-platform": "Платформа",
   revalib: "RevaLib",
 };
@@ -67,7 +69,9 @@ const statuses: Record<string, string> = {
   "drum-machine": "Живое демо, Web Audio",
   pioner: "Публичный preview",
   "worktime-reporting": "Windows, демо",
-  "infrastructure-inventory": "Windows, демо",
+  "infrastructure-inventory": "Рабочий инструмент, живое демо",
+  podpisoon: "Windows 7–11, живое демо",
+  routerdesk: "WinUI 3, рабочий инструмент",
   "content-platform": "Production, обезличен",
   revalib: "Production",
 };

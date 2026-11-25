@@ -24,37 +24,12 @@ describe("project catalog", () => {
 
   it("puts neutral commercial cases first and sensitive content last", () => {
     expect(allProjects.map(({ slug }) => slug)).toEqual([
-      "pcstudio",
-      "chess-platform",
-      "document-factory",
-      "chessrise",
-      "pioner",
-      "liquid-glass-kit",
-      "glassrates",
-      "gradient-studio",
-      "globe-routes",
-      "gravity-tags",
-      "kinetic-type",
-      "shader-gallery",
-      "micro-ui",
-      "particle-type",
-      "scroll-story",
-      "analytics-dashboard",
-      "kanban-board",
-      "booking-flow",
-      "drum-machine",
-      "streaming-web-platform",
-      "streaming-android-tv",
-      "worktime-reporting",
-      "visitor-flow-reporting",
-      "launcher",
-      "infrastructure-inventory",
-      "atlant-business-site",
-      "revalib",
-      "backup-lifecycle-automation",
-      "ilgiz-portfolio",
-      "content-platform",
-      "routerdesk",
+      "pcstudio", "chess-platform", "infrastructure-inventory", "document-factory", "podpisoon", "routerdesk",
+      "chessrise", "pioner", "liquid-glass-kit", "glassrates", "gradient-studio", "globe-routes",
+      "gravity-tags", "kinetic-type", "shader-gallery", "micro-ui", "particle-type", "scroll-story",
+      "analytics-dashboard", "kanban-board", "booking-flow", "drum-machine",
+      "streaming-web-platform", "streaming-android-tv", "worktime-reporting", "visitor-flow-reporting",
+      "launcher", "atlant-business-site", "revalib", "backup-lifecycle-automation", "ilgiz-portfolio", "content-platform",
     ]);
   });
 
@@ -123,7 +98,7 @@ describe("project catalog", () => {
   });
 
   it("hides the outdated cases from the site but keeps their pages", () => {
-    const hidden = ["streaming-web-platform", "streaming-android-tv", "launcher", "backup-lifecycle-automation", "revalib", "atlant-business-site", "infrastructure-inventory"];
+    const hidden = ["streaming-web-platform", "streaming-android-tv", "launcher", "backup-lifecycle-automation", "revalib", "atlant-business-site"];
     for (const slug of hidden) {
       expect(projects.some((project) => project.slug === slug)).toBe(false);
       expect(getProject(slug)?.hidden).toBe(true);

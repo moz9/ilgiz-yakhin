@@ -113,8 +113,9 @@ test("remaining cases include product stories and purposeful media frames", asyn
     { route: "/projects/chessrise", groups: 4, media: 3, presentation: "collage" },
     { route: "/projects/pioner", groups: 4, media: 1, presentation: "collage" },
     { route: "/projects/worktime-reporting", groups: 4, media: 2, presentation: "strip" },
-    { route: "/projects/visitor-flow-reporting", groups: 4, media: 2, presentation: "strip" },
-    { route: "/projects/infrastructure-inventory", groups: 4, media: 2, presentation: "strip" },
+    { route: "/projects/visitor-flow-reporting", groups: 4, media: 3, presentation: "strip" },
+    { route: "/projects/infrastructure-inventory", groups: 6, media: 4, presentation: "strip" },
+    { route: "/projects/podpisoon", groups: 5, media: 3, presentation: "browser" },
     { route: "/projects/backup-lifecycle-automation", groups: 4, media: 1, presentation: "diagram" },
   ];
   for (const item of cases) {

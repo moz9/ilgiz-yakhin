@@ -88,6 +88,80 @@ export function unconfirmed(history: Attempt[]): number[] {
   return sent.filter((id) => !confirmed.has(id)).sort((a, b) => a - b);
 }
 
+/* Device card ------------------------------------------------------------------------ */
+
+export type Status = "online" | "offline" | "unknown";
+export const STATUS_TEXT: Record<Status, string> = { online: "В сети", offline: "Не в сети", unknown: "Нет данных" };
+export const SOURCES = ["Active Directory", "Сетевое сканирование", "Excel-реестр", "Прежний учёт", "Документы ОСВ"] as const;
+export const CLIENTS = ["RDP", "VNC", "AnyDesk", "RustDesk", "Dameware", "SSH"] as const;
+
+export type DeviceCard = {
+  status: Status; ip: string; mac: string; model: string; cpu: string; ram: number; disk: number;
+  location: string; inventory: string; serial: string;
+  metrics: { cpu: number; mem: number; temp: number; free: number; uptime: number };
+  software: { apps: number; services: number; startup: number; hotfixes: number };
+  security: { antivirus: string | null; bitlocker: boolean; shares: number; usb: number };
+  sources: (typeof SOURCES)[number][];
+  profiles: { client: (typeof CLIENTS)[number]; preferred: boolean; secret: boolean }[];
+  history: { when: string; what: string }[];
+};
+
+const MODELS = ["HP ProDesk 400 G7", "Lenovo ThinkCentre M70q", "Dell OptiPlex 3080", "Acer Veriton X2690G", "HP EliteDesk 800 G4"];
+const CPUS = ["Core i3-10100", "Core i5-10400", "Core i5-12400", "Ryzen 5 5600G", "Pentium G6400"];
+const APPS = ["1С:Предприятие 8.3", "Microsoft Office 2019", "Яндекс Браузер", "7-Zip", "Adobe Acrobat Reader", "КриптоПро CSP", "Kaspersky Endpoint Security", "AnyDesk", "Telegram Desktop", "VLC"];
+const FLOORS = ["1 этаж, офис 104", "2 этаж, бухгалтерия", "1 этаж, касса", "−1 этаж, склад", "3 этаж, приёмная", "2 этаж, отдел кадров", "4 этаж, техслужба"];
+
+/** Everything the card shows for one computer, generated from its id: the same on every visit. */
+export function card(id: number): DeviceCard {
+  const rnd = random(id * 2654435761 % 2147483647 || 7);
+  const pc = FLEET[id];
+  const status: Status = id % 11 === 4 || id % 13 === 9 ? "offline" : id === 17 ? "unknown" : "online";
+  const pick = <T,>(list: readonly T[]) => list[Math.floor(rnd() * list.length)];
+  const sources = SOURCES.filter((_, i) => i === 1 || rnd() < (i === 4 ? 0.55 : 0.8));
+  const preferred = pc.dept === "Техслужба" ? "SSH" : "RDP";
+  const profiles = CLIENTS.filter((c) => c === preferred || (c !== "SSH" && rnd() < 0.35)).map((client) => ({ client, preferred: client === preferred, secret: rnd() < 0.75 }));
+  const day = (d: number) => `${String(25 - d).padStart(2, "0")}.11`;
+  return {
+    status, ip: `192.0.2.${10 + id * 3}`, mac: Array.from({ length: 6 }, () => Math.floor(rnd() * 256).toString(16).padStart(2, "0")).join(":").toUpperCase(),
+    model: pick(MODELS), cpu: pick(CPUS), ram: pick([8, 8, 16, 16, 32]), disk: pick([256, 512, 512, 1000]),
+    location: FLOORS[DEPTS.findIndex(([d]) => d === pc.dept) % FLOORS.length], inventory: `ИН-${String(1040 + id * 7).padStart(5, "0")}`, serial: `SN${Math.floor(rnd() * 9e7 + 1e7)}`,
+    metrics: { cpu: Math.round(rnd() * 70 + 4), mem: Math.round(rnd() * 55 + 30), temp: Math.round(rnd() * 30 + 38), free: Math.round(rnd() * 180 + 12), uptime: Math.round(rnd() * 300 + 2) },
+    software: { apps: Math.round(rnd() * 60 + 40), services: Math.round(rnd() * 60 + 180), startup: Math.round(rnd() * 12 + 4), hotfixes: pc.os === "Windows 7" ? Math.round(rnd() * 20 + 180) : Math.round(rnd() * 25 + 8) },
+    security: { antivirus: rnd() < 0.9 ? "Kaspersky Endpoint Security" : null, bitlocker: pc.os !== "Windows 7" && rnd() < 0.4, shares: Math.round(rnd() * 3), usb: Math.round(rnd() * 8 + 3) },
+    sources, profiles,
+    history: [
+      { when: `${day(0)} 08:52`, what: status === "online" ? "Опрос: снимок состояния обновлён" : "Опрос: компьютер не ответил" },
+      { when: `${day(2)} 14:10`, what: `Вход в систему: ${pc.lastUser}` },
+      { when: `${day(5)} 10:31`, what: "Сверка: привязан к позиции ОСВ по инвентарному номеру" },
+      { when: `${day(9)} 17:45`, what: "Удалённое действие: установка КриптоПро CSP — успешно" },
+      { when: `${day(16)} 09:02`, what: "Импорт из Active Directory: обновлено подразделение" },
+    ],
+  };
+}
+
+export const appsOf = (id: number) => APPS.filter((_, i) => (id + i) % 3 !== 0 || i < 3);
+
+/* Reconciliation with accounting --------------------------------------------------------- */
+
+export type Match = { doc: string; inventory: string; amount: number; how: "inventory" | "serial" | "model" | "ambiguous" | "none"; candidates: number[] };
+
+/** Accounting lines from the fixed-assets statement and what the console found for each. */
+export const LEDGER: Match[] = [
+  { doc: "Системный блок HP ProDesk 400 G7", inventory: "ИН-01040", amount: 54_200, how: "inventory", candidates: [0] },
+  { doc: "Системный блок Lenovo ThinkCentre", inventory: "ИН-01047", amount: 61_900, how: "inventory", candidates: [1] },
+  { doc: "Компьютер в сборе (касса)", inventory: "ИН-01075", amount: 38_400, how: "serial", candidates: [5] },
+  { doc: "ПК Dell OptiPlex 3080", inventory: "ИН-00912", amount: 57_300, how: "ambiguous", candidates: [8, 9] },
+  { doc: "Системный блок офисный", inventory: "ИН-00933", amount: 41_000, how: "model", candidates: [12] },
+  { doc: "Моноблок Acer (приёмная)", inventory: "ИН-01138", amount: 49_800, how: "inventory", candidates: [14] },
+  { doc: "Рабочая станция техслужбы", inventory: "ИН-00871", amount: 88_500, how: "ambiguous", candidates: [20, 21, 22] },
+  { doc: "Системный блок (списание 2024)", inventory: "ИН-00402", amount: 12_000, how: "none", candidates: [] },
+];
+
+export const HOW_TEXT: Record<Match["how"], string> = {
+  inventory: "по инвентарному номеру", serial: "по серийному номеру", model: "по модели и месту — нужна проверка",
+  ambiguous: "несколько кандидатов — выберите", none: "устройство не найдено",
+};
+
 /* Backup register ------------------------------------------------------------------- */
 
 export type System = { id: string; name: string; kind: "Сервер" | "ВМ" | "Сеть" | "Сервис"; copy: number | null; job: number | null; restore: number | null; what: string };

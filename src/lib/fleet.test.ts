@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { FLEET, latest, outcome, summary, SYSTEMS, unconfirmed, verdict, type Attempt, type Phase } from "./fleet";
+import { card, FLEET, latest, LEDGER, outcome, summary, SYSTEMS, unconfirmed, verdict, type Attempt, type Phase } from "./fleet";
 
 const run = (targets: number[], attempt: number): Attempt => ({ at: "09:00", targets, results: Object.fromEntries(targets.map((id) => [id, outcome(id, attempt)])) });
 
@@ -44,5 +44,23 @@ describe("backup register", () => {
 
   it("starts with every status represented", () => {
     expect(new Set(SYSTEMS.map(verdict))).toEqual(new Set(["proven", "untested", "stale", "missing"]));
+  });
+});
+
+describe("device card and reconciliation", () => {
+  it("builds the same card on every visit, with addresses from the documentation range", () => {
+    expect(card(3)).toEqual(card(3));
+    for (const p of FLEET) {
+      const c = card(p.id);
+      expect(c.ip).toMatch(/^192\.0\.2\.\d+$/);
+      expect(c.profiles.some((x) => x.preferred)).toBe(true);
+      expect(c.sources).toContain("Сетевое сканирование");
+    }
+  });
+
+  it("matches ledger lines found by number to the device with that number", () => {
+    for (const m of LEDGER.filter((x) => x.how === "inventory")) expect(card(m.candidates[0]).inventory).toBe(m.inventory);
+    expect(LEDGER.filter((x) => x.how === "ambiguous").every((x) => x.candidates.length > 1)).toBe(true);
+    expect(LEDGER.flatMap((x) => x.candidates).every((id) => id >= 0 && id < FLEET.length)).toBe(true);
   });
 });

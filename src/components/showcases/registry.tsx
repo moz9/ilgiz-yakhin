@@ -31,6 +31,7 @@ export const showcases: Record<string, ComponentType<ShowcaseProps>> = {
   pcstudio: dynamic(() => import("./pcstudio-explode"), { ssr: false, loading }),
   "infrastructure-inventory": dynamic(() => import("./fleet-console"), { ssr: false, loading }),
   podpisoon: dynamic(() => import("./signer-desk"), { ssr: false, loading }),
+  "visitor-flow-reporting": dynamic(() => import("./visitor-week"), { ssr: false, loading }),
 };
 
 export function ShowcaseHost({ slug, mode }: { slug: string; mode: ShowcaseProps["mode"] }) {

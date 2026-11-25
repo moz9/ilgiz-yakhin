@@ -286,7 +286,8 @@
   padding: 6px;
 }
 .work-picker-tabs { position: relative; z-index: 2; display: flex; justify-content: space-between; }
-.work-picker-tabs button { flex: 1 1 auto; min-width: 0; height: 44px; padding: 0 12px; border: 0; border-radius: 9999px; background: none; font-weight: 500; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.work-picker-tabs button { flex: 1 1 auto; min-width: 0; height: 44px; padding: 0 9px; border: 0; border-radius: 9999px; background: none; font-weight: 500; font-size: 0.86rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 1100px) { .work-picker-tabs button { padding: 0 5px; font-size: 0.78rem; } }
 .work-picker-tabs button[data-lg-selected] { color: var(--cobalt-ink); }
 
 /* Scenarios ------------------------------------------------------------------ */

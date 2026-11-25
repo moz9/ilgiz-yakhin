@@ -48,6 +48,8 @@ const labels: Record<string, string> = {
   "content-platform": "Платформа",
   revalib: "RevaLib",
 };
+/** Twelve chapters share one bar: the longest names get a shorter form there only. */
+const pickerLabels: Record<string, string> = { glassrates: "Курсы", "document-factory": "Табель", "worktime-reporting": "Время", "liquid-glass-kit": "Стекло", "gradient-studio": "Градиент" };
 const statuses: Record<string, string> = {
   chessrise: "Принят и оплачен",
   pcstudio: "Закрытая проверка",
@@ -194,7 +196,7 @@ export function FeaturedWork() {
     </div>
     <div className="work-picker" data-lg="surface">
       <div className="work-picker-tabs" ref={picker} role="tablist" aria-label="Быстрый переход к проекту">
-        {featured.map((project, index) => <button key={project.slug} type="button" role="tab" aria-selected={active === index} tabIndex={active === index ? 0 : -1}>{labels[project.slug]}</button>)}
+        {featured.map((project, index) => <button key={project.slug} type="button" role="tab" aria-selected={active === index} tabIndex={active === index ? 0 : -1} title={project.title}>{pickerLabels[project.slug] ?? labels[project.slug]}</button>)}
       </div>
     </div>
   </section>;

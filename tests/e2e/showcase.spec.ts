@@ -24,8 +24,8 @@ test("the chapter picker scrolls straight to the chosen case", async ({ page, is
   await page.goto("/");
   await page.locator("#work").scrollIntoViewIfNeeded();
   const picker = page.getByRole("tablist", { name: "Быстрый переход к проекту" });
-  await picker.getByRole("tab", { name: "Отчётность" }).click();
-  await expect.poll(() => picker.getByRole("tab", { name: "Отчётность" }).getAttribute("aria-selected"), { timeout: 8_000 }).toBe("true");
+  await picker.getByRole("tab", { name: "Время" }).click();
+  await expect.poll(() => picker.getByRole("tab", { name: "Время" }).getAttribute("aria-selected"), { timeout: 8_000 }).toBe("true");
   // The page scrolls smoothly: wait for the chosen chapter to be pinned and opened up.
   const chapter = page.locator(".chapter").nth(featured.findIndex(({ slug }) => slug === "worktime-reporting"));
   await expect.poll(async () => (await chapter.boundingBox())?.y ?? Infinity, { timeout: 8_000 }).toBeLessThanOrEqual(0);

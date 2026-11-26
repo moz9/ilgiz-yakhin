@@ -49,3 +49,6 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# VPS release archives (deploy/vps/build-release.sh)
+/deploy/vps/out/

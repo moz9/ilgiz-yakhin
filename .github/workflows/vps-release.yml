@@ -1,0 +1,34 @@
+# Builds the VPS release archive on Linux and keeps it as a workflow artifact.
+# Manual only: it never runs on push, so the Vercel deployment is unaffected.
+name: VPS release
+
+on:
+  workflow_dispatch:
+    inputs:
+      site_url:
+        description: Canonical site URL baked into sitemap, robots and metadata
+        default: https://ilgiz-yakhin.vercel.app
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Build release
+        env:
+          SITE_URL: ${{ inputs.site_url }}
+        run: bash deploy/vps/build-release.sh HEAD
+      - uses: actions/upload-artifact@v4
+        with:
+          name: portfolio-release-${{ github.sha }}
+          path: deploy/vps/out/
+          retention-days: 14

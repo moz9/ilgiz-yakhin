@@ -1,0 +1,39 @@
+[Unit]
+Description=Portfolio (Next.js standalone server)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=portfolio
+Group=portfolio
+# The symlink is resolved at start, so a restart picks up the new release.
+WorkingDirectory=/srv/portfolio/current
+ExecStart=/usr/bin/node server.js
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=HOSTNAME=127.0.0.1
+Environment=NEXT_TELEMETRY_DISABLED=1
+# 2 GB VPS: keep the heap well below RAM, let systemd cut a runaway process.
+Environment=NODE_OPTIONS=--max-old-space-size=640
+MemoryHigh=900M
+MemoryMax=1200M
+Restart=always
+RestartSec=3
+TimeoutStopSec=15
+
+# Hardening: the server only needs to write its ISR cache inside the release.
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+ReadWritePaths=/srv/portfolio/releases
+
+[Install]
+WantedBy=multi-user.target
